@@ -31,9 +31,9 @@ class UserService {
       s.student_id,
       CONCAT_WS(' ', s.last_name, s.first_name, s.patronymic) AS full_name,
       CONCAT(g.group_number, '/', s.subgroup) AS group_name,
-      TO_CHAR(s.enrolled_date, 'DD.MM.YYYY') AS formatted_enrolled_date,
+      TO_CHAR(s.enrolled_date, 'DD/MM/YYYY') AS formatted_enrolled_date,
       s.enrollment_order,
-      TO_CHAR(s.date_of_birth, 'DD.MM.YYYY') AS formatted_date_of_birth
+      TO_CHAR(s.date_of_birth, 'DD/MM/YYYY') AS formatted_date_of_birth
   FROM 
       students s
   JOIN 
