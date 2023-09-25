@@ -132,7 +132,7 @@
                   v-show="loading"
                   class="spinner-border spinner-border-sm"
                 ></span>
-                Добавить плательщика
+                Добавить законного представителя
               </button>
               <router-link to="/payers" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
             </div>

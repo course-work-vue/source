@@ -5,7 +5,7 @@
     <div class="col col-12">
     <div class="mb-3 col col-12">
     
-      <button @click="navigateToAddCW" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить курсовую работу</button>
+      <button @click="navigateToAddListener" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить платёж</button>
       <div class="col col-3 float-end">
       <input class="form-control"  id="filter-text-box" v-on:input="onFilterTextBoxChanged()" placeholder="Поиск..."> 
     </div>
@@ -41,7 +41,7 @@
 
 import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
 import { reactive, onMounted, ref } from "vue";
-import ButtonCell from "@/components/GroupButtonCell.vue";
+import ButtonCell from "@/components/PayerButtonCell.vue";
 import GroupHref from "@/components/GroupHrefCellRenderer.vue";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
@@ -91,11 +91,27 @@ export default {
       cellClass: "grid-cell-centered",
 
     },
-           { field: "course_work_id", headerName: 'ID', filter: 'agSetColumnFilter'
+           { field: "id", headerName: 'ID', filter: 'agSetColumnFilter'
            },
-           { field: "course_work_kafedra", headerName: 'Кафедра'},
-           { field: "course_work_theme", headerName: 'Тема' },
-           { field: "full_name", headerName: 'ФИО студента' },
+           { field: "contr_number", headerName: 'Номер договора' },
+           {
+            field: 'full_name',
+            headerName: 'ФИО слушателя'
+           },
+           {
+            field: 'full_name2',
+            headerName: 'ФИО законного представителя'
+           },
+           {
+            field: 'deposited_amount',
+            headerName: 'Внёсенная сумма'
+           },
+           {
+            field: 'expiration_date',
+            headerName: 'Просрочка'
+           }
+       
+
 
            
          
@@ -147,18 +163,18 @@ export default {
   
   methods: {
 
-    async loadGroupsData() {
+    async loadPayersData() {
         try {
-          const response = await UserService.getAllCws(); // Replace with your API endpoint
+          const response = await UserService.getAllPayments(); // Replace with your API endpoint
           this.rowData.value = Array.isArray(response.data) ? response.data : [response.data];
           this.loading=false;
         } catch (error) {
           console.error('Error loading students data:', error);
         }
       },
-      navigateToAddCW() {
+      navigateToAddListener() {
     
-    this.$router.push(`/addCw`); // Navigate to the AddStudent route
+    this.$router.push(`/addProgram`); // Navigate to the AddStudent route
 },
 
 onFirstDataRendered(params) {
@@ -186,7 +202,7 @@ onFirstDataRendered(params) {
 
     created() {
     
-    this.loadGroupsData();
+    this.loadPayersData();
 
     },
 

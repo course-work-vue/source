@@ -122,6 +122,28 @@
             <ErrorMessage name="email" class="error-feedback" />
           </div>
 
+
+      
+
+          <div class="form-group">
+            <label for="people_count">Желаемое количество людей в группе</label>
+            <Field name="people_count" type="number" class="form-control"  value="" :class="{'is-invalid': errors.people_count}" />
+            <ErrorMessage name="people_count" class="error-feedback" />
+          </div>
+          <div class="form-group">
+              <label for="group_id">Желаемые дни недели</label>
+              
+              <Select2 :class="{'form-control is-invalid': errors.group_id}" v-model="myValue" 
+              :options="groups" 
+              :settings=" { theme: 'bootstrap-5', width: '100%'}"
+              
+               />
+
+               <Field  name="group_id" as="select" v-model="myValue" hidden>
+                <option v-for="group in groups" :key="group.id" :value="group.id">{{ group.text }}</option>
+              </Field>
+              <ErrorMessage name="group_id" class="error-feedback" />
+            </div>
             
 
            
@@ -162,6 +184,8 @@
     setup() {
       const toast = useToast();
       return { toast }
+
+
     },
 
     name: "AddStudent",
@@ -185,7 +209,7 @@
         dataLoading:false,
         message: "",
         schema,
-        groups: null,
+        days_of_week: null,
 
         myValue: '',
       };

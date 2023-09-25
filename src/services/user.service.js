@@ -314,12 +314,19 @@ class UserService {
   getAllListeners(){
     const query = {
       query: `SELECT
-      CONCAT(name, ' ', lastname, ' ', surname) AS full_name,
-      phone_number,
-      email,
-      id
+      CONCAT(l.name, ' ', l.lastname, ' ', l.surname) AS full_name,
+      l.phone_number,
+      l.email,
+      l.id,
+      l.days_of_week,
+      l.people_count,
+      CONCAT(p.name, ' ', p.lastname, ' ', p.surname) AS full_name2
   FROM
-      listeners;
+      "listeners" as l
+      JOIN
+      "payers" AS p
+  ON
+      l.payer_id = p.id;
   `,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
@@ -333,7 +340,7 @@ class UserService {
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
-  addListener(name, surname,lastname, snils, passport, issued_by, issue_date, department_code, registration_address, phone_number, email){
+  addListener(name, surname,lastname, snils, passport, issued_by, issue_date, department_code, registration_address, phone_number, email,days_of_week,people_count){
     const query = {
       query: `INSERT INTO "listeners" (
         "name",
@@ -346,7 +353,9 @@ class UserService {
         "department_code",
         "registration_address",
         "phone_number",
-        "email"
+        "email",
+        "days_of_week", 
+        "people_count"
     ) VALUES (
         '${name}',
         '${surname}',
@@ -358,13 +367,15 @@ class UserService {
         '${department_code}',
         '${registration_address}',
         '${phone_number}',
-        '${email}'
+        '${email}',
+        '${days_of_week}',
+        '${people_count}'
     );`,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
-  updateListenerById(id, name, surname,lastname, snils, passport, issued_by, issue_date, department_code, registration_address, phone_number, email){
+  updateListenerById(id, name, surname,lastname, snils, passport, issued_by, issue_date, department_code, registration_address, phone_number, email,days_of_week,people_count){
     const query = {
       query: ` "name" ='${name}',
       "surname" ='${surname}',
@@ -376,7 +387,9 @@ class UserService {
       "department_code"='${department_code}',
       "registration_address"='${registration_address}',
       "phone_number"='${phone_number}',
-      "email"='${email}'
+      "email"='${email}',
+      "days_of_week"='${days_of_week}', 
+      "people_count"='${people_count}'
   WHERE
       "id" = '${id}';`,
     };
@@ -384,77 +397,6 @@ class UserService {
   }
 
 
-  getAllPayers(){
-    const query = {
-      query: `SELECT
-      CONCAT(name, ' ', lastname, ' ', surname) AS full_name,
-      phone_number,
-      email,
-      id
-  FROM
-      payers;
-  `,
-    };
-    return axios.post(API_URL, query, { headers: authHeader() });
-  }
-
-
-  getPayerById(id){
-    const query = {
-      query: `SELECT *, TO_CHAR(issue_date , 'YYYY-MM-DD') AS issue_date from payers where 
-      id='${id}';`,
-    };
-    return axios.post(API_URL, query, { headers: authHeader() });
-  }
-  addPayer(name, surname,lastname, snils, passport, issued_by, issue_date, department_code, registration_address, phone_number, email){
-    const query = {
-      query: `INSERT INTO "payers" (
-        "name",
-        "surname",
-        "lastname",
-        "snils",
-        "passport",
-        "issued_by",
-        "issue_date",
-        "department_code",
-        "registration_address",
-        "phone_number",
-        "email"
-    ) VALUES (
-        '${name}',
-        '${surname}',
-        '${lastname}',
-        '${snils}',
-        '${passport}',
-        '${issued_by}',
-        '${issue_date}',
-        '${department_code}',
-        '${registration_address}',
-        '${phone_number}',
-        '${email }'
-    );`,
-    };
-    return axios.post(API_URL, query, { headers: authHeader() });
-  }
-
-  updatePayerById(id, name, surname,lastname, snils, passport, issued_by, issue_date, department_code, registration_address, phone_number, email){
-    const query = {
-      query: ` "name" ='${name}',
-      "surname" ='${surname}',
-      "lastname"=  '${lastname}',
-      "snils"= '${snils}',
-      "passport"= '${passport}',
-      "issued_by"= '${issued_by}',
-      "issue_date"='${issue_date}',
-      "department_code"='${department_code}',
-      "registration_address"='${registration_address}',
-      "phone_number"='${phone_number}',
-      "email"='${email}'
-  WHERE
-      "id" = '${id}';`,
-    };
-    return axios.put(API_URL +"payers", query, { headers: authHeader() });
-  }
 
 
 
@@ -483,15 +425,17 @@ class UserService {
       payers.registration_address AS payer_registration_address,
       payers.phone_number AS payer_phone_number,
       payers.email AS payer_email,
-      contracts.required_amount,
-      contracts.deposited_amount,
-      TO_CHAR(contracts.expiration_date , 'DD-MM-YYYY') AS expiration_date
+      programs.program_name,
+      contracts.contr_number,
+      contracts.id
   FROM 
       contracts
   JOIN
       listeners ON contracts.listener_id = listeners.id
   JOIN
-      payers ON contracts.payer_id = payers.id;
+      payers ON contracts.payer_id = payers.id
+  JOIN
+      programs ON contracts.program_id = programs.id;
   `,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
@@ -578,7 +522,77 @@ class UserService {
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
+  getAllPayers(){
+    const query = {
+      query: `SELECT
+      CONCAT(name, ' ', lastname, ' ', surname) AS full_name,
+      phone_number,
+      email,
+      id
+  FROM
+      payers;
+  `,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
 
+
+  getPayerById(id){
+    const query = {
+      query: `SELECT *, TO_CHAR(issue_date , 'YYYY-MM-DD') AS issue_date from payers where 
+      id='${id}';`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  addPayer(name, surname,lastname, snils, passport, issued_by, issue_date, department_code, registration_address, phone_number, email){
+    const query = {
+      query: `INSERT INTO "payers" (
+        "name",
+        "surname",
+        "lastname",
+        "snils",
+        "passport",
+        "issued_by",
+        "issue_date",
+        "department_code",
+        "registration_address",
+        "phone_number",
+        "email"
+    ) VALUES (
+        '${name}',
+        '${surname}',
+        '${lastname}',
+        '${snils}',
+        '${passport}',
+        '${issued_by}',
+        '${issue_date}',
+        '${department_code}',
+        '${registration_address}',
+        '${phone_number}',
+        '${email }'
+    );`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  updatePayerById(id, name, surname,lastname, snils, passport, issued_by, issue_date, department_code, registration_address, phone_number, email){
+    const query = {
+      query: ` "name" ='${name}',
+      "surname" ='${surname}',
+      "lastname"=  '${lastname}',
+      "snils"= '${snils}',
+      "passport"= '${passport}',
+      "issued_by"= '${issued_by}',
+      "issue_date"='${issue_date}',
+      "department_code"='${department_code}',
+      "registration_address"='${registration_address}',
+      "phone_number"='${phone_number}',
+      "email"='${email}'
+  WHERE
+      "id" = '${id}';`,
+    };
+    return axios.put(API_URL +"payers", query, { headers: authHeader() });
+  }
 
   getCwById(id){
     const query = {
@@ -617,6 +631,110 @@ class UserService {
       FROM "students";`,
     };
     
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+
+
+  getAllPrograms(){
+    const query = {
+      query: `SELECT
+      id,
+      required_amount,
+      program_name,
+      hours,
+      TO_CHAR(start_date , 'YYYY-MM-DD') AS start_date,
+      TO_CHAR(end_date , 'YYYY-MM-DD') AS end_date
+  FROM
+    programs;
+  `,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+
+  getProgramById(id){
+    const query = {
+      query: `SELECT *, TO_CHAR(start_date , 'YYYY-MM-DD') AS start_date, TO_CHAR(end_date , 'YYYY-MM-DD') AS end_date from programs where 
+      id='${id}';`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  addProgram(required_amount, program_name,hours, start_date, end_date){
+    const query = {
+      query: `INSERT INTO "programs" (
+        "required_amount",
+        "program_name",
+        "hours",
+        "start_date",
+        "end_date"
+    ) VALUES (
+        '${required_amount}',
+        '${program_name}',
+        '${hours}',
+        '${start_date}',
+        '${end_date}'
+    );`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  updateProgramById(id, required_amount, program_name,hours, start_date, end_date){
+    const query = {
+      query: ` "required_amount" ='${required_amount}',
+      "program_name" ='${program_name}',
+      "hours"=  '${hours}',
+      "start_date"= '${start_date}',
+      "end_date"= '${end_date}'
+  WHERE
+      "id" = '${id}';`,
+    };
+    return axios.put(API_URL +"programs", query, { headers: authHeader() });
+  }
+
+   
+  getAllPayments(){
+    const query = {
+      query: `SELECT
+      pg.id AS id,
+      pg.listener_id,
+      pg.contract_id,
+      pg.payer_id AS pay_graph_payer_id,
+      pg.expiration_date,
+      pg.deposited_amount,
+      c.id AS contract_id,
+      c.listener_id AS contract_listener_id,
+      c.payer_id AS contract_payer_id,
+      c.contr_number,
+      c.program_id,
+      CONCAT(l.name, ' ', l.lastname, ' ', l.surname) AS full_name,  
+      l.days_of_week,
+      l.people_count,
+      l.payer_id AS listener_payer_id,
+      l.snils AS listener_snils,
+      l.passport AS listener_passport,
+      l.issued_by AS listener_issued_by,
+      l.issue_date AS listener_issue_date,
+      l.department_code AS listener_department_code,
+      l.registration_address AS listener_registration_address,
+      l.phone_number AS listener_phone_number,
+      l.email AS listener_email,
+      p.id AS payer_id,
+      CONCAT(p.name, ' ', p.lastname, ' ', p.surname) AS full_name2,
+      p.snils AS payer_snils,
+      p.passport AS payer_passport,
+      p.issued_by AS payer_issued_by,
+      p.issue_date AS payer_issue_date,
+      p.department_code AS payer_department_code,
+      p.registration_address AS payer_registration_address,
+      p.phone_number AS payer_phone_number,
+      p.email AS payer_email
+  FROM pay_graph AS pg
+  JOIN contracts AS c ON pg.contract_id = c.id
+  JOIN listeners AS l ON pg.listener_id = l.id
+  JOIN payers AS p ON pg.payer_id = p.id;
+  `,
+    };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 

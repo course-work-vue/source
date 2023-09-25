@@ -36,7 +36,16 @@ const ContractList = () => import("./components/ContractList.vue")
 const ContractDetail = () => import("./components/ContractDetail.vue")
 const AddContract = () => import("./components/AddContract.vue")
 
+
+
 const CWList = () => import("./components/CwList.vue")
+
+const ProgramList = () => import("./components/ProgramList.vue")
+const AddProgram = () => import("./components/AddProgram.vue")
+const ProgramDetail = () => import("./components/ProgramDetail.vue")
+
+const PaymentList = () => import("./components/PaymentList.vue")
+
 const routes = [
   { 
     path: "/",
@@ -89,6 +98,13 @@ const routes = [
   { path: '/AddContract', component: AddContract },
 
   { path: '/courseworks', component: CWList },
+
+
+  { path: '/programs', component: ProgramList },
+  { path: '/programs/:programId', component: ProgramDetail },
+  { path: '/AddProgram', component: AddProgram },
+
+  { path: '/payments', component: PaymentList },
   {
     path: "/user",
     name: "user",

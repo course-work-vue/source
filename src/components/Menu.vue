@@ -67,13 +67,23 @@
               link: "/listeners",
             },
             {
-              label: "Список плательщиков",
+              label: "Список законных представителей",
               link: "/payers",
             },
             {
               label: "Договора",
               link: "/contracts",
             },
+            {
+              label: "Программы",
+              link: "/programs",
+            },
+            {
+              label: "График платежей",
+              link: "/payments",
+            },
+            
+            
 
           ]
         },

@@ -1,231 +1,210 @@
-
 <template>
+
+
   <div class="col col-xs-9 col-lg-12 mt-4 list">
     <div class="col col-12">
     <div class="mb-3 col col-12">
-      <button @click="navigateToAddListener" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить Слушателя</button>
+    
+      <button @click="navigateToAddListener" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить слушателя</button>
       <div class="col col-3 float-end">
-      <input class="form-control" v-model="searchQuery" @input="updateSearchQuery" placeholder="Поиск..."> 
+      <input class="form-control"  id="filter-text-box" v-on:input="onFilterTextBoxChanged()" placeholder="Поиск..."> 
     </div>
   </div>
-      <!-- список студентов -->
-      <table v-if="loading" class="table">
-        <tbody>
-        <tr v-for="n in listenersPerPage" :key="n">
-          <td><div class="skeleton skeleton-animate"></div></td>
-          <td><div class="skeleton skeleton-animate"></div></td>
-          <td><div class="skeleton skeleton-animate"></div></td>
-          <td><div class="skeleton skeleton-animate"></div></td>
-          <td><div class="skeleton skeleton-animate"></div></td>
-          <td><div class="skeleton skeleton-animate"></div></td>
-        </tr>
-      </tbody>
-    </table>
-    <table v-else class="table">
-        <!-- таблица -->
-        <thead>
-          <!-- колонки -->
-          <tr>
-            <th>ФИО</th>
-            <th>Телефон</th>
-            <th>Email</th>
-          </tr>
-        </thead>
-        <!-- тело таблицы -->
-        <tbody>
-          <!-- цикл по строкам студентов -->
-          <tr v-for="listener in paginatedListeners" :key="listener.listener_id">
-            <td>{{ listener.full_name }}</td>
-            <td>{{ listener.phone_number }}</td>
-            <td>{{ listener.email }}</td>
-
-            <td>
-              <!-- кнопошка -->
-              <button @click="viewListenerDetail(listener.id)" class="btn btn-primary btn-sm"><i class="material-icons-outlined">visibility</i>Детали</button>
-             
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-
-      <!-- странички -->
-      <nav class="float-start">
-        <ul class=" pagination">
-          <li class="page-item" :class="{ 'disabled': currentPage === 1 }">
-            <button @click="prevPage" class="btn page-link btn-sm"><i class="material-icons-outlined">chevron_left</i></button>
-          </li>
-          <li class="page-item" v-for="pageNumber in pageRange" :key="pageNumber" :class="{ 'active': pageNumber == currentPage }">
-            <button @click="changePage(pageNumber)" class="btn page-link nmbr btn-sm">{{ pageNumber }}</button>
-          </li>
-          <li class="page-item" :class="{ 'disabled': currentPage === totalPages }">
-            <button @click="nextPage" class="btn page-link btn-sm"><i class="material-icons-outlined">chevron_right</i></button>
-          </li>
-        </ul>
-      </nav>
-      <div class="float-end"> <button @click="viewRightsDetail()" class="btn btn-primary btn-sm">Права ролей</button>
-      </div>
-    </div>
-  </div>
-  </template>
-  
-  <script>
-
-  import UserService from "../services/user.service";
+</div>
 
 
 
+<div style="height: 50vh">
+<div class="h-100 pt-5">
+  <ag-grid-vue
+    class="ag-theme-alpine"
+    style="width: 100%; height: 100%;"
+    :columnDefs="columnDefs.value"
+    :rowData="rowData.value"
+    :defaultColDef="defaultColDef"
+    rowSelection="multiple"
+    animateRows="true"
+    @cell-clicked="cellWasClicked"
+    @grid-ready="onGridReady"
+    @firstDataRendered="onFirstDataRendered"
+    @filter-changed="onFilterChanged"
+    :pagination="true"            
+    :paginationPageSize="paginationPageSize"  
+  >
+  </ag-grid-vue>
+</div>
+</div></div>
 
-  export default {
-  
+</template>
 
-    data() {
+<script>
+
+import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
+import { reactive, onMounted, ref } from "vue";
+import ButtonCell from "@/components/GroupButtonCell.vue";
+import GroupHref from "@/components/GroupHrefCellRenderer.vue";
+import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
+import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
+import UserService from "../services/user.service";
+/* eslint-disable vue/no-unused-components */
+export default {
+  name: "App",
+  components: {
+    AgGridVue,
+    ButtonCell,
+    GroupHref
+  },
+  setup() {
+    const gridApi = ref(null); // Optional - for accessing Grid's API
+    const gridColumnApi = ref();
+    // Obtain API from grid's onGridReady event
+
+    const paginationPageSize = 60;
+
+
+    const onGridReady = (params) => {
+      gridApi.value = params.api;
+      gridColumnApi.value = params.columnApi;
+     
+    };
+    const navigateToStudent = () => {
+ 
+  };
 
 
 
+    const rowData = reactive({}); // Set rowData to Array of Objects, one Object per Row
 
-      return {
+    // Each Column Definition results in one Column.
+    const columnDefs = reactive({
+      value: [
+      {
+      sortable: false,
+      filter: false,
+      headerName: 'Действия',
+      cellRenderer: 'ButtonCell',
+      cellRendererParams: {
+        onClick: navigateToStudent,
+        label: 'View Details', // Button label
+      },
+      minWidth: 150, // Adjust the width as needed
+      cellClass: "grid-cell-centered",
 
-        
-        listeners: [], // массив всех студентов
-        currentPage: 1, // теущий номер страницы
-        listenersPerPage: 10, // кол-во студентов на странице
-        maxPageButtons: 3,
-        loading: true,
-        searchQuery: ''
-      };
     },
-    computed: {
-      // подсчет страниц
+           { field: "id", headerName: 'ID', filter: 'agSetColumnFilter'
+           },
+           { field: "full_name", headerName: 'ФИО' },
+           {
+            field: 'people_count',
+            headerName: 'Желаемое количество человек'
+           },
+           {
+            field: 'days_of_week',
+            headerName: 'Желаемые дни'
+           },
+           { field: "phone_number", headerName: 'Номер телефона' },
+           { field: "email", headerName: 'Email' },
+           { field: "full_name2", headerName: 'ФИО законного представителя', filter: 'agSetColumnFilter'
+           },
 
-  totalPages() {
-    const filteredListeners = this.filterListeners();
-    return Math.ceil(filteredListeners.length / this.listenersPerPage);
-  },
-  paginatedListeners() {
-    const startIndex = (this.currentPage - 1) * this.listenersPerPage;
-    const endIndex = startIndex + this.listenersPerPage;
-
-    const filteredListeners = this.filterListeners();
-    return filteredListeners.slice(startIndex, endIndex);
-  },
-  pageRange() {
-    const totalPages = this.totalPages;
-    const currentPage = this.currentPage;
-    const maxButtons = this.maxPageButtons;
-    const ellipsis = '...';
-
-    if (totalPages <= maxButtons) {
-      // If total pages are less than or equal to the max buttons, show all pages
-      return Array.from({ length: totalPages }, (_, i) => i + 1);
-    }
-
-    // Calculate the start and end page numbers for the limited display
-    const halfMaxButtons = Math.floor(maxButtons / 2);
-    let startPage = Math.max(1, currentPage - halfMaxButtons);
-    let endPage = Math.min(totalPages, startPage + maxButtons - 1);
-
-    // Ensure that we always show maxButtons, if possible
-    if (endPage - startPage + 1 < maxButtons) {
-      startPage = endPage - maxButtons + 1;
-    }
-
-    // Insert an ellipsis and the last page when appropriate
-    const pageRange = [];
-
-    if (startPage > 1) {
-      pageRange.push(1, ellipsis);
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pageRange.push(i);
-    }
-
-    if (endPage < totalPages) {
-      pageRange.push(ellipsis, totalPages);
-    }
-
-    return pageRange;
-  },
-    },
-    methods: {
-      filterListeners() {
-    const queryString = this.searchQuery.toLowerCase();
-    return this.listeners.filter(listener => {
-      return (
-        String(listener.full_name).toLowerCase().includes(queryString) ||
-        String(listener.phone_number).toLowerCase().includes(queryString) ||
-        String(listener.email).includes(queryString) 
-      );
+           
+         
+      ],
     });
+
+    // DefaultColDef sets props common to all Columns
+    const defaultColDef = {
+      sortable: true,
+      filter: true,
+      flex: 1,
+      resizable: true,
+      minWidth: 300
+    };
+
+    // Example load data from server
+    onMounted(() => {
+
+    });
+
+    const onFilterTextBoxChanged = () => {
+      gridApi.value.setQuickFilter(
+        document.getElementById('filter-text-box').value
+      );
+    };
+
+
+    return {
+      onGridReady,
+      columnDefs,
+      rowData,
+      defaultColDef,
+      cellWasClicked: (event) => { // Example of consuming Grid Event
+        console.log("cell was clicked", event);
+      },
+      deselectRows: () =>{
+        gridApi.value.deselectAll()
+      },
+
+      onFilterTextBoxChanged,
+      paginationPageSize,
+      navigateToStudent,
+
+
+      
+
+    };
   },
-      // грузим данные
-      async loadListenersData() {
+  
+  methods: {
+
+    async loadListenersData() {
         try {
           const response = await UserService.getAllListeners(); // Replace with your API endpoint
-          this.listeners = Array.isArray(response.data) ? response.data : [response.data];
+          this.rowData.value = Array.isArray(response.data) ? response.data : [response.data];
           this.loading=false;
         } catch (error) {
-          console.error('Error loading listeners data:', error);
+          console.error('Error loading students data:', error);
         }
       },
-
-      updateSearchQuery() {
-  const query = { page: 1 }; // когда меняется фильтр летим на первую страницу
-  if (this.searchQuery.trim() !== '') {
-    query.search = this.searchQuery;
-  }
-  this.currentPage = 1; 
-  this.$router.replace({ query });
-},
-      // смена страницы
-      changePage(pageNumber) {
-  const query = { ...this.$route.query, page: pageNumber };
-  if (this.searchQuery.trim() !== '') {
-    query.search = this.searchQuery;
-  }
-  this.$router.replace({ query });
-},
-      prevPage() {
-        if (this.currentPage > 1) {
-        this.changePage(this.currentPage - 1);
-        }
-      },
-      nextPage() {
-        if (this.currentPage < this.totalPages) {
-          this.changePage(this.currentPage + 1);
-        }
-      },
-      // смотрим детали о студенте
-      viewListenerDetail(listenerId) {
-        this.$router.push(`/listeners/${listenerId}`);
-      },
-      viewRightsDetail(){
-        this.$router.push(`/Rights/listeners`);
-      },
-
       navigateToAddListener() {
     
-        this.$router.push(`/addListener`); // Navigate to the AddListener route
-    },
-    },
-
-    beforeRouteUpdate(to, from, next) {
-  // берём филтр из роутера
-  this.searchQuery = to.query.search || '';
-  // берём страницу из роутера
-  this.currentPage = parseInt(to.query.page) || 1;
-  next();
+    this.$router.push(`/addListener`); // Navigate to the AddStudent route
 },
 
-    created() {
-    const query = this.$route.query;
-    this.currentPage = parseInt(query.page) || 1;
-    this.searchQuery = query.search || '';
-    this.loadListenersData();
+onFirstDataRendered(params) {
+      this.gridApi = params.api;
+      this.columnApi = params.columnApi;
+
+      // Check if filterModel exists in the route query
+      const filterModelQuery = this.$route.query.filterModel;
+      if (filterModelQuery) {
+        const filterModel = JSON.parse(filterModelQuery);
+        this.gridApi.setFilterModel(filterModel);
+      }
     },
-  };
-  </script>
+    onFilterChanged() {
+    // This function will be called whenever filters change.
+    // You can perform your desired action here.
+    // For example, you can get the current filter model:
+    const savedFilterModel = this.gridApi.getFilterModel();
+    const query = { filterModel: JSON.stringify(savedFilterModel) };
+    this.$router.push({ query });
+    // Do something with the filterModel or trigger other actions as needed.
+  },
+  
+    },
+
+    created() {
+    
+    this.loadListenersData();
+
+    },
+
+    
+};
+
+
+</script>
 
 <style lang="scss" scoped>
 .skeleton {

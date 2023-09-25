@@ -1,6 +1,8 @@
 <template>
 
-<a :href="'/students/' + this.params.data.student_id">{{this.params.data.student_id}}</a>
+<a :href="'#/directions?filterModel=' + JSON.stringify({ dir_code: { filterType: 'text', type: 'equals', filter: this.params.data.dir_code } })">{{ this.params.data.dir_code }}</a>
+
+
   </template>
   
   <script>

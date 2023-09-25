@@ -68,7 +68,7 @@
                 v-show="loading"
                 class="spinner-border spinner-border-sm"
               ></span>
-              Обновить студента
+              Обновить законного представителя
             </button>
             <router-link to="/payers" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
           </div>

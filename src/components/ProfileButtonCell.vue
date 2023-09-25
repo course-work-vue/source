@@ -1,16 +1,18 @@
 <template>
 
-<a :href="'/students/' + this.params.data.student_id">{{this.params.data.student_id}}</a>
+    <button @click="onClick" class="btn btn-primary btn-sm"><i class="material-icons-outlined">visibility</i>Детали</button>
   </template>
   
   <script>
   export default {
     props: ['params'],
     computed: {
-
+      
     },
     methods: {
-
+      onClick() {
+        this.$router.push(`/profiles/${this.params.data.prof_id}`);
+      },
     },
   };
   </script>
@@ -19,25 +21,7 @@
 <style lang="scss" scoped>
 
 
-a:link {
-  text-decoration: underline;
-  color: #181d1f;
-}
 
-a:visited {
-  text-decoration: underline;
-  color: #181d1f;
-}
-
-a:hover {
-  text-decoration: underline;
-  color: #181d1f;
-}
-
-a:active {
-  text-decoration: underline;
-  color: #181d1f;
-}
 .btn-primary{
     --bs-btn-bg: rgb(68,99,52);
     border: none;

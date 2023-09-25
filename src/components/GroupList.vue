@@ -1,235 +1,204 @@
-
 <template>
+
+
   <div class="col col-xs-9 col-lg-12 mt-4 list">
     <div class="col col-12">
     <div class="mb-3 col col-12">
+    
       <button @click="navigateToAddGroup" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить группу</button>
       <div class="col col-3 float-end">
-      <input class="form-control" v-model="searchQuery" @input="updateSearchQuery" placeholder="Поиск..."> 
+      <input class="form-control"  id="filter-text-box" v-on:input="onFilterTextBoxChanged()" placeholder="Поиск..."> 
     </div>
   </div>
-      <!-- список студентов -->
-      <table v-if="loading" class="table">
-        <tbody>
-        <tr v-for="n in groupsPerPage" :key="n">
-          <td><div class="skeleton skeleton-animate"></div></td>
-          <td><div class="skeleton skeleton-animate"></div></td>
-          <td><div class="skeleton skeleton-animate"></div></td>
-          <td><div class="skeleton skeleton-animate"></div></td>
-          <td><div class="skeleton skeleton-animate"></div></td>
-          <td><div class="skeleton skeleton-animate"></div></td>
-        </tr>
-      </tbody>
-    </table>
-    <table v-else class="table">
-        <!-- таблица -->
-        <thead>
-          <!-- колонки -->
-          <tr>
-            <th>Номер группы</th>
-            <th>Профиль</th>
-            <th>Направление</th>
-            <th>Код направления</th>
-
-          </tr>
-        </thead>
-        <!-- тело таблицы -->
-        <tbody>
-          <!-- цикл по строкам студентов -->
-          <tr v-for="group in paginatedGroups" :key="group.group_id">
-            <td>{{ group.group_number }}</td>
-            <td>{{ group.prof_name }}</td>
-            <td>{{ group.dir_name }}</td>
-            <td>{{ group.dir_code }}</td>
-          
-            <td>
-              <!-- кнопошка -->
-              <button @click="viewGroupDetail(group.group_id)" class="btn btn-primary btn-sm"><i class="material-icons-outlined">visibility</i>Детали</button>
-             
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-
-      <!-- странички -->
-      <nav class="float-start">
-        <ul class=" pagination">
-          <li class="page-item" :class="{ 'disabled': currentPage === 1 }">
-            <button @click="prevPage" class="btn page-link btn-sm"><i class="material-icons-outlined">chevron_left</i></button>
-          </li>
-          <li class="page-item" v-for="pageNumber in pageRange" :key="pageNumber" :class="{ 'active': pageNumber == currentPage }">
-            <button @click="changePage(pageNumber)" class="btn page-link nmbr btn-sm">{{ pageNumber }}</button>
-          </li>
-          <li class="page-item" :class="{ 'disabled': currentPage === totalPages }">
-            <button @click="nextPage" class="btn page-link btn-sm"><i class="material-icons-outlined">chevron_right</i></button>
-          </li>
-        </ul>
-      </nav>
-      <div class="float-end"> <button @click="viewRightsDetail()" class="btn btn-primary btn-sm">Права ролей</button>
-      </div>
-    </div>
-  </div>
-  </template>
-  
-  <script>
-
-  import UserService from "../services/user.service";
+</div>
 
 
 
+<div style="height: 50vh">
+<div class="h-100 pt-5">
+  <ag-grid-vue
+    class="ag-theme-alpine"
+    style="width: 100%; height: 100%;"
+    :columnDefs="columnDefs.value"
+    :rowData="rowData.value"
+    :defaultColDef="defaultColDef"
+    rowSelection="multiple"
+    animateRows="true"
+    @cell-clicked="cellWasClicked"
+    @grid-ready="onGridReady"
+    @firstDataRendered="onFirstDataRendered"
+    @filter-changed="onFilterChanged"
+    :pagination="true"            
+    :paginationPageSize="paginationPageSize"  
+  >
+  </ag-grid-vue>
+</div>
+</div></div>
 
-  export default {
-  
+</template>
 
-    data() {
+<script>
+
+import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
+import { reactive, onMounted, ref } from "vue";
+import ButtonCell from "@/components/GroupButtonCell.vue";
+import GroupHref from "@/components/GroupHrefCellRenderer.vue";
+import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
+import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
+import UserService from "../services/user.service";
+/* eslint-disable vue/no-unused-components */
+export default {
+  name: "App",
+  components: {
+    AgGridVue,
+    ButtonCell,
+    GroupHref
+  },
+  setup() {
+    const gridApi = ref(null); // Optional - for accessing Grid's API
+    const gridColumnApi = ref();
+    // Obtain API from grid's onGridReady event
+
+    const paginationPageSize = 60;
+
+
+    const onGridReady = (params) => {
+      gridApi.value = params.api;
+      gridColumnApi.value = params.columnApi;
+     
+    };
+    const navigateToStudent = () => {
+ 
+  };
 
 
 
+    const rowData = reactive({}); // Set rowData to Array of Objects, one Object per Row
 
-      return {
+    // Each Column Definition results in one Column.
+    const columnDefs = reactive({
+      value: [
+      {
+      sortable: false,
+      filter: false,
+      headerName: 'Действия',
+      cellRenderer: 'ButtonCell',
+      cellRendererParams: {
+        onClick: navigateToStudent,
+        label: 'View Details', // Button label
+      },
+      minWidth: 150, // Adjust the width as needed
+      cellClass: "grid-cell-centered",
 
-        
-        groups: [], // массив всех студентов
-        currentPage: 1, // теущий номер страницы
-        groupsPerPage: 10, // кол-во студентов на странице
-        maxPageButtons: 3,
-        loading: true,
-        searchQuery: ''
-      };
     },
-    computed: {
-      // подсчет страниц
-
-  totalPages() {
-    const filteredGroups = this.filterGroups();
-    return Math.ceil(filteredGroups.length / this.groupsPerPage);
-  },
-  paginatedGroups() {
-    const startIndex = (this.currentPage - 1) * this.groupsPerPage;
-    const endIndex = startIndex + this.groupsPerPage;
-
-    const filteredGroups = this.filterGroups();
-    return filteredGroups.slice(startIndex, endIndex);
-  },
-  pageRange() {
-    const totalPages = this.totalPages;
-    const currentPage = this.currentPage;
-    const maxButtons = this.maxPageButtons;
-    const ellipsis = '...';
-
-    if (totalPages <= maxButtons) {
-      // If total pages are less than or equal to the max buttons, show all pages
-      return Array.from({ length: totalPages }, (_, i) => i + 1);
-    }
-
-    // Calculate the start and end page numbers for the limited display
-    const halfMaxButtons = Math.floor(maxButtons / 2);
-    let startPage = Math.max(1, currentPage - halfMaxButtons);
-    let endPage = Math.min(totalPages, startPage + maxButtons - 1);
-
-    // Ensure that we always show maxButtons, if possible
-    if (endPage - startPage + 1 < maxButtons) {
-      startPage = endPage - maxButtons + 1;
-    }
-
-    // Insert an ellipsis and the last page when appropriate
-    const pageRange = [];
-
-    if (startPage > 1) {
-      pageRange.push(1, ellipsis);
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pageRange.push(i);
-    }
-
-    if (endPage < totalPages) {
-      pageRange.push(ellipsis, totalPages);
-    }
-
-    return pageRange;
-  },
-    },
-    methods: {
-      filterGroups() {
-    const queryString = this.searchQuery.toLowerCase();
-    return this.groups.filter(group => {
-      return ( 
-        String(group.group_number).toLowerCase().includes(queryString) ||
-        String(group.prof_name).toLowerCase().includes(queryString) ||
-        String(group.dir_name).includes(queryString) ||
-        String(group.dir_code).includes(queryString)
-      );
+           { field: "group_id", headerName: 'ID', filter: 'agSetColumnFilter'
+           },
+           { field: "group_number", headerName: 'Номер группы', cellRenderer: "GroupHref" },
+           { field: "prof_name", headerName: 'Название профиля' },
+           { field: "dir_code", headerName: 'Код направления' },
+           {
+            field: 'dir_name',
+            filter: 'agDateColumnFilter',
+            headerName: 'Название Направления'
+           },
+           
+         
+      ],
     });
+
+    // DefaultColDef sets props common to all Columns
+    const defaultColDef = {
+      sortable: true,
+      filter: true,
+      flex: 1,
+      resizable: true,
+      minWidth: 300
+    };
+
+    // Example load data from server
+    onMounted(() => {
+
+    });
+
+    const onFilterTextBoxChanged = () => {
+      gridApi.value.setQuickFilter(
+        document.getElementById('filter-text-box').value
+      );
+    };
+
+
+    return {
+      onGridReady,
+      columnDefs,
+      rowData,
+      defaultColDef,
+      cellWasClicked: (event) => { // Example of consuming Grid Event
+        console.log("cell was clicked", event);
+      },
+      deselectRows: () =>{
+        gridApi.value.deselectAll()
+      },
+
+      onFilterTextBoxChanged,
+      paginationPageSize,
+      navigateToStudent,
+
+
+      
+
+    };
   },
-      // грузим данные
-      async loadGroupsData() {
+  
+  methods: {
+
+    async loadGroupsData() {
         try {
           const response = await UserService.getAllGroups(); // Replace with your API endpoint
-          this.groups = Array.isArray(response.data) ? response.data : [response.data];
+          this.rowData.value = Array.isArray(response.data) ? response.data : [response.data];
           this.loading=false;
         } catch (error) {
-          console.error('Error loading groups data:', error);
+          console.error('Error loading students data:', error);
         }
       },
-
-      updateSearchQuery() {
-  const query = { page: 1 }; // когда меняется фильтр летим на первую страницу
-  if (this.searchQuery.trim() !== '') {
-    query.search = this.searchQuery;
-  }
-  this.currentPage = 1; 
-  this.$router.replace({ query });
-},
-      // смена страницы
-      changePage(pageNumber) {
-  const query = { ...this.$route.query, page: pageNumber };
-  if (this.searchQuery.trim() !== '') {
-    query.search = this.searchQuery;
-  }
-  this.$router.replace({ query });
-},
-      prevPage() {
-        if (this.currentPage > 1) {
-        this.changePage(this.currentPage - 1);
-        }
-      },
-      nextPage() {
-        if (this.currentPage < this.totalPages) {
-          this.changePage(this.currentPage + 1);
-        }
-      },
-      // смотрим детали о студенте
-      viewGroupDetail(groupId) {
-        this.$router.push(`/groups/${groupId}`);
-      },
-      viewRightsDetail(){
-        this.$router.push(`/Rights/groups`);
-      },
-
       navigateToAddGroup() {
     
-        this.$router.push(`/addGroup`); // Navigate to the AddGroup route
-    },
-    },
-
-    beforeRouteUpdate(to, from, next) {
-  // берём филтр из роутера
-  this.searchQuery = to.query.search || '';
-  // берём страницу из роутера
-  this.currentPage = parseInt(to.query.page) || 1;
-  next();
+    this.$router.push(`/addGroup`); // Navigate to the AddStudent route
 },
 
-    created() {
-    const query = this.$route.query;
-    this.currentPage = parseInt(query.page) || 1;
-    this.searchQuery = query.search || '';
-    this.loadGroupsData();
+onFirstDataRendered(params) {
+      this.gridApi = params.api;
+      this.columnApi = params.columnApi;
+
+      // Check if filterModel exists in the route query
+      const filterModelQuery = this.$route.query.filterModel;
+      if (filterModelQuery) {
+        const filterModel = JSON.parse(filterModelQuery);
+        this.gridApi.setFilterModel(filterModel);
+      }
     },
-  };
-  </script>
+    onFilterChanged() {
+    // This function will be called whenever filters change.
+    // You can perform your desired action here.
+    // For example, you can get the current filter model:
+    const savedFilterModel = this.gridApi.getFilterModel();
+    const query = { filterModel: JSON.stringify(savedFilterModel) };
+    this.$router.push({ query });
+    // Do something with the filterModel or trigger other actions as needed.
+  },
+  
+    },
+
+    created() {
+    
+    this.loadGroupsData();
+
+    },
+
+    
+};
+
+
+</script>
 
 <style lang="scss" scoped>
 .skeleton {

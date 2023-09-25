@@ -1,6 +1,8 @@
 <template>
 
-<a :href="'/students/' + this.params.data.student_id">{{this.params.data.student_id}}</a>
+<a :href="'#/students?filterModel=' + JSON.stringify({ group_name: { filterType: 'text', type: 'contains', filter: this.params.data.group_number } })">{{ this.params.data.group_number }}</a>
+
+
   </template>
   
   <script>
