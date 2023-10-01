@@ -13,7 +13,7 @@
         :class="{ 'bottom-fixed': index === menuTree.length - 1 }"
       />
 
-      <i @click="smallMenu = !smallMenu" class="material-icons-round">menu</i>
+     
     </div>
   </template>
   
@@ -23,7 +23,7 @@
   export default {
     name: 'recursive-menu',
     data: () => ({
-      smallMenu: true,
+      smallMenu: false,
       menuTree: [
         {
           label: "Домой",

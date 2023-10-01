@@ -166,12 +166,10 @@
       }
     }
   }
-  .test{
-   
-  
-    position: relative;
-    bottom: 13px;
-   
-    margin-left: 3px;
+
+  .nav-link{
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   </style>

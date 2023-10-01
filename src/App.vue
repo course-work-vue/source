@@ -49,7 +49,7 @@
       </div>
     </nav>
 -->
-    <div class="container">
+    <div class="mycontainer">
       <router-view />
     </div>
   </div>
@@ -103,8 +103,12 @@ export default {
   padding: 0;
   box-sizing: border-box;
   font-family: "Montserrat";
-
   
+  
+}
+.mycontainer{
+  margin-left: 130px;
+
 }
 html, body {
                 height: 100%;

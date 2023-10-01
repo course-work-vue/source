@@ -24,13 +24,20 @@ class UserService {
     
     return axios.get(API_URL+"students", { headers: authHeader() });
   }
+  deleteStudentById(student_id){
+    const query = {
+      query: `DELETE FROM students where "student_id" = '${student_id}'`,
+    };
+
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
 
   getAllFormattedStudents(){
     const query = {
       query: `SELECT 
       s.student_id,
       CONCAT_WS(' ', s.last_name, s.first_name, s.patronymic) AS full_name,
-      CONCAT(g.group_number, '/', s.subgroup) AS group_name,
+      CONCAT_WS('/', g.group_number, NULLIF(s.subgroup, '')) AS group_name,
       TO_CHAR(s.enrolled_date, 'DD/MM/YYYY') AS formatted_enrolled_date,
       s.enrollment_order,
       TO_CHAR(s.date_of_birth, 'DD/MM/YYYY') AS formatted_date_of_birth

@@ -3,7 +3,7 @@
     <div v-if="student" >
       <Form @submit="updateStudent" :validation-schema="schema" v-slot="{ errors }">
         
-        <div >
+        <div class="col col-12">
           <div class="form-group">
             <label for="last_name">Фамилия</label>
             <Field name="last_name" type="text" value="" class="form-control" :class="{'is-invalid': errors.last_name}" v-model="editedStudent.last_name"/>
@@ -95,7 +95,7 @@
             <ErrorMessage name="group_id" class="error-feedback" />
           </div>
 
-          <div class="form-group">
+          <div class="form-group float-none">
             <label for="subgroup">Подгруппа</label>
             <Field name="subgroup" type="text" class="form-control" :class="{'is-invalid': errors.subgroup}" v-model="editedStudent.subgroup"/>
             <ErrorMessage name="subgroup" class="error-feedback" />
@@ -103,17 +103,29 @@
           </div>
 
           <div class="form-group mt-3">
-            <button class="btn btn-primary btn-block float-start" :disabled="loading">
+            
+            <router-link to="/students" class="mx-2 btn btn-secondary  float-start">Отмена</router-link>
+          </div>
+
+          <div class="form-group mt-3">
+            <button class="btn btn-primary btn-block" :disabled="loading">
               <span
                 v-show="loading"
                 class="spinner-border spinner-border-sm"
               ></span>
               Обновить студента
             </button>
-            <router-link to="/students" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
+        
           </div>
+          <div class="form-group mt-3">
+            <button class="btn btn-danger  float-end" @click="deleteStudent">
+              Удалить студента
+            </button>
+          </div>
+        
         </div>
       </Form>
+
     </div>
     <div v-else>
       <div class="form-group">
@@ -280,6 +292,20 @@ import { Form, Field, ErrorMessage } from "vee-validate";
           console.error('Ошибка загрузки данных о студенте:', error);
         }
       },
+      async deleteStudent() {
+        try {
+          // запрос в psql
+          this.loading=true;
+
+          const response = await UserService.deleteStudentById(this.student.student_id);
+          response.data;
+          this.student = { ...this.editedStudent };
+          this.loading=false;
+          this.toast.success("Успешно удалили студента!");
+        } catch (error) {
+          console.error('Ошибка загрузки данных о студенте:', error);
+        }
+      },
       async loadGroupsData() {
         try {
           const response = await UserService.getGroupsAsIdText(); 
@@ -298,7 +324,11 @@ import { Form, Field, ErrorMessage } from "vee-validate";
   </script>
 
 <style lang="scss" scoped>
-
+.form-group{
+  width: 33%;
+  padding-right: 10px;
+  float: left;
+}
 .skeleton-text {
   width: 15%;
   height: 1.0em;
@@ -380,7 +410,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
     --bs-btn-hover-border-color: rgb(6 215 29);
     --bs-btn-active-bg: rgb(68,99,52);
     --bs-btn-disabled-bg: rgb(68,99,52);
-    display: flex;
+
   justify-content: center;
   align-items: center;
 }

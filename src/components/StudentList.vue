@@ -14,7 +14,7 @@
 
 
 
-<div style="height: 50vh">
+<div style="height: 95vh">
 <div class="h-100 pt-5">
   <ag-grid-vue
     class="ag-theme-alpine"
@@ -82,27 +82,26 @@ export default {
       sortable: false,
       filter: false,
       headerName: 'Действия',
+      headerClass: 'text-center',
       cellRenderer: 'ButtonCell',
       cellRendererParams: {
         onClick: navigateToStudent,
         label: 'View Details', // Button label
       },
-      minWidth: 150, // Adjust the width as needed
-      cellClass: "grid-cell-centered",
-
+      minWidth: 120, // Adjust the width as needed
+     
     },
-           { field: "student_id", headerName: 'ID', filter: 'agSetColumnFilter', cellRenderer: "StudentHref"
-           },
-           { field: "full_name", headerName: 'ФИО' },
-           { field: "group_name", headerName: 'Группа' },
-           { field: "enrollment_order", headerName: 'Приказ о зачислении' },
+        
+           { field: "full_name", headerName: 'ФИО', minWidth:250 },
+           { field: "group_name", headerName: 'Группа', maxWidth:129 },
+           { field: "enrollment_order", headerName: 'Приказ о зачислении', minWidth: 200 },
            {
-            field: 'formatted_enrolled_date',
+            field: 'formatted_enrolled_date', 
             filter: 'agDateColumnFilter',
-            filterParams: filterParams, headerName: 'Дата зачисления'
+            filterParams: filterParams, headerName: 'Дата зачисления', minWidth: 170
            },
            
-           { field: "formatted_date_of_birth", filter: 'agDateColumnFilter', filterParams: filterParams, headerName: 'Дата рождения' }
+           { field: "formatted_date_of_birth", filter: 'agDateColumnFilter', filterParams: filterParams, headerName: 'Дата рождения', minWidth: 170 }
       ],
     });
 
@@ -112,7 +111,7 @@ export default {
       filter: true,
       flex: 1,
       resizable: true,
-      minWidth: 300
+      minWidth: 150
     };
 
     // Example load data from server
@@ -231,8 +230,16 @@ var filterParams = {
   border-radius: 4px;
   margin: 0.2em 0;
 }
+  .list{
+    padding-left: 100px;
+    font-size: 5px;
 
+  }
 
+    .text-center * {
+      justify-content: center;
+      display:flex 
+  }
 
 @keyframes skeletonShimmer {
   0% {

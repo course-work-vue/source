@@ -181,14 +181,15 @@
             </div>
 
             <div class="form-group mt-3">
-              <button class="btn btn-primary btn-block" :disabled="loading">
+             
+              <router-link to="/students" class="btn btn-secondary ml-2 float-start">Отмена</router-link>
+              <button class="btn btn-primary btn-block float-end" :disabled="loading">
                 <span
                   v-show="loading"
                   class="spinner-border spinner-border-sm"
                 ></span>
                 Добавить студента
               </button>
-              <router-link to="/students" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
             </div>
           </div>
         </Form>
@@ -307,6 +308,12 @@
   </script>
 
 <style lang="scss" scoped>
+
+.form-group{
+  width: 30%;
+  padding-right: 10px;
+  float: left;
+}
 
 .skeleton-text {
   width: 15%;
