@@ -88,6 +88,17 @@
           ]
         },
         {
+          label: "Расписание",
+          link: "",
+          icon: "calendar_month",
+          children: [
+            {
+              label: "Нагрузка",
+              link: "/ScheludeLoads",
+            },
+          ]
+        },
+        {
           label: "Настройки",
           link: "/profile",
           icon: "settings"
