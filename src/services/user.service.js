@@ -40,7 +40,8 @@ class UserService {
       CONCAT_WS('/', g.group_number, NULLIF(s.subgroup, '')) AS group_name,
       TO_CHAR(s.enrolled_date, 'DD/MM/YYYY') AS formatted_enrolled_date,
       s.enrollment_order,
-      TO_CHAR(s.date_of_birth, 'DD/MM/YYYY') AS formatted_date_of_birth
+      TO_CHAR(s.date_of_birth, 'DD/MM/YYYY') AS formatted_date_of_birth,
+      s.course
   FROM 
       students s
   JOIN 

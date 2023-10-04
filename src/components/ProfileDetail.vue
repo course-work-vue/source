@@ -5,10 +5,10 @@
         
         <div >
           
-          <div class="form-group">
-            <label for="group_id">Направление</label>
+          <div class="form-group d-inline-flex align-items-center mb-2 col-12">
+            <label for="group_id">Код направление:</label>
             
-            <Select2 :class="{'form-control is-invalid': errors.group_id}" v-model="editedProfile.prof_dir_id" 
+            <Select2 class="col-6" :class="{'form-control is-invalid': errors.group_id}" v-model="editedProfile.prof_dir_id" 
             :options="directions" 
             :settings=" { theme: 'bootstrap-5', width: '100%'}"
             
@@ -20,22 +20,22 @@
             <ErrorMessage name="group_id" class="error-feedback" />
           </div>
 
-          <div class="form-group">
-            <label for="prof_name">Подгруппа</label>
+          <div class="form-group d-inline-flex align-items-center mb-2 col-12">
+            <label for="prof_name">Название профиля:</label>
             <Field name="prof_name" type="text" class="form-control" :class="{'is-invalid': errors.subgroup}" v-model="editedProfile.prof_name"/>
             <ErrorMessage name="prof_name" class="error-feedback" />
             
           </div>
 
           <div class="form-group mt-3">
-            <button class="btn btn-primary btn-block float-start" :disabled="loading">
+            <button class="btn btn-primary btn-block float-end" :disabled="loading">
               <span
                 v-show="loading"
                 class="spinner-border spinner-border-sm"
               ></span>
               Обновить профиль
             </button>
-            <router-link to="/profiles" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
+            <router-link to="/profiles" class="btn btn-secondary ml-2 float-start">Отмена</router-link>
           </div>
         </div>
       </Form>
@@ -149,7 +149,13 @@ import { Form, Field, ErrorMessage } from "vee-validate";
   </script>
 
 <style lang="scss" scoped>
-
+label{
+  margin-right: 15px;
+  white-space: nowrap;
+}
+.form-group{
+  margin-right: 20px;
+}
 .skeleton-text {
   width: 15%;
   height: 1.0em;

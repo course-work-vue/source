@@ -4,12 +4,17 @@
       <Form @submit="updateGroup" :validation-schema="schema" v-slot="{ errors }">
         
         <div >
-
+          <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+            <label for="group_number">Номер группы</label>
+            <Field name="group_number" type="text" class="form-control" :class="{'is-invalid': errors.group_number}" v-model="editedGroup.group_number"/>
+            <ErrorMessage name="group_number" class="error-feedback" />
+            
+          </div>
           
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center col-5 mb-2">
             <label for="group_dir_id">Направление</label>
             
-            <Select2 :class="{'form-control is-invalid': errors.group_dir_id}" v-model="editedGroup.group_dir_id" 
+            <Select2 class="col-5" :class="{'form-control is-invalid': errors.group_dir_id}" v-model="editedGroup.group_dir_id" 
             :options="directions" 
             :settings=" { theme: 'bootstrap-5', width: '100%'}"
             
@@ -21,10 +26,10 @@
             <ErrorMessage name="group_dir_id" class="error-feedback" />
           </div>
 
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center col-10 mb-2">
             <label for="group_prof_id">Профиль</label>
             
-            <Select2 :class="{'form-control is-invalid': errors.group_prof_id}" v-model="editedGroup.group_prof_id" 
+            <Select2 class="col-5" :class="{'form-control is-invalid': errors.group_prof_id}" v-model="editedGroup.group_prof_id" 
             :options="profiles" 
             :settings=" { theme: 'bootstrap-5', width: '100%'}"
             
@@ -36,12 +41,7 @@
             <ErrorMessage name="group_prof_id" class="error-feedback" />
           </div>
 
-          <div class="form-group">
-            <label for="group_number">Номер группы</label>
-            <Field name="group_number" type="text" class="form-control" :class="{'is-invalid': errors.group_number}" v-model="editedGroup.group_number"/>
-            <ErrorMessage name="group_number" class="error-feedback" />
-            
-          </div>
+    
 
           <div class="form-group mt-3">
             <button class="btn btn-primary btn-block float-start" :disabled="loading">
@@ -240,7 +240,13 @@ import { Form, Field, ErrorMessage } from "vee-validate";
   </script>
 
 <style lang="scss" scoped>
-
+label{
+  margin-right: 15px;
+  white-space: nowrap;
+}
+.form-group{
+  margin-right: 20px;
+}
 .skeleton-text {
   width: 15%;
   height: 1.0em;

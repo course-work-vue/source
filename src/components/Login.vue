@@ -1,10 +1,10 @@
 <template>
-    <div class="col-md-12 list">
-      <div class="card card-container">
+    <div class="col-md-12 list ">
+      <div class=" col-8 mx-auto">
         <img
           id="profile-img"
           src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-          class="profile-img-card"
+          class="profile-img-card "
         />
         <Form @submit="handleLogin" :validation-schema="schema">
           <div class="form-group">
@@ -12,7 +12,7 @@
             <Field name="username" type="text" class="form-control" />
             <ErrorMessage name="username" class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group mb-3">
             <label for="password">Пароль:</label>
             <Field name="password" type="password" class="form-control" />
             <ErrorMessage name="password" class="error-feedback" />
@@ -51,8 +51,8 @@
     },
     data() {
       const schema = yup.object().shape({
-        username: yup.string().required("Username is required!"),
-        password: yup.string().required("Password is required!"),
+        username: yup.string().required("Требуется логин!"),
+        password: yup.string().required("Требуется пароль!"),
       });
   
       return {
@@ -95,6 +95,7 @@
   </script>
   
 <style lang="scss" scoped>
+
 
 @media (max-width: 769px) {
   .list{

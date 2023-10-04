@@ -2,12 +2,13 @@
 
 
   <div class="col col-xs-9 col-lg-12 mt-4 list">
+    <div class="col col-12 ">
     <div class="col col-12">
-    <div class="mb-3 col col-12">
     
       <button @click="navigateToAddStudent" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить студента</button>
-      <div class="col col-3 float-end">
-      <input class="form-control"  id="filter-text-box" v-on:input="onFilterTextBoxChanged()" placeholder="Поиск..."> 
+      <div class="col col-6 float-end d-inline-flex align-items-center mb-2 ">
+      <button @click="clearFilters" :disabled="!filters" class="btn btn-sm btn-primary text-nowrap mx-2" type="button"><i class="material-icons-outlined">close</i>Очистить фильтры</button>
+      <input class="form-control" type="text" v-model="quickFilterValue" id="filter-text-box" v-on:input="onFilterTextBoxChanged()" placeholder="Поиск..."> 
     </div>
   </div>
 </div>
@@ -24,6 +25,7 @@
     :defaultColDef="defaultColDef"
     rowSelection="multiple"
     animateRows="true"
+    includeHiddenColumnsInQuickFilter = true
     @cell-clicked="cellWasClicked"
     @grid-ready="onGridReady"
     @firstDataRendered="onFirstDataRendered"
@@ -46,6 +48,7 @@ import StudentHref from "@/components/StudentHrefCellRenderer.vue";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import UserService from "../services/user.service";
+
 /* eslint-disable vue/no-unused-components */
 export default {
   name: "App",
@@ -88,20 +91,21 @@ export default {
         onClick: navigateToStudent,
         label: 'View Details', // Button label
       },
-      minWidth: 120, // Adjust the width as needed
+      maxWidth: 120, resizable: false
      
     },
         
            { field: "full_name", headerName: 'ФИО', minWidth:250 },
+           { field: "course", headerName: 'Курс', maxWidth:129 },
            { field: "group_name", headerName: 'Группа', maxWidth:129 },
-           { field: "enrollment_order", headerName: 'Приказ о зачислении', minWidth: 200 },
+           { field: "enrollment_order", headerName: 'Приказ о зачислении', minWidth: 200, hide: true },
            {
             field: 'formatted_enrolled_date', 
             filter: 'agDateColumnFilter',
-            filterParams: filterParams, headerName: 'Дата зачисления', minWidth: 170
+            filterParams: filterParams, headerName: 'Дата зачисления', minWidth: 170, hide: true
            },
            
-           { field: "formatted_date_of_birth", filter: 'agDateColumnFilter', filterParams: filterParams, headerName: 'Дата рождения', minWidth: 170 }
+           { field: "formatted_date_of_birth", filter: 'agDateColumnFilter', filterParams: filterParams, headerName: 'Дата рождения', minWidth: 170, hide: true }
       ],
     });
 
@@ -116,7 +120,7 @@ export default {
 
     // Example load data from server
     onMounted(() => {
-
+    
     });
 
     const onFilterTextBoxChanged = () => {
@@ -141,13 +145,19 @@ export default {
       onFilterTextBoxChanged,
       paginationPageSize,
       navigateToStudent,
-
+     
 
       
 
     };
   },
-  
+  data() {
+  return {
+    quickFilterValue: '',
+    filters:false
+  };
+},
+
   methods: {
 
     async loadStudentsData() {
@@ -173,17 +183,55 @@ onFirstDataRendered(params) {
       if (filterModelQuery) {
         const filterModel = JSON.parse(filterModelQuery);
         this.gridApi.setFilterModel(filterModel);
+        this.filters=true;
+        
+      }
+
+      const quickFilterQuery = this.$route.query.quickFilter;
+      if (quickFilterQuery) {
+        const quickFilter = JSON.parse(quickFilterQuery);
+        this.gridApi.setQuickFilter(quickFilter);
+        this.quickFilterValue = quickFilter;
+        this.filters=true;
       }
     },
     onFilterChanged() {
-    // This function will be called whenever filters change.
-    // You can perform your desired action here.
-    // For example, you can get the current filter model:
-    const savedFilterModel = this.gridApi.getFilterModel();
-    const query = { filterModel: JSON.stringify(savedFilterModel) };
-    this.$router.push({ query });
-    // Do something with the filterModel or trigger other actions as needed.
+  // This function will be called whenever filters change.
+  // You can perform your desired action here.
+  // For example, you can get the current filter model:
+  this.filters=false;
+  const savedQuickFilter = this.gridApi.getQuickFilter();
+  const savedFilterModel = this.gridApi.getFilterModel();
+
+  // Initialize an empty object for queryParams
+  const queryParams = {};
+
+  // Check if savedQuickFilter is not empty, then add it to queryParams
+  if (savedQuickFilter) {
+    queryParams.quickFilter = JSON.stringify(savedQuickFilter);
+    this.filters=true;
+  }
+
+  // Check if savedFilterModel is not empty, then add it to queryParams
+  if (savedFilterModel && Object.keys(savedFilterModel).length > 0) {
+    queryParams.filterModel = JSON.stringify(savedFilterModel);
+    this.filters=true;
+  }
+
+  // Push the query parameters to the router
+  this.$router.push({ query: queryParams });
+
+  // Do something with the filterModel or trigger other actions as needed.
+},
+  clearFilters(){
+
+  
+    this.gridApi.setFilterModel();
+    this.gridApi.setQuickFilter();
+    this.quickFilterValue='';
+    this.filters=false;
   },
+
   
     },
 
@@ -221,6 +269,13 @@ var filterParams = {
 </script>
 
 <style lang="scss" scoped>
+
+.ag-row .ag-cell {
+  display: flex;
+  justify-content: center; /* align horizontal */
+  align-items: center;
+}
+
 .skeleton {
   width: 100%;
   height: 1.2em;

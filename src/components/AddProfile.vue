@@ -18,12 +18,12 @@
    
             
 
-            <div class="form-group">
-              <label for="prof_dir_id">Направление</label>
+            <div class="form-group d-inline-flex align-items-center mb-2 col-12">
+              <label for="prof_dir_id">Направление: </label>
               
-              <Select2 :class="{'form-control is-invalid': errors.prof_dir_id}" v-model="myValue" 
+              <Select2 class="col-5" :class="{'form-control is-invalid': errors.prof_dir_id}" v-model="myValue" 
               :options="directions" 
-              :settings=" { theme: 'bootstrap-5', width: '100%'}"
+              :settings=" { theme: 'bootstrap-5'}"
               
                />
 
@@ -33,23 +33,25 @@
               <ErrorMessage name="prof_dir_id" class="error-feedback" />
             </div>
 
-            <div class="form-group">
-              <label for="prof_name">Название профиля</label>
+            <div class="form-group d-inline-flex align-items-center mb-2 col-12">
+              <label for="prof_name">Название профиля: </label>
               <Field name="prof_name" type="text" class="form-control" :class="{'is-invalid': errors.prof_name}"/>
               <ErrorMessage name="prof_name" class="error-feedback" />
               
             </div>
 
+  
             <div class="form-group mt-3">
-              <button class="btn btn-primary btn-block" :disabled="loading">
-                <span
-                  v-show="loading"
-                  class="spinner-border spinner-border-sm"
-                ></span>
-                Добавить профиль
-              </button>
-              <router-link to="/profiles" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
-            </div>
+             
+             <router-link to="/profiles" class="btn btn-secondary ml-2 float-start">Отмена</router-link>
+             <button class="btn btn-primary btn-block float-end" :disabled="loading">
+               <span
+                 v-show="loading"
+                 class="spinner-border spinner-border-sm"
+               ></span>
+               Добавить профиль
+             </button>
+           </div>
           </div>
         </Form>
   
@@ -152,7 +154,13 @@
   </script>
 
 <style lang="scss" scoped>
-
+label{
+  margin-right: 15px;
+  white-space: nowrap;
+}
+.form-group{
+  margin-right: 20px;
+}
 .skeleton-text {
   width: 15%;
   height: 1.0em;
