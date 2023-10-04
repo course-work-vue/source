@@ -94,7 +94,7 @@
           children: [
             {
               label: "Нагрузка",
-              link: "/ScheludeLoads",
+              link: "/ScheduleLoads",
             },
           ]
         },

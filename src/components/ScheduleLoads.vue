@@ -1,6 +1,6 @@
 <template>
-    <div class="col col-xs-9 col-lg-12 mt-4">
-        <div class="col col-12">
+    <div class="col col-xs-9 col-lg-12 mt-4 offset-md-1">
+        <div class="col col-10 align-self-end">
             <div class="mb-3 col col-12">
                 <div id="v-model-select" class="demo">
                     <select class="form-select w-25" v-model="selected_group">
@@ -200,23 +200,19 @@ export default {
         };
     },
     methods: {
-        filterGroups() {
-            const queryString = this.searchQuery.toLowerCase();
-            return this.groups.filter(group => {
-                return (
-                    String(group.group_id).toLowerCase().includes(queryString) ||
-                    String(group.group_number).toLowerCase().includes(queryString) ||
-                    String(group.prof_name).includes(queryString)  ||
-                    String(group.dir_name).includes(queryString)  ||
-                    String(group.dir_code).includes(queryString) 
-                );
-            });
-        },
-
         // грузим данные
         async loadGroupsData() {
             try {
                 const response = await UserService.getAllGroups(); // Replace with your API endpoint
+                this.groups = Array.isArray(response.data) ? response.data : [response.data];
+                this.loading=false;
+            } catch (error) {
+            console.error('Error loading groups data:', error);
+            }
+        },
+        async loadTeachersData() {
+            try {
+                const response = await UserService.getAllTeachers(); // Replace with your API endpoint
                 this.groups = Array.isArray(response.data) ? response.data : [response.data];
                 this.loading=false;
             } catch (error) {
@@ -315,6 +311,10 @@ export default {
     padding-right: 5px;
 
     }
+}
+
+.ml-240px{
+    margin-left: 240px;
 }
 
 .nmbr{

@@ -195,6 +195,58 @@ class UserService {
     return axios.put(API_URL +"directions", query, { headers: authHeader() });
   }
 
+  
+
+  getAllTeachers(){
+    const query = {
+      query: `SELECT
+        t.teacher_id,
+        t.first_name
+        t.last_name
+        t.patronymic
+      FROM 
+          "teachers" t
+      `,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  getTeacherById(id){
+    const query = {
+      query: `SELECT * from teachers where 
+      teacher_id='${id}';`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  addTeacher(teacher_id, first_name, last_name, patronymic){
+    const query = {
+      query: `INSERT INTO "teachers" (
+        "teacher_id",
+        "first_name"
+        "last_name"
+        "patronymic"
+    ) VALUES (
+        '${teacher_id}',
+        '${first_name}',
+        '${last_name}',
+        '${patronymic}'
+    );`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  updateTeacherById(teacher_id, first_name, last_name, patronymic){
+    const query = {
+      query: `"first_name" = '${first_name}',
+      "last_name" = '${last_name}',
+      "patronymic" = '${patronymic}'
+  WHERE
+      "teacher_id" = '${teacher_id}';`,
+    };
+    return axios.put(API_URL +"teachers", query, { headers: authHeader() });
+  }
+
+
   getAllProfiles(){
     const query = {
       query: `SELECT
@@ -542,8 +594,6 @@ class UserService {
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
-
-
   getPayerById(id){
     const query = {
       query: `SELECT *, TO_CHAR(issue_date , 'YYYY-MM-DD') AS issue_date from payers where 
