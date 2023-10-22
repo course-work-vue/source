@@ -145,7 +145,14 @@ class UserService {
     
     return axios.post(API_URL, query, { headers: authHeader() });
   }
-  
+  getProgramsAsIdText(){
+    const query = {
+      query: `SELECT id, program_name AS text
+      FROM "programs";`,
+    };
+    
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
 
   getPermissionByTable(tablename){
     const query = {
@@ -349,6 +356,9 @@ class UserService {
     return axios.post(API_URL, query, { headers: authHeader() });
   }
   addListener(name, surname,lastname, snils, passport, issued_by, issue_date, department_code, registration_address, phone_number, email,days_of_week,people_count){
+
+    var array3 = new Array;
+    array3.push(days_of_week);
     const query = {
       query: `INSERT INTO "listeners" (
         "name",
@@ -376,7 +386,7 @@ class UserService {
         '${registration_address}',
         '${phone_number}',
         '${email}',
-        '${days_of_week}',
+        '${array3}',
         '${people_count}'
     );`,
     };
@@ -452,30 +462,30 @@ class UserService {
 
   getContractById(id){
     const query = {
-      query: `SELECT *, TO_CHAR(expiration_date , 'YYYY-MM-DD') AS expiration_date from contracts where 
+      query: `SELECT * from contracts where 
       id='${id}';`,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
-  addContract(listener_id, payer_id,required_amount, expiration_date){
+  addContract(listener_id, payer_id,contr_number, program_id){
     const query = {
-      query: `INSERT INTO contracts (listener_id, payer_id, required_amount, expiration_date)
-      VALUES()
+      query: `INSERT INTO contracts (listener_id, payer_id, contr_number, program_id)
+      VALUES(
         '${listener_id}',
         '${payer_id}',
-        '${required_amount}',
-        '${expiration_date}'
+        '${contr_number}',
+        '${program_id}'
     );`,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
-  updateContractById(id, listener_id, payer_id,required_amount, expiration_date){
+  updateContractById(id, listener_id, payer_id,contr_number, program_id){
     const query = {
       query: ` "listener_id" ='${listener_id}',
       "payer_id" ='${payer_id}',
-      "required_amount"= '${required_amount}',
-      "expiration_date"= '${expiration_date}'
+      "contr_number"= '${contr_number}',
+      "program_id"= '${program_id}'
   WHERE
       "id" = '${id}';`,
     };
@@ -490,6 +500,7 @@ class UserService {
     
     return axios.post(API_URL, query, { headers: authHeader() });
   }
+  
   getListenersAsIdText(){
     const query = {
       query: `SELECT id AS id, CONCAT(lastname, ' ', name, ' ', surname) AS text
@@ -689,7 +700,7 @@ class UserService {
 
   updateProgramById(id, required_amount, program_name,hours, start_date, end_date){
     const query = {
-      query: ` "required_amount" ='${required_amount}',
+      query: `"required_amount" ='${required_amount}',
       "program_name" ='${program_name}',
       "hours"=  '${hours}',
       "start_date"= '${start_date}',
@@ -746,6 +757,45 @@ class UserService {
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
+  updatePaymentById(id, listener_id, contract_id,payer_id, expiration_date, deposited_amount){
+    const query = {
+      query: `"listener_id" ='${listener_id}',
+      "contract_id" ='${contract_id}',
+      "payer_id"=  '${payer_id}',
+      "expiration_date"= '${expiration_date}',
+      "deposited_amount"= '${deposited_amount}'
+  WHERE
+      "id" = '${id}';`,
+    };
+    return axios.put(API_URL +"pay_graph", query, { headers: authHeader() });
+  }
+  addPayment(listener_id, contract_id,payer_id, expiration_date, deposited_amount){
+    const query = {
+      query: `INSERT INTO "payments" (
+        "listener_id",
+        "contract_id",
+        "payer_id",
+        "expiration_date",
+        "deposited_amount"
+    ) VALUES (
+        '${listener_id}',
+        '${contract_id}',
+        '${payer_id}',
+        '${expiration_date}',
+        '${deposited_amount}'
+    );`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  getPaymentsAsIdText(){
+    const query = {
+      query: `SELECT id, contr_number AS text
+      FROM "contracts";`,
+    };
+    
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
 }
 
 export default new UserService();

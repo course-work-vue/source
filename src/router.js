@@ -44,7 +44,9 @@ const ProgramList = () => import("./components/ProgramList.vue")
 const AddProgram = () => import("./components/AddProgram.vue")
 const ProgramDetail = () => import("./components/ProgramDetail.vue")
 
+const AddPayment = () => import("./components/AddPayment.vue")
 const PaymentList = () => import("./components/PaymentList.vue")
+const PaymentDetail = () => import("./components/PaymentDetail.vue")
 
 const routes = [
   { 
@@ -105,6 +107,9 @@ const routes = [
   { path: '/AddProgram', component: AddProgram },
 
   { path: '/payments', component: PaymentList },
+  { path: '/payments/:paymentID', component: PaymentDetail },
+  { path: '/AddPayment', component: AddPayment },
+
   {
     path: "/user",
     name: "user",

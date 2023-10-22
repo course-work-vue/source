@@ -41,7 +41,7 @@
 
 import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
 import { reactive, onMounted, ref } from "vue";
-import ButtonCell from "@/components/GroupButtonCell.vue";
+import ButtonCell from "@/components/ContractButtonCell.vue";
 import GroupHref from "@/components/GroupHrefCellRenderer.vue";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
@@ -87,12 +87,10 @@ export default {
         onClick: navigateToStudent,
         label: 'View Details', // Button label
       },
-      minWidth: 150, // Adjust the width as needed
       cellClass: "grid-cell-centered",
+      maxWidth: 120, resizable: false
 
     },
-           { field: "id", headerName: 'ID', filter: 'agSetColumnFilter'
-           },
            { field: "listener_full_name", headerName: 'ФИО слушателя' },
            {
             field: 'payer_full_name',

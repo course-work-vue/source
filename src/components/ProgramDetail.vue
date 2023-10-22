@@ -1,6 +1,6 @@
 <template>
   <div class="col-md-12 list">
-    <div v-if="Program" >
+    <div v-if="program" >
       <Form @submit="updateProgram" :validation-schema="schema" v-slot="{ errors }">
         
         <div >
@@ -44,7 +44,7 @@
               ></span>
               Обновить направление
             </button>
-            <router-link to="/directions" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
+            <router-link to="/programs" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
           </div>
         </div>
       </Form>
@@ -105,7 +105,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
       return {
         schema,
         loading:false,
-        direction: null, // заглушка для данных студента
+        program: null, // заглушка для данных студента
         editedProgram: null, // заглушка для новых данных студента
         groups: null,
 
@@ -117,7 +117,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
         const programId = this.$route.params.programId;
         try {
           const response = await UserService.getProgramById(programId);
-          this.direction = response.data;
+          this.program = response.data;
           // Клонирование объекта, для избежание редактирования данных сразу
           this.editedProgram = { ...response.data };
         } catch (error) {
@@ -130,7 +130,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
           // запрос в psql
           this.loading=true;
 
-          const response = await UserService.updateProgramById(this.editedProgram.required_amount, this.editedProgram.program_name, this.editedProgram.hours, this.editedProgram.start_date, this.editedProgram.end_date);
+          const response = await UserService.updateProgramById(this.editedProgram.id, this.editedProgram.required_amount, this.editedProgram.program_name, this.editedProgram.hours, this.editedProgram.start_date, this.editedProgram.end_date);
           response.data;
           this.student = { ...this.editedStudent };
           this.loading=false;

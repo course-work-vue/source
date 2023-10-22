@@ -1,60 +1,66 @@
 <template>
   <div class="col-md-12 list">
-    <div v-if="contract" >
-      <Form @submit="updateContract" :validation-schema="schema" v-slot="{ errors }">
+    <div v-if="payer" >
+      <Form @submit="updatePayer" :validation-schema="schema" v-slot="{ errors }">
         
         <div >
-
-          
           <div class="form-group">
-            <label for="listener_id">Слушатель</label>
-            
-            <Select2 :class="{'form-control is-invalid': errors.listener_id}" v-model="editedContract.listener_id" 
-            :options="listeners" 
-            :settings=" { theme: 'bootstrap-5', width: '100%'}"
-            
-             />
-
-             <Field  name="listener_id" as="select" v-model="editedContract.listener_id" hidden>
-              <option v-for="listener in listeners" :key="listener.id" :value="listener.id">{{ listener.text }}</option>
-            </Field>
-            <ErrorMessage name="listener_id" class="error-feedback" />
-          </div>
-
-          <div class="form-group">
-            <label for="payer_id">Законный представитель</label>
-            
-            <Select2 :class="{'form-control is-invalid': errors.payer_id}" v-model="editedContract.payer_id" 
-            :options="payers" 
-            :settings=" { theme: 'bootstrap-5', width: '100%'}"
-            
-             />
-
-             <Field  name="payer_id" as="select" v-model="editedContract.payer_id" hidden>
-              <option v-for="payer in payers" :key="payer.id" :value="payer.id">{{ payer.text }}</option>
-            </Field>
-            <ErrorMessage name="payer_id" class="error-feedback" />
-          </div>
-
-          <div class="form-group">
-            <label for="contr_number">Номер договра</label>
-            <Field name="contr_number" type="text" value="" class="form-control" :class="{'is-invalid': errors.contr_number}" v-model="editedContract.contr_number"/>
-            <ErrorMessage name="contr_number" class="error-feedback" />
+            <label for="lastname">Фамилия</label>
+            <Field name="lastname" type="text" value="" class="form-control" :class="{'is-invalid': errors.lastname}" v-model="editedPayer.lastname "/>
+            <ErrorMessage name="lastname" class="error-feedback" />
           </div>
           <div class="form-group">
-            <label for="program_id">Программа</label>
-            
-            <Select2 :class="{'form-control is-invalid': errors.program_id}" v-model="editedContract.program_id" 
-            :options="programs" 
-            :settings=" { theme: 'bootstrap-5', width: '100%'}"
-            
-             />
-
-             <Field  name="program_id" as="select" v-model="editedContract.program_id" hidden>
-              <option v-for="program in programs" :key="program.id" :value="program.id">{{ program.text }}</option>
-            </Field>
-            <ErrorMessage name="program_id" class="error-feedback" />
+            <label for="name">Имя</label>
+            <Field name="name" type="text" class="form-control" value="" :class="{'is-invalid': errors.name}" v-model="editedPayer.name "/>
+            <ErrorMessage name="name" class="error-feedback" />
           </div>
+          <div class="form-group">
+            <label for="surname">Отчество</label>
+            <Field name="surname" type="text" class="form-control" value="" :class="{'is-invalid': errors.patronymic}" v-model="editedPayer.surname "/>
+            <ErrorMessage name="surname" class="error-feedback" />
+          </div>
+         
+     
+          <div class="form-group">
+            <label for="passport ">Серия и номер паспорта</label>
+            <Field name="passport " type="text" class="form-control" value="" :class="{'is-invalid': errors.passport }" v-model="editedPayer.passport "/>
+            <ErrorMessage name="passport " class="error-feedback" />
+          </div>
+          <div class="form-group">
+            <label for="issue_date">Дата выдачи</label>
+            <Field name="issue_date" type="date" class="form-control" value="" :class="{'is-invalid': errors.date}" v-model="editedPayer.issue_date "/>
+         
+            <ErrorMessage name="issue_date " class="error-feedback" />
+          </div>
+          <div class="form-group">
+            <label for="department_code ">Код подразделения</label>
+            <Field name="department_code " type="text" class="form-control" value="" :class="{'is-invalid': errors.department_code }" v-model="editedPayer.department_code "/>
+            <ErrorMessage name="department_code " class="error-feedback" />
+          </div>
+          <div class="form-group">
+            <label for="registration_address ">Адресс регистрации</label>
+            <Field name="registration_address " type="text" class="form-control" value="" :class="{'is-invalid': errors.registration_address }" v-model="editedPayer.registration_address "/>
+            <ErrorMessage name="registration_address " class="error-feedback" />
+          </div>
+          <div class="form-group">
+            <label for="SNILS">СНИЛС</label>
+            <Field name="SNILS" type="text" class="form-control" value="" :class="{'is-invalid': errors.SNILS}" v-model="editedPayer.snils "/>
+            <ErrorMessage name="SNILS" class="error-feedback" />
+          </div>
+          <div class="form-group">
+            <label for="phone_number ">Телефон</label>
+            <Field name="phone_number " type="text" class="form-control" value="" :class="{'is-invalid': errors.phone_number }" v-model="editedPayer.phone_number "/>
+            <ErrorMessage name="phone_number " class="error-feedback" />
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <Field name="email" type="text" class="form-control"  value="" :class="{'is-invalid': errors.email}"  v-model="editedPayer.email"/>
+            <ErrorMessage name="email" class="error-feedback" />
+          </div>
+
+         
+
+
 
           <div class="form-group mt-3">
             <button class="btn btn-primary btn-block float-start" :disabled="loading">
@@ -62,9 +68,9 @@
                 v-show="loading"
                 class="spinner-border spinner-border-sm"
               ></span>
-              Обновить контракт
+              Обновить законного представителя
             </button>
-            <router-link to="/contracts" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
+            <router-link to="/payers" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
           </div>
         </div>
       </Form>
@@ -114,7 +120,15 @@
         <label class="form-control skeleton-text skeleton-animate"></label>
         <input type="text" class="form-control skeleton skeleton-animate">
       </div>
-  
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+
     </div>
       
       
@@ -155,82 +169,61 @@ import { Form, Field, ErrorMessage } from "vee-validate";
       const schema = yup.object().shape({
         
 
-          
        
       });
 
       return {
         schema,
         loading:false,
-        contract: null, // заглушка для данных студента
-        editedContract: null, // заглушка для новых данных студента
-        listeners: null,
-        payers: null,
-        programs:null
+        payer: null, // заглушка для данных студента
+        editedPayer: null, // заглушка для новых данных студента
+        groups: null,
 
       };
     },
     methods: {
       // грузим студента из psql по id 
-      async loadContractDetail() {
-        const contractId = this.$route.params.contractId;
+      async loadPayerDetail() {
+        const payerId = this.$route.params.payerId;
         try {
-          const response = await UserService.getContractById(contractId);
-          this.contract = response.data;
+          const response = await UserService.getPayerById(payerId);
+          this.payer = response.data;
           // Клонирование объекта, для избежание редактирования данных сразу
-          this.editedContract = { ...response.data };
+          this.editedPayer = { ...response.data };
         } catch (error) {
-          console.error('Error loading contract details:', error);
+          console.error('Error loading payer details:', error);
         }
       },
       // Метод для обновления данных о студенте
-      async updateContract() {
+      async updatePayer() {
         try {
           // запрос в psql
           this.loading=true;
 
-          const response = await UserService.updateContractById(this.contract.id, this.editedContract.listener_id, this.editedContract.payer_id, this.editedContract.contr_number, 
-          this.editedContract.program_id);
+          const response = await UserService.updatePayerById(this.payer.id, this.editedPayer.name , this.editedPayer.surname  , this.editedPayer.lastname  , 
+          this.editedPayer.snils , this.editedPayer.passport , this.editedPayer.issued_by , this.editedPayer.issue_date , this.editedPayer.department_code , this.editedPayer.registration_address , this.editedPayer.phone_number ,
+          this.editedPayer.email);
           response.data;
-          this.contract = { ...this.editedContract };
+          this.payer = { ...this.editedPayer };
           this.loading=false;
-          this.toast.success("Успешно обновили!");
+          this.toast.success("Успешно обновили плательщика!");
         } catch (error) {
-          console.error('Ошибка загрузки данных:', error);
+          console.error('Ошибка :', error);
         }
       },
-      async loadListenersData() {
+      async loadGroupsData() {
         try {
-          const response = await UserService.getListenersAsIdText(); 
-          this.listeners = Array.isArray(response.data) ? response.data : [response.data];
+          const response = await UserService.getGroupsAsIdText(); 
+          this.groups = Array.isArray(response.data) ? response.data : [response.data];
         } catch (error) {
-          console.error('Ошибка загрузки данных:', error);
-        }
-      },
-
-      async loadPayersData() {
-        try {
-          const response = await UserService.getPayersAsIdText(); 
-          this.payers = Array.isArray(response.data) ? response.data : [response.data];
-        } catch (error) {
-          console.error('Ошибка загрузки данных:', error);
-        }
-      },
-      async loadProgramsData() {
-        try {
-          const response = await UserService.getProgramsAsIdText(); 
-          this.programs = Array.isArray(response.data) ? response.data : [response.data];
-        } catch (error) {
-          console.error('Ошибка загрузки данных:', error);
+          console.error('Ошибка :', error);
         }
       }
     },
     created() {
-      this.loadContractDetail();
-      this.loadListenersData();
-      this.loadPayersData();
-      this.loadProgramsData();
-
+      this.loadGroupsData();
+      this.loadPayerDetail();
+     
     },
   };
   </script>

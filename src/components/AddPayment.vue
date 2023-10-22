@@ -41,7 +41,7 @@
 
   </div>
     <div v-else class="col-md-12">
-        <Form @submit="addContract" :validation-schema="schema" v-slot="{ errors }">
+        <Form @submit="addPayment" :validation-schema="schema" v-slot="{ errors }">
           <div>
                       
           <div class="form-group">
@@ -74,27 +74,33 @@
             <ErrorMessage name="payer_id" class="error-feedback" />
           </div>
 
+ 
           <div class="form-group">
-            <label for="contr_number">Номер договора</label>
-            <Field name="contr_number" type="text" value="" class="form-control" :class="{'is-invalid': errors.contr_number}" />
-            <ErrorMessage name="contr_number" class="error-feedback" />
-          </div>
-
-          <div class="form-group">
-            <label for="program_id">Программы</label>
+            <label for="contract_id">Номер договора</label>
             
-            <Select2 :class="{'form-control is-invalid': errors.program_id}" v-model="myValue3" 
-            :options="programs" 
+            <Select2 :class="{'form-control is-invalid': errors.contract_id}" v-model="myValue3" 
+            :options="contracts" 
             :settings=" { theme: 'bootstrap-5', width: '100%'}"
             
              />
 
-             <Field  name="program_id" as="select" v-model="myValue3" hidden>
-              <option v-for="program in programs" :key="program.id" :value="program.id">{{ program.text }}</option>
+             <Field  name="contract_id" as="select" v-model="myValue3" hidden>
+              <option v-for="contract in contracts" :key="contract.id" :value="contract.id">{{ contract.text }}</option>
             </Field>
-            <ErrorMessage name="program_id" class="error-feedback" />
+            <ErrorMessage name="contract_id" class="error-feedback" />
           </div>
-  
+
+          <div class="form-group d-inline-flex align-items-center mb-2">
+              <label for="expiration_date">Дата просрочки:</label>
+              <Field name="expiration_date" type="date"  class="form-control" value="" :class="{'is-invalid': errors.expiration_date}"/>
+              <ErrorMessage name="expiration_date" class="error-feedback" />
+            </div>
+
+            <div class="form-group d-inline-flex align-items-center mb-2 col-2">
+              <label for="deposited_amount">Внесённая сумма:</label>
+              <Field name="deposited_amount" type="text" class="form-control" value="" :class="{'is-invalid': errors.deposited_amount}"/>
+              <ErrorMessage name="deposited_amount" class="error-feedback" />
+            </div>
           </div>
           <div class="form-group mt-3">
               <button class="btn btn-primary btn-block" :disabled="loading">
@@ -102,7 +108,7 @@
                   v-show="loading"
                   class="spinner-border spinner-border-sm"
                 ></span>
-                Добавить договор
+                Добавить платёж
               </button>
               <router-link to="/contracts" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
             </div>
@@ -152,7 +158,7 @@
       return {
         successful: false,
         loading: false,
-        dataLoading:true,
+        dataLoading:false,
         message: "",
         schema,
         listeners: null,
@@ -211,6 +217,14 @@
         try {
           const response = await UserService.getProgramsAsIdText(); 
           this.programs = Array.isArray(response.data) ? response.data : [response.data];
+        } catch (error) {
+          console.error('Ошибка загрузки данных:', error);
+        }
+      },
+      async loadContractsData() {
+        try {
+          const response = await UserService.getContractsAsIdText(); 
+          this.programs = Array.isArray(response.data) ? response.data : [response.data];
           this.dataLoading=false;
         } catch (error) {
           console.error('Ошибка загрузки данных:', error);
@@ -223,6 +237,7 @@
       this.loadListenersData();
       this.loadPayersData();
       this.loadProgramsData();
+      this.loadContractsData();
     },
   };
   </script>

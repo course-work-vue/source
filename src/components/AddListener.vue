@@ -68,55 +68,60 @@
         <Form @submit="addListener" :validation-schema="schema" v-slot="{ errors }">
                   
         <div >
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center col-12 mb-2">
             <label for="lastname">Фамилия</label>
-            <Field name="lastname" type="text" value="" class="form-control" :class="{'is-invalid': errors.lastname}" />
+            <Field name="lastname" type="text" value="" class="form-control " :class="{'is-invalid': errors.lastname}" />
             <ErrorMessage name="lastname" class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center col-12 mb-2">
             <label for="name">Имя</label>
-            <Field name="name" type="text" class="form-control" value="" :class="{'is-invalid': errors.name}" />
+            <Field name="name" type="text" class="form-control " value="" :class="{'is-invalid': errors.name}" />
             <ErrorMessage name="name" class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group  d-inline-flex align-items-center col-12 mb-2">
             <label for="surname">Отчество</label>
             <Field name="surname" type="text" class="form-control" value="" :class="{'is-invalid': errors.patronymic}" />
             <ErrorMessage name="surname" class="error-feedback" />
           </div>
          
      
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="passport">Серия и номер паспорта</label>
             <Field name="passport" type="text" class="form-control" value="" :class="{'is-invalid': errors.passport }" />
             <ErrorMessage name="passport" class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="issue_date">Дата выдачи</label>
             <Field name="issue_date" type="date" class="form-control" value="" :class="{'is-invalid': errors.date}" />
          
             <ErrorMessage name="issue_date " class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2">
             <label for="department_code">Код подразделения</label>
             <Field name="department_code" type="text" class="form-control" value="" :class="{'is-invalid': errors.department_code }" />
             <ErrorMessage name="department_code" class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2">
             <label for="registration_address ">Адресс регистрации</label>
             <Field name="registration_address" type="text" class="form-control" value="" :class="{'is-invalid': errors.registration_address }"/>
             <ErrorMessage name="registration_address" class="error-feedback" />
           </div>
-          <div class="form-group">
-            <label for="SNILS">СНИЛС</label>
-            <Field name="SNILS" type="text" class="form-control" value="" :class="{'is-invalid': errors.SNILS}" />
-            <ErrorMessage name="SNILS" class="error-feedback" />
+          <div class="form-group d-inline-flex align-items-center mb-2">
+            <label for="snils">СНИЛС</label>
+            <Field name="snils" type="text" class="form-control" value="" :class="{'is-invalid': errors.snils}" />
+            <ErrorMessage name="snils" class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2">
+            <label for="issued_by">Кем выдан</label>
+            <Field name="issued_by" type="text" class="form-control" value="" :class="{'is-invalid': errors.issued_by}" />
+            <ErrorMessage name="issued_by" class="error-feedback" />
+          </div>
+          <div class="form-group d-inline-flex align-items-center mb-2">
             <label for="phone_number">Телефон</label>
             <Field name="phone_number" type="text" class="form-control" value="" :class="{'is-invalid': errors.phone_number }" />
             <ErrorMessage name="phone_number" class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2">
             <label for="email">Email</label>
             <Field name="email" type="text" class="form-control"  value="" :class="{'is-invalid': errors.email}" />
             <ErrorMessage name="email" class="error-feedback" />
@@ -124,12 +129,18 @@
 
 
       
-
-          <div class="form-group">
+          
+          <div class="form-group d-inline-flex align-items-center mb-2">
             <label for="people_count">Желаемое количество людей в группе</label>
             <Field name="people_count" type="number" class="form-control"  value="" :class="{'is-invalid': errors.people_count}" />
             <ErrorMessage name="people_count" class="error-feedback" />
           </div>
+            <div class="form-group d-inline-flex align-items-center mb-2">
+            <label for="wanted_days">Желаемые дни</label>
+            <Field name="wanted_days" type="text" class="form-control"  value="" :class="{'is-invalid': errors.wanted_days}" />
+            <ErrorMessage name="wanted_days" class="error-feedback" />
+          </div>
+          <!--
           <div class="form-group">
               <label for="group_id">Желаемые дни недели</label>
               
@@ -144,7 +155,7 @@
               </Field>
               <ErrorMessage name="group_id" class="error-feedback" />
             </div>
-            
+            -->
 
            
 
@@ -229,7 +240,7 @@
 
           const response = await UserService.addListener(listener.name , listener.surname  , listener.lastname  , 
           listener.snils , listener.passport , listener.issued_by , listener.issue_date , listener.department_code , listener.registration_address , listener.phone_number ,
-          listener.email);
+          listener.email, listener.people_count, listener.wanted_days);
           response.data;
           this.loading=false;
           this.successful=true;
@@ -255,7 +266,18 @@
   </script>
 
 <style lang="scss" scoped>
+.error-feedback{
+  white-space: nowrap;
+  margin-left:5px;
+}
 
+label{
+  margin-right: 15px;
+  white-space: nowrap;
+}
+.form-group{
+  margin-right: 20px;
+}
 .skeleton-text {
   width: 15%;
   height: 1.0em;

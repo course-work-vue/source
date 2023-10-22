@@ -56,9 +56,9 @@
                   v-show="loading"
                   class="spinner-border spinner-border-sm"
                 ></span>
-                Добавить направление
+                Добавить программу
               </button>
-              <router-link to="/directions" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
+              <router-link to="/programs" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
             </div>
           </div>
         </Form>
