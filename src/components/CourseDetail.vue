@@ -4,108 +4,37 @@
       <Form  @submit="updateStudent" :validation-schema="schema" v-slot="{ errors }">
         
         <div>
-          <div class="form-group d-inline-flex align-items-center col-12 mb-2">
-            <label class="col-form-label" for="last_name">Фамилия:</label>
-            <Field name="last_name" id="last_name" type="text" value="" class="form-control" :class="{'is-invalid': errors.last_name}" v-model="editedStudent.last_name"/>
-            <ErrorMessage name="last_name" class="error-feedback" />
-          </div>
-          <div class="form-group d-inline-flex align-items-center col-12 mb-2">
-            <label for="first_name">Имя:</label>
-            <Field name="first_name" type="text" class="form-control" value="" :class="{'is-invalid': errors.first_name}" v-model="editedStudent.first_name"/>
-            <ErrorMessage name="first_name" class="error-feedback" />
-          </div>
-     
-          <div class="form-group d-inline-flex align-items-center col-12 mb-2">
-            <label for="patronymic">Отчество:</label>
-            <Field name="patronymic" type="text" class="form-control" value="" :class="{'is-invalid': errors.patronymic}" v-model="editedStudent.patronymic"/>
-            <ErrorMessage name="patronymic" class="error-feedback" />
-          </div>
-          <div class="form-group d-inline-flex align-items-center mb-2">
-            <label for="gender">Пол:</label>
-            <br>
-            <Field name="gender" type="radio" value="m" class="form-check-input" :class="{'is-invalid': errors.gender}" v-model="editedStudent.gender"/> М
-            <Field name="gender" type="radio" value="f" class="form-check-input" :class="{'is-invalid': errors.gender}" v-model="editedStudent.gender"/> Ж
-            <br>
-            <ErrorMessage name="gender" class="error-feedback" />
-          </div>
-          <div class="form-group d-inline-flex align-items-center mb-2">
-            <label for="date_of_birth">Дата рождения:</label>
-            <Field name="date_of_birth" type="date" class="form-control" value="" :class="{'is-invalid': errors.date}" v-model="editedStudent.date_of_birth"/>
-         
-            <ErrorMessage name="date_of_birth" class="error-feedback" />
-          </div>
-          <div class="form-group d-inline-flex align-items-center mb-2 col-6">
-            <label for="passport_series_and_number">Серия и номер паспорта:</label>
-            <Field name="passport_series_and_number" type="text" class="form-control" value="" :class="{'is-invalid': errors.passport_series_and_number}" v-model="editedStudent.passport_series_and_number"/>
-            <ErrorMessage name="passport_series_and_number" class="error-feedback" />
-          </div>
-          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
-            <label for="place_of_birth">Страна рождения:</label>
-            <Field name="place_of_birth" type="text" class="form-control" value="" :class="{'is-invalid': errors.place_of_birth}" v-model="editedStudent.place_of_birth"/>
-            <ErrorMessage name="place_of_birth" class="error-feedback" />
-          </div>
-          <div class="form-group d-inline-flex align-items-center mb-2">
-            <label for="INN">ИНН:</label>
-            <Field name="INN" type="text" class="form-control" value="" :class="{'is-invalid': errors.INN}" v-model="editedStudent.INN"/>
-            <ErrorMessage name="INN" class="error-feedback" />
-          </div>
-          <div class="form-group d-inline-flex align-items-center mb-2">
-            <label for="SNILS">СНИЛС:</label>
-            <Field name="SNILS" type="text" class="form-control" value="" :class="{'is-invalid': errors.SNILS}" v-model="editedStudent.SNILS"/>
-            <ErrorMessage name="SNILS" class="error-feedback" />
-          </div>
 
- 
-          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
-            <label for="email">Email:</label>
-            <Field name="email" type="text" class="form-control"  value="" :class="{'is-invalid': errors.email}"  v-model="editedStudent.email"/>
-            <ErrorMessage name="email" class="error-feedback" />
-          </div>
-
-          <div class="form-group d-inline-flex align-items-center mb-2">
-            <label for="student_login">Логин студента:</label>
-            <Field name="student_login" type="text" class="form-control" value="" :class="{'is-invalid': errors.student_login}" v-model="editedStudent.student_login"/>
-            <ErrorMessage name="student_login" class="error-feedback" />
-          </div>
-          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
-            <label for="enrollment_order">Приказ о зачислении:</label>
-            <Field name="enrollment_order" type="text" class="form-control" value="" :class="{'is-invalid': errors.enrollment_order}" v-model="editedStudent.enrollment_order"/>
-            <ErrorMessage name="enrollment_order" class="error-feedback" />
-          </div>
-          <div class="form-group d-inline-flex align-items-center mb-2">
-            <label for="enrolled_date">Дата зачисления:</label>
-            <Field name="enrolled_date" type="date" class="form-control" value="" :class="{'is-invalid': errors.enrolled_date}" v-model="editedStudent.enrolled_date"/>
-            <ErrorMessage name="enrolled_date" class="error-feedback" />
+          <div class="form-group d-inline-flex align-items-center float-none mb-2 col-3">
+            <label for="course">Подгруппа:</label>
+            <Field name="course" type="text" class="form-control" :class="{'is-invalid': errors.course}" v-model="editedCourse.course"/>
+            <ErrorMessage name="course" class="error-feedback" />
+            
           </div>
           <div class="d-flex flex-wrap">
           <div class="form-group d-inline-flex align-items-center mb-2">
             <label for="group_id">Группа:</label>
             
-            <Select2 :class="{'form-control is-invalid': errors.group_id}" v-model="editedStudent.group_id" 
+            <Select2 :class="{'form-control is-invalid': errors.group_id}" v-model="editedCourse.group_id" 
             :options="groups" 
             :settings=" { theme: 'bootstrap-5', width: '100%'}"
             
              />
 
-             <Field  name="group_id" as="select" v-model="editedStudent.group_id" hidden>
+             <Field  name="group_id" as="select" v-model="editedCourse.group_id" hidden>
               <option v-for="group in groups" :key="group.id" :value="group.id">{{ group.text }}</option>
             </Field>
             <ErrorMessage name="group_id" class="error-feedback" />
           </div>
 
-          <div class="form-group d-inline-flex align-items-center float-none mb-2 col-3">
-            <label for="subgroup">Подгруппа:</label>
-            <Field name="subgroup" type="text" class="form-control" :class="{'is-invalid': errors.subgroup}" v-model="editedStudent.subgroup"/>
-            <ErrorMessage name="subgroup" class="error-feedback" />
-            
-          </div>
+         
         </div>
           <div class="form-group  mt-3">
             
-            <router-link to="/students" class="mx-2 btn btn-secondary  float-start">Отмена</router-link>
+            <router-link to="/courses" class="mx-2 btn btn-secondary  float-start">Отмена</router-link>
           </div>
           <div class="form-group float-end">
-            <button class="btn btn-danger float-end" @click="deleteStudent">
+            <button class="btn btn-danger float-end" @click="deleteCourse">
               Удалить студента
             </button>
           </div>
@@ -115,7 +44,7 @@
                 v-show="loading"
                 class="spinner-border spinner-border-sm"
               ></span>
-              Обновить студента
+              Обновить курс
             </button>
         
           </div>
@@ -174,30 +103,7 @@
         <label class="form-control skeleton-text skeleton-animate"></label>
         <input type="text" class="form-control skeleton skeleton-animate">
       </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
+
     </div>
       
       
@@ -262,35 +168,33 @@ import { Form, Field, ErrorMessage } from "vee-validate";
     },
     methods: {
       // грузим студента из psql по id 
-      async loadStudentDetail() {
-        const studentId = this.$route.params.studentId;
+      async loadCourseDetail() {
+        const courseId = this.$route.params.courseId;
         try {
-          const response = await UserService.getStudentById(studentId);
+          const response = await UserService.getCourseById(courseId);
           this.student = response.data;
           // Клонирование объекта, для избежание редактирования данных сразу
-          this.editedStudent = { ...response.data };
+          this.editedCourse = { ...response.data };
         } catch (error) {
           console.error('Error loading student details:', error);
         }
       },
       // Метод для обновления данных о студенте
-      async updateStudent() {
+      async updateCourse() {
         try {
           // запрос в psql
           this.loading=true;
 
-          const response = await UserService.updateStudentById(this.student.student_id, this.editedStudent.first_name, this.editedStudent.last_name, this.editedStudent.patronymic, 
-          this.editedStudent.gender, this.editedStudent.date_of_birth, this.editedStudent.passport_series_and_number, this.editedStudent.INN, this.editedStudent.SNILS, this.editedStudent.place_of_birth, this.editedStudent.email,
-          this.editedStudent.student_login, this.editedStudent.enrollment_order, this.editedStudent.enrolled_date, this.editedStudent.group_id, this.editedStudent.subgroup);
+          const response = await UserService.updateCourseById(this.course.course_id, this.editedCourse.course, this.editedCourse.group_id);
           response.data;
-          this.student = { ...this.editedStudent };
+          this.course = { ...this.editedCourse };
           this.loading=false;
           this.toast.success("Успешно обновили студента!");
         } catch (error) {
           console.error('Ошибка загрузки данных о студенте:', error);
         }
       },
-      async deleteStudent() {
+      async deleteCourse() {
         try {
           // запрос в psql
           this.loading=true;
@@ -299,9 +203,9 @@ import { Form, Field, ErrorMessage } from "vee-validate";
           response.data;
           this.student = { ...this.editedStudent };
           this.loading=false;
-          this.toast.success("Успешно удалили студента!");
+          this.toast.success("Успешно удалили курс!");
         } catch (error) {
-          console.error('Ошибка загрузки данных о студенте:', error);
+          console.error('Ошибка загрузки данных о курс:', error);
         }
       },
       async loadGroupsData() {
@@ -309,12 +213,12 @@ import { Form, Field, ErrorMessage } from "vee-validate";
           const response = await UserService.getGroupsAsIdText(); 
           this.groups = Array.isArray(response.data) ? response.data : [response.data];
         } catch (error) {
-          console.error('Ошибка загрузки данных о студенте:', error);
+          console.error('Ошибка загрузки данных о курсе:', error);
         }
       }
     },
     created() {
-      this.loadGroupsData();
+      this.loadCourseDetail();
       this.loadStudentDetail();
      
     },

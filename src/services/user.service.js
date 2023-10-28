@@ -47,7 +47,7 @@ class UserService {
   JOIN 
       groups g ON s.group_id = g.group_id
   ORDER BY 
-      s.student_id ASC;`,
+      full_name ASC;`,
     };
 
     return axios.post(API_URL, query, { headers: authHeader() });
@@ -140,7 +140,8 @@ class UserService {
   getGroupsAsIdText(){
     const query = {
       query: `SELECT group_id AS id, group_number AS text
-      FROM "groups";`,
+      FROM "groups" ORDER BY 
+      text ASC;`,
     };
     
     return axios.post(API_URL, query, { headers: authHeader() });
@@ -148,7 +149,8 @@ class UserService {
   getProgramsAsIdText(){
     const query = {
       query: `SELECT id, program_name AS text
-      FROM "programs";`,
+      FROM "programs" ORDER BY 
+      text ASC;`,
     };
     
     return axios.post(API_URL, query, { headers: authHeader() });
@@ -166,7 +168,8 @@ class UserService {
 
   getAllDirections(){
     const query = {
-      query: `SELECT * from directions;`,
+      query: `SELECT * from directions ORDER BY 
+      dir_name ASC;`,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
@@ -214,7 +217,9 @@ class UserService {
   FROM
       "profiles" p
   JOIN
-      "directions" d ON p.prof_dir_id = d.dir_id;
+      "directions" d ON p.prof_dir_id = d.dir_id
+      ORDER BY 
+      p.prof_name ASC;
   `,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
@@ -253,7 +258,8 @@ class UserService {
   getDirectionsAsIdText(){
     const query = {
       query: `SELECT dir_id AS id, dir_code AS text
-      FROM "directions";`,
+      FROM "directions" ORDER BY 
+      text ASC;`,
     };
     
     return axios.post(API_URL, query, { headers: authHeader() });
@@ -262,7 +268,8 @@ class UserService {
   getProfilesAsIdText(){
     const query = {
       query: `SELECT prof_id AS id, prof_name AS text
-      FROM "profiles";`,
+      FROM "profiles" ORDER BY 
+      text ASC;`,
     };
     
     return axios.post(API_URL, query, { headers: authHeader() });
@@ -286,7 +293,8 @@ class UserService {
   JOIN
       "directions" AS d
   ON
-      g.group_dir_id = d.dir_id;
+      g.group_dir_id = d.dir_id  ORDER BY 
+      g.group_number ASC;
   `,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
@@ -341,7 +349,8 @@ class UserService {
       JOIN
       "payers" AS p
   ON
-      l.payer_id = p.id;
+      l.payer_id = p.id
+      ;
   `,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
@@ -495,7 +504,8 @@ class UserService {
   getPayersAsIdText(){
     const query = {
       query: `SELECT id AS id, CONCAT(lastname, ' ', name, ' ', surname) AS text
-      FROM "payers";`,
+      FROM "payers" ORDER BY 
+      text ASC;`,
     };
     
     return axios.post(API_URL, query, { headers: authHeader() });
@@ -504,7 +514,8 @@ class UserService {
   getListenersAsIdText(){
     const query = {
       query: `SELECT id AS id, CONCAT(lastname, ' ', name, ' ', surname) AS text
-      FROM "listeners";`,
+      FROM "listeners" ORDER BY 
+      text ASC;`,
     };
     
     return axios.post(API_URL, query, { headers: authHeader() });
@@ -644,10 +655,61 @@ class UserService {
     };
     return axios.put(API_URL +"contracts", query, { headers: authHeader() });
   }
+
+  getAllCourses(){
+    const query = {
+      query: `SELECT
+      c.course_id,
+      c.course,
+      c.group_id,
+      g.group_number
+  FROM
+      "courses" c
+  JOIN
+      "groups" g ON c.group_id = g.group_id
+      ORDER BY 
+      c.course ASC;
+  `,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  
+
+  getCourseById(id){
+    const query = {
+      query: `SELECT * from courses where 
+      course_id='${id}';`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  addCourse(course, group_id){
+    const query = {
+      query: `INSERT INTO "courses" (
+        "course",
+        "group_id"
+    ) VALUES (
+        '${course}',
+        '${group_id}'
+    );`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  updateCourseById(course_id,course,group_id){
+    const query = {
+      query: `"course" = '${course}',
+      "group_id" = '${group_id}'
+  WHERE
+      "course_id" = '${course_id}';`,
+    };
+    return axios.put(API_URL +"courses", query, { headers: authHeader() });
+  }
+
   getStudentsAsIdText(){
     const query = {
       query: `SELECT student_id AS id, CONCAT(last_name, ' ', first_name, ' ', patronymic) AS text
-      FROM "students";`,
+      FROM "students" ORDER BY 
+      text ASC;`,
     };
     
     return axios.post(API_URL, query, { headers: authHeader() });
@@ -791,7 +853,8 @@ class UserService {
   getPaymentsAsIdText(){
     const query = {
       query: `SELECT id, contr_number AS text
-      FROM "contracts";`,
+      FROM "contracts" ORDER BY 
+      text ASC;`,
     };
     
     return axios.post(API_URL, query, { headers: authHeader() });

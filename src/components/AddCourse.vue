@@ -57,100 +57,17 @@
         <label class="form-control skeleton-text skeleton-animate"></label>
         <input type="text" class="form-control skeleton skeleton-animate">
       </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
+      
 
   </div>
     <div v-else class="col-md-12">
-        <Form @submit="addStudent" :validation-schema="schema" v-slot="{ errors }">
+        <Form @submit="addCourse" :validation-schema="schema" v-slot="{ errors }">
           <div>
-            <div class="form-group d-inline-flex align-items-center col-12 mb-2">
-              <label for="last_name">Фамилия:</label>
-              <Field name="last_name" type="text" value="" class="form-control" :class="{'is-invalid': errors.last_name}" />
-              <ErrorMessage name="last_name" class="error-feedback" />
-            </div>
-            <div class="form-group d-inline-flex align-items-center col-12 mb-2">
-              <label for="first_name">Имя:</label>
-              <Field name="first_name" type="text" class="form-control" value="" :class="{'is-invalid': errors.first_name}" />
-              <ErrorMessage name="first_name" class="error-feedback" />
-            </div>
-            <div class="form-group d-inline-flex align-items-center col-12 mb-2">
-              <label for="patronymic">Отчество:</label>
-              <Field name="patronymic" type="text" class="form-control" value="" :class="{'is-invalid': errors.patronymic}"/>
-              <ErrorMessage name="patronymic" class="error-feedback" />
-            </div>
+            
             <div class="form-group d-inline-flex align-items-center mb-2">
-              <label for="gender">Пол:</label>
-              <br>
-              <Field name="gender" type="radio" value="m" class="form-check-input" :class="{'is-invalid': errors.gender}"/>М 
-              <Field name="gender" type="radio" value="f" class="form-check-input" :class="{'is-invalid': errors.gender}"/>Ж 
-              <br>
-              <ErrorMessage name="gender" class="error-feedback" />
-            </div>
-            <div class="form-group d-inline-flex align-items-center mb-2">
-              <label for="date_of_birth">Дата рождения:</label>
-              <Field name="date_of_birth" type="date"  class="form-control" value="" :class="{'is-invalid': errors.date}"/>
-              <ErrorMessage name="date_of_birth" class="error-feedback" />
-            </div>
-            <div class="form-group d-inline-flex align-items-center mb-2 col-6">
-              <label for="passport_series_and_number">Серия и номер паспорта:</label>
-              <Field name="passport_series_and_number" type="text" class="form-control" value="" :class="{'is-invalid': errors.passport_series_and_number}"/>
-              <ErrorMessage name="passport_series_and_number" class="error-feedback" />
-            </div>
-            <div class="form-group d-inline-flex align-items-center mb-2 col-5">
-              <label for="place_of_birth">Страна рождения:</label>
-              <Field name="place_of_birth" type="text" class="form-control" value="" :class="{'is-invalid': errors.place_of_birth}"/>
-              <ErrorMessage name="place_of_birth" class="error-feedback" />
-            </div>
-            <div class="form-group d-inline-flex align-items-center mb-2">
-              <label for="INN">ИНН:</label>
-              <Field name="INN" type="text" class="form-control" value="" :class="{'is-invalid': errors.INN}"/>
-              <ErrorMessage name="INN" class="error-feedback" />
-            </div>
-            <div class="form-group d-inline-flex align-items-center mb-2">
-              <label for="SNILS">СНИЛС:</label>
-              <Field name="SNILS" type="text" class="form-control" value="" :class="{'is-invalid': errors.SNILS}"/>
-              <ErrorMessage name="SNILS" class="error-feedback" />
-            </div>
-  
-            <div class="form-group d-inline-flex align-items-center mb-2 col-5">
-              <label for="email">Email:</label>
-              <Field name="email" type="text" class="form-control"  value="" :class="{'is-invalid': errors.email}"  />
-              <ErrorMessage name="email" class="error-feedback" />
-            </div>
- 
-            <div class="form-group d-inline-flex align-items-center mb-2 col-5">
-              <label for="student_login">Логин студента:</label>
-              <Field name="student_login" type="text" class="form-control" value="" :class="{'is-invalid': errors.student_login}"/>
-              <ErrorMessage name="student_login" class="error-feedback" />
-            </div>
-            <div class="form-group d-inline-flex align-items-center mb-2 col-5">
-              <label for="enrollment_order">Приказ о зачислении:</label>
-              <Field name="enrollment_order" type="text" class="form-control" value="" :class="{'is-invalid': errors.enrollment_order}"/>
-              <ErrorMessage name="enrollment_order" class="error-feedback" />
-            </div>
-            <div class="form-group d-inline-flex align-items-center mb-2">
-              <label for="enrolled_date">Дата зачисления:</label>
-              <Field name="enrolled_date" type="date" class="form-control" value="" :class="{'is-invalid': errors.enrolled_date}"/>
-              <ErrorMessage name="enrolled_date" class="error-feedback" />
+              <label for="course">Курс:</label>
+              <Field name="course" type="number" class="form-control" value="" :class="{'is-invalid': errors.course}"/>
+              <ErrorMessage name="course" class="error-feedback" />
             </div>
             <div class="d-flex flex-wrap">
             <div class="form-group d-inline-flex align-items-center mb-2">
@@ -168,22 +85,16 @@
               <ErrorMessage name="group_id" class="error-feedback" />
             </div>
 
-            <div class="form-group d-inline-flex align-items-center float-none mb-2 col-3">
-              <label for="subgroup">Подгруппа:</label>
-              <Field name="subgroup" type="text" class="form-control" :class="{'is-invalid': errors.subgroup}"/>
-              <ErrorMessage name="subgroup" class="error-feedback" />
-              
-            </div>
           </div>
             <div class="form-group mt-3">
              
-              <router-link to="/students" class="btn btn-secondary ml-2 float-start">Отмена</router-link>
+              <router-link to="/courses" class="btn btn-secondary ml-2 float-start">Отмена</router-link>
               <button class="btn btn-primary btn-block float-end" :disabled="loading">
                 <span
                   v-show="loading"
                   class="spinner-border spinner-border-sm"
                 ></span>
-                Добавить студента
+                Добавить курс
               </button>
             </div>
           </div>
@@ -224,21 +135,7 @@
     },
     data() {
       const schema = yup.object().shape({
-  last_name: yup.string().required('Требуется фамилия'),
-  first_name: yup.string().required('Требуется имя'),
-  patronymic: yup.string().required('Требуется отчество'),
-  gender: yup.string().required('Требуется указать пол'),
-  date_of_birth: yup.date().required('Требуется указать дату рождения'),
-  passport_series_and_number: yup.string().required('Требуется серия и номер паспорта'),
-  place_of_birth: yup.string().required('Требуется указать место рождения'),
-  INN: yup.string().required('Требуется указать ИНН').matches(/^\d{12}$/, 'Некорректный ИНН'),
-  SNILS: yup.string().required('Требуется указать СНИЛС').matches(/^\d{11}$/, 'Некорректный СНИЛС'),
-  email: yup.string().required('Требуется электронная почта').email('Некорректный адрес электронной почты'),
-  student_login: yup.string().required('Требуется указать логин студента'),
-  enrollment_order: yup.string().required('Требуется указать приказ о зачислении'),
-  enrolled_date: yup.date().required('Требуется указать дату зачисления'),
-  course: yup.string().required('Требуется указать курс'),
-  group_id: yup.string().required('Требуется указать группу'),
+
 
 
 });
@@ -262,22 +159,20 @@
     },
     methods: {
 
-      async addStudent(student) {
+      async addCourse(course) {
         try {
           // запрос в psql
           this.loading=true;
 
-          const response = await UserService.addStudent(student.last_name, student.first_name, student.patronymic, 
-          student.gender, student.date_of_birth, student.passport_series_and_number, student.INN, student.SNILS, student.place_of_birth, student.email,
-           student.student_login, student.enrollment_order, student.enrolled_date, student.group_id, student.subgroup);
+          const response = await UserService.addCourse(course.course, course.group_id);
           response.data;
           this.loading=false;
           this.successful=true;
 
-          this.toast.success("Успешно добавили студента!");
+          this.toast.success("Успешно добавили курс!");
         } catch (error) {
           this.message="Ошибка";
-          this.toast.error("Ошибка добавления студента");
+          this.toast.error("Ошибка добавления курса");
           console.error('Error updating student details:', error);
         }
       },
