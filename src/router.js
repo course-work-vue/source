@@ -36,7 +36,7 @@ const ContractList = () => import("./components/ContractList.vue")
 const ContractDetail = () => import("./components/ContractDetail.vue")
 const AddContract = () => import("./components/AddContract.vue")
 
-
+const ScheduleLoads = () => import("./components/ScheduleLoads.vue")
 
 const CWList = () => import("./components/CwList.vue")
 
@@ -107,8 +107,9 @@ const routes = [
   { path: '/contracts/:contractId', component: ContractDetail },
   { path: '/AddContract', component: AddContract },
 
-  { path: '/courseworks', component: CWList },
+  { path: '/ScheduleLoads', component: ScheduleLoads },
 
+  { path: '/courseworks', component: CWList },
 
   { path: '/programs', component: ProgramList },
   { path: '/programs/:programId', component: ProgramDetail },

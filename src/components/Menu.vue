@@ -92,6 +92,17 @@
           ]
         },
         {
+          label: "Расписание",
+          link: "",
+          icon: "calendar_month",
+          children: [
+            {
+              label: "Нагрузка",
+              link: "/ScheduleLoads",
+            },
+          ]
+        },
+        {
           label: "Настройки",
           link: "/profile",
           icon: "settings"
