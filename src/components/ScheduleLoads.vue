@@ -33,7 +33,6 @@
                     </table>
                     
                     <!-- Выбор предмета -->
-
                     <table class="table table-sm" v-if="this.selected_group >= 0" id="table_subject">
                         <thead>
                             <tr><th>Предмет</th></tr>
@@ -41,7 +40,11 @@
                         <tbody>
                             <tr v-for="subject in this.subjects" :key="subject.subject_id">
                                 <th
-                                    @click="this.selected_subject = subject.subject_id; this.loadTeachersData(subject.subject_id)"
+                                    @click="
+                                        this.selected_subject = subject.subject_id; 
+                                        this.loadTeachersData(subject.subject_id);
+                                        this.t_loading = true;
+                                    "
                                     v-bind:class="{ 'table-active': this.selected_subject == subject.subject_id, 'text-success bold': this.findWl(this.selected_group, subject.subject_id) != -1 }"
                                 >
                                 {{ subject.subject_name }}
@@ -50,23 +53,34 @@
                         </tbody>
                     </table>
                     
-
                     <!-- Выбор препода -->
-                    <table class="table table-sm" v-if="this.selected_subject >= 0" id="table_teacher">
-                        <thead>
-                            <tr><th>Преподаватель</th></tr>
-                        </thead>
+                    <table v-if="t_loading" class="table">
                         <tbody>
-                            <tr v-for="teacher in this.teachers" :key="teacher.teacher_id">
-                                <th
-                                    @click="this.selected_teacher = teacher.teacher_id"
-                                    v-bind:class="{ 'table-active': this.selected_teacher == teacher.teacher_id, 'table-success': this.findWl(this.selected_group, this.selected_subject) == teacher.teacher_id}"
-                                >
-                                {{ teacher.last_name }}
-                                </th>
+                            <tr v-for="n in subjects" :key="n">
+                                <td><div class="skeleton skeleton-animate"></div></td>
+                                <td><div class="skeleton skeleton-animate"></div></td>
+                                <td><div class="skeleton skeleton-animate"></div></td>
                             </tr>
                         </tbody>
                     </table>
+                    
+                        <table class="table table-sm" v-else-if="this.selected_subject >= 0" id="table_teacher">
+                            <thead>
+                                <tr><th>Преподаватель</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(teacher, index) in this.teachers" :key="teacher.teacher_id">
+                                    <th
+                                        @click="this.selected_teacher = teacher.teacher_id"
+                                        v-bind:class="{ 'table-active': this.selected_teacher == teacher.teacher_id, 'table-success': this.findWl(this.selected_group, this.selected_subject) == teacher.teacher_id}"
+                                    >
+                                    {{ teacher.last_name }}
+                                    {{ this.teacher_load[index].length }}
+                                    <!-- при length жалуется на undefined -->
+                                    </th>
+                                </tr>
+                            </tbody>
+                        </table>
                 </div>
                 <div>
                     <button class="btn btn-primary btn-block" @click="saveRel">Сохранить связь</button>
@@ -92,22 +106,13 @@ import UserService from "../services/user.service";
 export default {
     data() {
         return {
-            groups: [
-
-            ], // массив всех групп
-            subjects: [ 
-
-            ], // массив предметов
-            teachers: [
-
-            ], // массив преподов
-            employment: [
-                
-            ], // связь многие-ко-многим преподы/предметы
-            wl: [
-
-            ], // конечная связь
+            groups: [], // массив всех групп
+            subjects: [], // массив предметов
+            teachers: [], // массив преподов
+            employment: [], // связь многие-ко-многим преподы/предметы
+            wl: [], // конечная связь
             rels: [], // связи группа+предмет / препод
+            teacher_load: [], // нагрузка на препода
             selected_group: -1,
             selected_subject: -1,
             selected_teacher: -1,
@@ -116,6 +121,7 @@ export default {
             saved_subject: 0,
             saved_teacher: 0,
             saved: false,
+            t_loading: true,
             loading: true,
             searchQuery: ''
         };
@@ -135,6 +141,7 @@ export default {
             try {
                 const response = await UserService.getTeachersForSubject(id); // Replace with your API endpoint
                 this.teachers = Array.isArray(response.data) ? response.data : [response.data];
+                this.loadTeacherLoad(this.teachers);
                 this.loading=false;
             } catch (error) {
                 console.error('Error loading teachers data:', error);
@@ -167,6 +174,26 @@ export default {
                 console.error('Error loading employments data:', error);
             }
         },
+        async loadTeacherLoad(teachers){
+            try {
+                var arr = [];
+                for (let index = 0; index < teachers.length; index++) {
+                    const element = teachers[index];
+                    const response = await UserService.getSubjectsForTeacher(element.teacher_id); // Replace with your API endpoint
+                    var item = Array.isArray(response.data) ? response.data : [response.data];
+                    
+                    item == "Пустой вывод." ? arr.push([]) : arr.push(item);
+                    // console.log(item);
+                }
+                console.log(arr);
+                this.teacher_load = arr;
+                this.loading=false;
+                this.t_loading = false;
+            } catch (error) {
+                console.error('Error loading employments data:', error);
+            }
+        },
+        
 
 
         saveRel(){
@@ -226,7 +253,7 @@ export default {
         this.loadSubjectsData();
         this.loadEmploymentData();
         this.loadWorkloads();
-    },
+    }
 };
 </script>
 

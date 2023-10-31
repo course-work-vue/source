@@ -286,6 +286,32 @@ class UserService {
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
+  getSubjectsForTeacher(teacher_id){
+    const query = {
+      query: `SELECT 
+        g.group_number, 
+        s.subject_name, 
+        t.last_name 
+      FROM 
+        workload as w 
+      JOIN 
+        groups as g 
+      ON 
+        w.group_id = g.group_id 
+      JOIN 
+        subjects as s 
+      ON 
+        w.subject_id = s.subject_id 
+      JOIN 
+        teachers as t 
+      ON 
+        t.teacher_id = w.teacher_id 
+      WHERE 
+        w.teacher_id = '${teacher_id}';`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
   getTeacherById(id){
     const query = {
       query: `SELECT * from teachers where 
@@ -805,15 +831,6 @@ addWorkload(wl_id, group_id, subject_id, teacher_id){
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
-  getPayersAsIdText(){
-    const query = {
-      query: `SELECT id AS id, CONCAT(lastname, ' ', name, ' ', surname) AS text
-      FROM "payers";`,
-    };
-    
-    return axios.post(API_URL, query, { headers: authHeader() });
-  }
-
   getPayerById(id){
     const query = {
       query: `SELECT *, TO_CHAR(issue_date , 'YYYY-MM-DD') AS issue_date from payers where 
@@ -872,38 +889,6 @@ addWorkload(wl_id, group_id, subject_id, teacher_id){
     return axios.put(API_URL +"payers", query, { headers: authHeader() });
   }
 
-  getCwById(id){
-    const query = {
-      query: `SELECT *, TO_CHAR(expiration_date , 'YYYY-MM-DD') AS expiration_date from contracts where 
-      id='${id}';`,
-    };
-    return axios.post(API_URL, query, { headers: authHeader() });
-  }
-  addCw(listener_id, payer_id,required_amount, expiration_date){
-    const query = {
-      query: `INSERT INTO contracts (listener_id, payer_id, required_amount, expiration_date)
-      VALUES()
-        '${listener_id}',
-        '${payer_id}',
-        '${required_amount}',
-        '${expiration_date}'
-    );`,
-    };
-    return axios.post(API_URL, query, { headers: authHeader() });
-  }
-
-  updateCwById(id, listener_id, payer_id,required_amount, expiration_date){
-    const query = {
-      query: ` "listener_id" ='${listener_id}',
-      "payer_id" ='${payer_id}',
-      "required_amount"= '${required_amount}',
-      "expiration_date"= '${expiration_date}'
-  WHERE
-      "id" = '${id}';`,
-    };
-    return axios.put(API_URL +"contracts", query, { headers: authHeader() });
-  }
-
   getAllCourses(){
     const query = {
       query: `SELECT
@@ -951,16 +936,6 @@ addWorkload(wl_id, group_id, subject_id, teacher_id){
       "course_id" = '${course_id}';`,
     };
     return axios.put(API_URL +"courses", query, { headers: authHeader() });
-  }
-
-  getStudentsAsIdText(){
-    const query = {
-      query: `SELECT student_id AS id, CONCAT(last_name, ' ', first_name, ' ', patronymic) AS text
-      FROM "students" ORDER BY 
-      text ASC;`,
-    };
-    
-    return axios.post(API_URL, query, { headers: authHeader() });
   }
 
 
