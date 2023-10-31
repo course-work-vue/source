@@ -42,13 +42,14 @@ class UserService {
       CONCAT_WS('/', g.group_number, NULLIF(s.subgroup, '')) AS group_name,
       TO_CHAR(s.enrolled_date, 'DD/MM/YYYY') AS formatted_enrolled_date,
       s.enrollment_order,
-      TO_CHAR(s.date_of_birth, 'DD/MM/YYYY') AS formatted_date_of_birth
+      TO_CHAR(s.date_of_birth, 'DD/MM/YYYY') AS formatted_date_of_birth,
+      s.course
   FROM 
       students s
   JOIN 
       groups g ON s.group_id = g.group_id
   ORDER BY 
-      s.student_id ASC;`,
+      full_name ASC;`,
     };
 
     return axios.post(API_URL, query, { headers: authHeader() });
@@ -150,7 +151,17 @@ class UserService {
   getGroupsAsIdText(){
     const query = {
       query: `SELECT group_id AS id, group_number AS text
-      FROM "groups";`,
+      FROM "groups" ORDER BY 
+      text ASC;`,
+    };
+    
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  getProgramsAsIdText(){
+    const query = {
+      query: `SELECT id, program_name AS text
+      FROM "programs" ORDER BY 
+      text ASC;`,
     };
     
     return axios.post(API_URL, query, { headers: authHeader() });
@@ -170,7 +181,8 @@ class UserService {
 // ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ DIRECTIONS 
   getAllDirections(){
     const query = {
-      query: `SELECT * from directions;`,
+      query: `SELECT * from directions ORDER BY 
+      dir_name ASC;`,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
@@ -408,7 +420,9 @@ addWorkload(wl_id, group_id, subject_id, teacher_id){
   FROM
       "profiles" p
   JOIN
-      "directions" d ON p.prof_dir_id = d.dir_id;
+      "directions" d ON p.prof_dir_id = d.dir_id
+      ORDER BY 
+      p.prof_name ASC;
   `,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
@@ -447,7 +461,8 @@ addWorkload(wl_id, group_id, subject_id, teacher_id){
   getDirectionsAsIdText(){
     const query = {
       query: `SELECT dir_id AS id, dir_code AS text
-      FROM "directions";`,
+      FROM "directions" ORDER BY 
+      text ASC;`,
     };
     
     return axios.post(API_URL, query, { headers: authHeader() });
@@ -456,7 +471,8 @@ addWorkload(wl_id, group_id, subject_id, teacher_id){
   getProfilesAsIdText(){
     const query = {
       query: `SELECT prof_id AS id, prof_name AS text
-      FROM "profiles";`,
+      FROM "profiles" ORDER BY 
+      text ASC;`,
     };
     
     return axios.post(API_URL, query, { headers: authHeader() });
@@ -482,7 +498,8 @@ addWorkload(wl_id, group_id, subject_id, teacher_id){
   JOIN
       "directions" AS d
   ON
-      g.group_dir_id = d.dir_id;
+      g.group_dir_id = d.dir_id  ORDER BY 
+      g.group_number ASC;
   `,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
@@ -539,7 +556,8 @@ addWorkload(wl_id, group_id, subject_id, teacher_id){
       JOIN
       "payers" AS p
   ON
-      l.payer_id = p.id;
+      l.payer_id = p.id
+      ;
   `,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
@@ -554,6 +572,9 @@ addWorkload(wl_id, group_id, subject_id, teacher_id){
   }
 
   addListener(name, surname,lastname, snils, passport, issued_by, issue_date, department_code, registration_address, phone_number, email,days_of_week,people_count){
+
+    var array3 = new Array;
+    array3.push(days_of_week);
     const query = {
       query: `INSERT INTO "listeners" (
         "name",
@@ -581,7 +602,7 @@ addWorkload(wl_id, group_id, subject_id, teacher_id){
         '${registration_address}',
         '${phone_number}',
         '${email}',
-        '${days_of_week}',
+        '${array3}',
         '${people_count}'
     );`,
     };
@@ -653,40 +674,51 @@ addWorkload(wl_id, group_id, subject_id, teacher_id){
 
   getContractById(id){
     const query = {
-      query: `SELECT *, TO_CHAR(expiration_date , 'YYYY-MM-DD') AS expiration_date from contracts where 
+      query: `SELECT * from contracts where 
       id='${id}';`,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
-  addContract(listener_id, payer_id,required_amount, expiration_date){
+  addContract(listener_id, payer_id,contr_number, program_id){
     const query = {
-      query: `INSERT INTO contracts (listener_id, payer_id, required_amount, expiration_date)
-      VALUES()
+      query: `INSERT INTO contracts (listener_id, payer_id, contr_number, program_id)
+      VALUES(
         '${listener_id}',
         '${payer_id}',
-        '${required_amount}',
-        '${expiration_date}'
+        '${contr_number}',
+        '${program_id}'
     );`,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
-  updateContractById(id, listener_id, payer_id,required_amount, expiration_date){
+  updateContractById(id, listener_id, payer_id,contr_number, program_id){
     const query = {
       query: ` "listener_id" ='${listener_id}',
       "payer_id" ='${payer_id}',
-      "required_amount"= '${required_amount}',
-      "expiration_date"= '${expiration_date}'
+      "contr_number"= '${contr_number}',
+      "program_id"= '${program_id}'
   WHERE
       "id" = '${id}';`,
     };
     return axios.put(API_URL +"contracts", query, { headers: authHeader() });
   }
 
+  getPayersAsIdText(){
+    const query = {
+      query: `SELECT id AS id, CONCAT(lastname, ' ', name, ' ', surname) AS text
+      FROM "payers" ORDER BY 
+      text ASC;`,
+    };
+    
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  
   getListenersAsIdText(){
     const query = {
       query: `SELECT id AS id, CONCAT(lastname, ' ', name, ' ', surname) AS text
-      FROM "listeners";`,
+      FROM "listeners" ORDER BY 
+      text ASC;`,
     };
     
     return axios.post(API_URL, query, { headers: authHeader() });
@@ -840,6 +872,98 @@ addWorkload(wl_id, group_id, subject_id, teacher_id){
     return axios.put(API_URL +"payers", query, { headers: authHeader() });
   }
 
+  getCwById(id){
+    const query = {
+      query: `SELECT *, TO_CHAR(expiration_date , 'YYYY-MM-DD') AS expiration_date from contracts where 
+      id='${id}';`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  addCw(listener_id, payer_id,required_amount, expiration_date){
+    const query = {
+      query: `INSERT INTO contracts (listener_id, payer_id, required_amount, expiration_date)
+      VALUES()
+        '${listener_id}',
+        '${payer_id}',
+        '${required_amount}',
+        '${expiration_date}'
+    );`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  updateCwById(id, listener_id, payer_id,required_amount, expiration_date){
+    const query = {
+      query: ` "listener_id" ='${listener_id}',
+      "payer_id" ='${payer_id}',
+      "required_amount"= '${required_amount}',
+      "expiration_date"= '${expiration_date}'
+  WHERE
+      "id" = '${id}';`,
+    };
+    return axios.put(API_URL +"contracts", query, { headers: authHeader() });
+  }
+
+  getAllCourses(){
+    const query = {
+      query: `SELECT
+      c.course_id,
+      c.course,
+      c.group_id,
+      g.group_number
+  FROM
+      "courses" c
+  JOIN
+      "groups" g ON c.group_id = g.group_id
+      ORDER BY 
+      c.course ASC;
+  `,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  
+
+  getCourseById(id){
+    const query = {
+      query: `SELECT * from courses where 
+      course_id='${id}';`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  addCourse(course, group_id){
+    const query = {
+      query: `INSERT INTO "courses" (
+        "course",
+        "group_id"
+    ) VALUES (
+        '${course}',
+        '${group_id}'
+    );`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  updateCourseById(course_id,course,group_id){
+    const query = {
+      query: `"course" = '${course}',
+      "group_id" = '${group_id}'
+  WHERE
+      "course_id" = '${course_id}';`,
+    };
+    return axios.put(API_URL +"courses", query, { headers: authHeader() });
+  }
+
+  getStudentsAsIdText(){
+    const query = {
+      query: `SELECT student_id AS id, CONCAT(last_name, ' ', first_name, ' ', patronymic) AS text
+      FROM "students" ORDER BY 
+      text ASC;`,
+    };
+    
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+
 
 // ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ PROGRAMS
   getAllPrograms(){
@@ -887,7 +1011,7 @@ addWorkload(wl_id, group_id, subject_id, teacher_id){
 
   updateProgramById(id, required_amount, program_name,hours, start_date, end_date){
     const query = {
-      query: ` "required_amount" ='${required_amount}',
+      query: `"required_amount" ='${required_amount}',
       "program_name" ='${program_name}',
       "hours"=  '${hours}',
       "start_date"= '${start_date}',
@@ -945,6 +1069,46 @@ addWorkload(wl_id, group_id, subject_id, teacher_id){
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
+  updatePaymentById(id, listener_id, contract_id,payer_id, expiration_date, deposited_amount){
+    const query = {
+      query: `"listener_id" ='${listener_id}',
+      "contract_id" ='${contract_id}',
+      "payer_id"=  '${payer_id}',
+      "expiration_date"= '${expiration_date}',
+      "deposited_amount"= '${deposited_amount}'
+  WHERE
+      "id" = '${id}';`,
+    };
+    return axios.put(API_URL +"pay_graph", query, { headers: authHeader() });
+  }
+  addPayment(listener_id, contract_id,payer_id, expiration_date, deposited_amount){
+    const query = {
+      query: `INSERT INTO "payments" (
+        "listener_id",
+        "contract_id",
+        "payer_id",
+        "expiration_date",
+        "deposited_amount"
+    ) VALUES (
+        '${listener_id}',
+        '${contract_id}',
+        '${payer_id}',
+        '${expiration_date}',
+        '${deposited_amount}'
+    );`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  getPaymentsAsIdText(){
+    const query = {
+      query: `SELECT id, contr_number AS text
+      FROM "contracts" ORDER BY 
+      text ASC;`,
+    };
+    
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
 }
 
 export default new UserService();

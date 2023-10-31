@@ -44,7 +44,13 @@ const ProgramList = () => import("./components/ProgramList.vue")
 const AddProgram = () => import("./components/AddProgram.vue")
 const ProgramDetail = () => import("./components/ProgramDetail.vue")
 
+const AddPayment = () => import("./components/AddPayment.vue")
 const PaymentList = () => import("./components/PaymentList.vue")
+const PaymentDetail = () => import("./components/PaymentDetail.vue")
+
+const AddCourse = () => import("./components/AddCourse.vue")
+const CourseList = () => import("./components/CourseList.vue")
+const CourseDetail = () => import("./components/CourseDetail.vue")
 
 const routes = [
   { 
@@ -85,6 +91,10 @@ const routes = [
   { path: '/groups/:groupId', component: GroupDetail },
   { path: '/AddGroup', component: AddGroup },
 
+  { path: '/courses', component: CourseList },
+  { path: '/courses/:courseID', component: CourseDetail },
+  { path: '/AddCourse', component: AddCourse },
+
   { path: '/listeners', component: ListenerList },
   { path: '/listeners/:listenerId', component: ListenerDetail },
   { path: '/AddListener', component: AddListener },
@@ -106,6 +116,11 @@ const routes = [
   { path: '/AddProgram', component: AddProgram },
 
   { path: '/payments', component: PaymentList },
+  { path: '/payments/:paymentID', component: PaymentDetail },
+  { path: '/AddPayment', component: AddPayment },
+
+  
+
   {
     path: "/user",
     name: "user",

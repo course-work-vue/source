@@ -12,7 +12,7 @@
     },
     methods: {
       onClick() {
-        this.$router.push(`/students/${this.params.data.student_id}`);
+        this.$router.push(`/programs/${this.params.data.id}`);
       },
     },
   };
@@ -20,6 +20,7 @@
   
 
 <style lang="scss" scoped>
+
 
 .krasivsk{
   height: 100%;

@@ -5,7 +5,7 @@
     <div class="col col-12 ">
     <div class="col col-12">
     
-      <button @click="navigateToAddStudent" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить студента</button>
+      <button @click="navigateToAddCourse" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить курс</button>
       <div class="col col-6 float-end d-inline-flex align-items-center mb-2 ">
       <button @click="clearFilters" :disabled="!filters" class="btn btn-sm btn-primary text-nowrap mx-2" type="button"><i class="material-icons-outlined">close</i>Очистить фильтры</button>
       <input class="form-control" type="text" v-model="quickFilterValue" id="filter-text-box" v-on:input="onFilterTextBoxChanged()" placeholder="Поиск..."> 
@@ -95,15 +95,9 @@ export default {
      
     },
         
-           { field: "full_name", headerName: 'ФИО', minWidth:250 },
-           { field: "course", headerName: 'Курс', maxWidth:129 },
-           { field: "group_name", headerName: 'Группа', maxWidth:129 },
-           { field: "enrollment_order", headerName: 'Приказ о зачислении', minWidth: 200, hide: true },
-           {
-            field: 'formatted_enrolled_date', 
-            filter: 'agDateColumnFilter',
-            filterParams: filterParams, headerName: 'Дата зачисления', minWidth: 170, hide: true
-           },
+           { field: "course", headerName: 'Курс', minWidth:250 },
+           { field: "group_number", headerName: 'Группа', maxWidth:129 },
+           
            
            { field: "formatted_date_of_birth", filter: 'agDateColumnFilter', filterParams: filterParams, headerName: 'Дата рождения', minWidth: 170, hide: true }
       ],
@@ -162,16 +156,16 @@ export default {
 
     async loadStudentsData() {
         try {
-          const response = await UserService.getAllFormattedStudents(); // Replace with your API endpoint
+          const response = await UserService.getAllCourses(); // Replace with your API endpoint
           this.rowData.value = Array.isArray(response.data) ? response.data : [response.data];
           this.loading=false;
         } catch (error) {
           console.error('Error loading students data:', error);
         }
       },
-      navigateToAddStudent() {
+      navigateToAddCourse() {
     
-    this.$router.push(`/addStudent`); // Navigate to the AddStudent route
+    this.$router.push(`/addCourse`); // Navigate to the AddStudent route
 },
 
 onFirstDataRendered(params) {

@@ -52,6 +52,10 @@
               link: "/groups",
             },
             {
+              label: "Курсы",
+              link: "/courses",
+            },
+            {
               label: "Курсовые",
               link: "/courseworks",
             }

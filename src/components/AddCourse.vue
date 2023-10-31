@@ -9,49 +9,94 @@
         <label class="form-control skeleton-text skeleton-animate"></label>
         <input type="text" class="form-control skeleton skeleton-animate">
       </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
       
 
   </div>
     <div v-else class="col-md-12">
-        <Form @submit="addProfile" :validation-schema="schema" v-slot="{ errors }">
+        <Form @submit="addCourse" :validation-schema="schema" v-slot="{ errors }">
           <div>
-   
             
-
-            <div class="form-group d-inline-flex align-items-center mb-2 col-12">
-              <label for="prof_dir_id">Направление: </label>
+            <div class="form-group d-inline-flex align-items-center mb-2">
+              <label for="course">Курс:</label>
+              <Field name="course" type="number" class="form-control" value="" :class="{'is-invalid': errors.course}"/>
+              <ErrorMessage name="course" class="error-feedback" />
+            </div>
+            <div class="d-flex flex-wrap">
+            <div class="form-group d-inline-flex align-items-center mb-2">
+              <label for="group_id">Группа:</label>
               
-              <Select2 class="col-5" :class="{'form-control is-invalid': errors.prof_dir_id}" v-model="myValue" 
-              :options="directions" 
-              :settings=" { theme: 'bootstrap-5'}"
+              <Select2 :class="{'form-control is-invalid': errors.group_id}" v-model="myValue" 
+              :options="groups" 
+              :settings=" { theme: 'bootstrap-5', width: '100%'}"
               
                />
 
-               <Field  name="prof_dir_id" as="select" v-model="myValue" hidden>
-                <option v-for="direction in directions" :key="direction.id" :value="direction.id">{{ direction.text }}</option>
+               <Field  name="group_id" as="select" v-model="myValue" hidden>
+                <option v-for="group in groups" :key="group.id" :value="group.id">{{ group.text }}</option>
               </Field>
-              <ErrorMessage name="prof_dir_id" class="error-feedback" />
+              <ErrorMessage name="group_id" class="error-feedback" />
             </div>
 
-            <div class="form-group d-inline-flex align-items-center mb-2 col-12">
-              <label for="prof_name">Название профиля: </label>
-              <Field name="prof_name" type="text" class="form-control" :class="{'is-invalid': errors.prof_name}"/>
-              <ErrorMessage name="prof_name" class="error-feedback" />
-              
-            </div>
-
-  
+          </div>
             <div class="form-group mt-3">
              
-             <router-link to="/profiles" class="btn btn-secondary ml-2 float-start">Отмена</router-link>
-             <button class="btn btn-primary btn-block float-end" :disabled="loading">
-               <span
-                 v-show="loading"
-                 class="spinner-border spinner-border-sm"
-               ></span>
-               Добавить профиль
-             </button>
-           </div>
+              <router-link to="/courses" class="btn btn-secondary ml-2 float-start">Отмена</router-link>
+              <button class="btn btn-primary btn-block float-end" :disabled="loading">
+                <span
+                  v-show="loading"
+                  class="spinner-border spinner-border-sm"
+                ></span>
+                Добавить курс
+              </button>
+            </div>
           </div>
         </Form>
   
@@ -80,7 +125,7 @@
       return { toast }
     },
 
-    name: "AddProfile",
+    name: "AddStudent",
     components: {
       Form,
       Field,
@@ -90,10 +135,10 @@
     },
     data() {
       const schema = yup.object().shape({
-        
-       
-       
-      });
+
+
+
+});
   
       return {
         successful: false,
@@ -101,7 +146,7 @@
         dataLoading:true,
         message: "",
         schema,
-        directions: null,
+        groups: null,
 
         myValue: '',
       };
@@ -114,32 +159,32 @@
     },
     methods: {
 
-      async addProfile(profile) {
+      async addCourse(course) {
         try {
           // запрос в psql
           this.loading=true;
 
-          const response = await UserService.addProfile(profile.prof_dir_id, profile.prof_name);
+          const response = await UserService.addCourse(course.course, course.group_id);
           response.data;
           this.loading=false;
           this.successful=true;
 
-          this.toast.success("Успешно добавили профиль!");
+          this.toast.success("Успешно добавили курс!");
         } catch (error) {
           this.message="Ошибка";
-          this.toast.error("Ошибка добавления профиль");
-          console.error('Error:', error);
+          this.toast.error("Ошибка добавления курса");
+          console.error('Error updating student details:', error);
         }
       },
 
 
-      async loadDirectionsData() {
+      async loadGroupsData() {
         try {
-          const response = await UserService.getDirectionsAsIdText(); 
-          this.directions = Array.isArray(response.data) ? response.data : [response.data];
+          const response = await UserService.getGroupsAsIdText(); 
+          this.groups = Array.isArray(response.data) ? response.data : [response.data];
           this.dataLoading=false;
         } catch (error) {
-          console.error('Error:', error);
+          console.error('Error loading students data:', error);
         }
       },
 
@@ -148,12 +193,18 @@
     },
 
     created() {
-    this.loadDirectionsData();
+    this.loadGroupsData();
     },
   };
   </script>
 
 <style lang="scss" scoped>
+
+.error-feedback{
+  white-space: nowrap;
+  margin-left:5px;
+}
+
 label{
   margin-right: 15px;
   white-space: nowrap;

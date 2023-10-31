@@ -4,13 +4,13 @@
       <Form @submit="updateDirection" :validation-schema="schema" v-slot="{ errors }">
         
         <div >
-          <div class="form-group">
-            <label for="dir_name">Фамилия</label>
+          <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+            <label for="dir_name">Название направления</label>
             <Field name="dir_name" type="text" value="" class="form-control" :class="{'is-invalid': errors.dir_name}" v-model="editedDirection.dir_name"/>
             <ErrorMessage name="dir_name" class="error-feedback" />
           </div>
-          <div class="form-group">
-            <label for="dir_code">Имя</label>
+          <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+            <label for="dir_code">Код направления</label>
             <Field name="dir_code" type="text" class="form-control" value="" :class="{'is-invalid': errors.dir_code}" v-model="editedDirection.dir_code"/>
             <ErrorMessage name="dir_code" class="error-feedback" />
           </div>
@@ -19,14 +19,14 @@
           
 
           <div class="form-group mt-3">
-            <button class="btn btn-primary btn-block float-start" :disabled="loading">
+            <button class="btn btn-primary btn-block float-end" :disabled="loading">
               <span
                 v-show="loading"
                 class="spinner-border spinner-border-sm"
               ></span>
               Обновить направление
             </button>
-            <router-link to="/directions" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
+            <router-link to="/directions" class="btn btn-secondary ml-2 float-start">Отмена</router-link>
           </div>
         </div>
       </Form>
@@ -132,7 +132,13 @@ import { Form, Field, ErrorMessage } from "vee-validate";
   </script>
 
 <style lang="scss" scoped>
-
+label{
+  margin-right: 15px;
+  white-space: nowrap;
+}
+.form-group{
+  margin-right: 20px;
+}
 .skeleton-text {
   width: 15%;
   height: 1.0em;
