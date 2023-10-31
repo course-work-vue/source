@@ -20,6 +20,8 @@ class UserService {
     return axios.get(API_URL + 'admin', { headers: authHeader() });
   }
 */
+
+// ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ STUDENTS
   getAllStudents(){
     
     return axios.get(API_URL+"students", { headers: authHeader() });
@@ -91,6 +93,15 @@ class UserService {
     
     return axios.put(API_URL+"students", query, { headers: authHeader() });
   }
+  
+  getStudentsAsIdText(){
+    const query = {
+      query: `SELECT student_id AS id, CONCAT(last_name, ' ', first_name, ' ', patronymic) AS text
+      FROM "students";`,
+    };
+    
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
 
   addStudent(first_name,last_name,patronymic,gender,date_of_birth,passport_series_and_number,INN,SNILS,place_of_birth,email,student_login,enrollment_order,enrolled_date, course, group_id,subgroup){
     const query = {
@@ -144,7 +155,6 @@ class UserService {
     
     return axios.post(API_URL, query, { headers: authHeader() });
   }
-  
 
   getPermissionByTable(tablename){
     const query = {
@@ -156,6 +166,8 @@ class UserService {
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
+
+// ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ DIRECTIONS 
   getAllDirections(){
     const query = {
       query: `SELECT * from directions;`,
@@ -170,6 +182,7 @@ class UserService {
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
+
   addDirection(dir_name,dir_code){
     const query = {
       query: `INSERT INTO "directions" (
@@ -183,8 +196,6 @@ class UserService {
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
-
-
   updateDirectionById(dir_id,dir_name,dir_code){
     const query = {
       query: `"dir_name" = '${dir_name}',
@@ -195,18 +206,70 @@ class UserService {
     return axios.put(API_URL +"directions", query, { headers: authHeader() });
   }
 
-  
 
+  
+// ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ SUBJECTS
+  getAllSubjects(){
+    const query = {
+      query: `SELECT * from subjects;`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  getSubjectById(id){
+    const query = {
+      query: `SELECT * from subjects where 
+      subject_id='${id}';`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  addSubject(subject_id, subject_name){
+    const query = {
+      query: `INSERT INTO "subjects" (
+        "subject_id",
+        "subject_name"
+    ) VALUES (
+        '${subject_id}',
+        '${subject_name}'
+    );`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  updateSubjectById(subject_id, subject_name){
+    const query = {
+      query: `"subject_name" = '${subject_name}',
+  WHERE
+      "subject_id" = '${subject_id}';`,
+    };
+    return axios.put(API_URL +"subjects", query, { headers: authHeader() });
+  }
+
+  
+// ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ TEACHERS
   getAllTeachers(){
     const query = {
-      query: `SELECT
-        t.teacher_id,
-        t.first_name
-        t.last_name
-        t.patronymic
-      FROM 
-          "teachers" t
-      `,
+      query: `SELECT * from teachers;`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  getTeachersForSubject(subject_id){
+    const query = {
+      query: `SELECT 
+      t.teacher_id, 
+      t.first_name, 
+      t.last_name, 
+      t.patronymic 
+    FROM 
+      "teachers" t 
+    JOIN 
+      "employment" e 
+    ON 
+      t.teacher_id = e.teacher_id 
+    WHERE 
+      e.subject_id = '${subject_id}';`,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
@@ -218,6 +281,7 @@ class UserService {
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
+
   addTeacher(teacher_id, first_name, last_name, patronymic){
     const query = {
       query: `INSERT INTO "teachers" (
@@ -246,7 +310,93 @@ class UserService {
     return axios.put(API_URL +"teachers", query, { headers: authHeader() });
   }
 
+  
+// ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ EMPLOYMENT
+getAllEmployments(){
+  const query = {
+    query: `SELECT
+    e.emp_id,
+    e.teacher_id,
+    t.first_name,
+    t.last_name,
+    t.patronymic,
+    e.subject_id,
+    s.subject_name   
+  FROM 
+    "employment" e
+  JOIN
+    "teachers" t
+  ON
+    t.teacher_id = e.teacher_id
+  JOIN
+    "subjects" s
+  ON
+    s.subject_id = e.subject_id  
+    ;`,
+  };
+  return axios.post(API_URL, query, { headers: authHeader() });
+}
 
+getEmploymentById(id){
+  const query = {
+    query: `SELECT * from employment where 
+    emp_id='${id}';`,
+  };
+  return axios.post(API_URL, query, { headers: authHeader() });
+}
+
+addEmployment(emp_id, teacher_id, subject_id){
+  const query = {
+    query: `INSERT INTO "employment" (
+      "emp_id",
+      "teacher_id"
+      "subject_id"
+  ) VALUES (
+      '${emp_id}',
+      '${teacher_id}',
+      '${subject_id}'
+  );`,
+  };
+  return axios.post(API_URL, query, { headers: authHeader() });
+}
+
+updateEmploymentById(emp_id, teacher_id, subject_id){
+  const query = {
+    query: `"teacher_id" = '${teacher_id}',
+    "subject_id" = '${subject_id}'
+WHERE
+    "emp_id" = '${emp_id}';`,
+  };
+  return axios.put(API_URL +"teachers", query, { headers: authHeader() });
+}
+
+
+getAllWorkloads(){
+  const query = {
+    query: `SELECT * FROM workload`,
+  };
+  return axios.post(API_URL, query, { headers: authHeader() });
+}
+
+addWorkload(wl_id, group_id, subject_id, teacher_id){
+  const query = {
+    query: `INSERT INTO "workload" (
+      "wl_id",
+      "group_id",
+      "subject_id",
+      "teacher_id"
+  ) VALUES (
+      '${wl_id}',
+      '${group_id}',
+      '${subject_id}',
+      '${teacher_id}'
+  );`,
+  };
+  return axios.post(API_URL, query, { headers: authHeader() });
+}
+
+
+// ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ PROFILES
   getAllProfiles(){
     const query = {
       query: `SELECT
@@ -263,7 +413,6 @@ class UserService {
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
-  
 
   getProfileById(id){
     const query = {
@@ -272,6 +421,7 @@ class UserService {
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
+
   addProfile(prof_dir_id, prof_name){
     const query = {
       query: `INSERT INTO "profiles" (
@@ -313,6 +463,8 @@ class UserService {
   }
 
 
+// ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ GROUPS
+
   getAllGroups(){
     const query = {
       query: `SELECT
@@ -335,7 +487,6 @@ class UserService {
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
-  
 
   getGroupById(id){
     const query = {
@@ -344,6 +495,7 @@ class UserService {
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
+
   addGroup(group_dir_id, group_prof_id,group_number){
     const query = {
       query: `INSERT INTO "groups" (
@@ -370,6 +522,8 @@ class UserService {
     return axios.put(API_URL +"groups", query, { headers: authHeader() });
   }
  
+  
+// ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ LISTENERS
   getAllListeners(){
     const query = {
       query: `SELECT
@@ -391,7 +545,6 @@ class UserService {
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
-
   getListenerById(id){
     const query = {
       query: `SELECT *, TO_CHAR(issue_date , 'YYYY-MM-DD') AS issue_date from listeners where 
@@ -399,6 +552,7 @@ class UserService {
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
+
   addListener(name, surname,lastname, snils, passport, issued_by, issue_date, department_code, registration_address, phone_number, email,days_of_week,people_count){
     const query = {
       query: `INSERT INTO "listeners" (
@@ -455,11 +609,8 @@ class UserService {
     return axios.put(API_URL +"listeners", query, { headers: authHeader() });
   }
 
-
-
-
-
   
+// ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ CONTRACTS
   getAllContracts(){
     const query = {
       query: `SELECT 
@@ -500,7 +651,6 @@ class UserService {
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
-
   getContractById(id){
     const query = {
       query: `SELECT *, TO_CHAR(expiration_date , 'YYYY-MM-DD') AS expiration_date from contracts where 
@@ -533,14 +683,6 @@ class UserService {
     return axios.put(API_URL +"contracts", query, { headers: authHeader() });
   }
 
-  getPayersAsIdText(){
-    const query = {
-      query: `SELECT id AS id, CONCAT(lastname, ' ', name, ' ', surname) AS text
-      FROM "payers";`,
-    };
-    
-    return axios.post(API_URL, query, { headers: authHeader() });
-  }
   getListenersAsIdText(){
     const query = {
       query: `SELECT id AS id, CONCAT(lastname, ' ', name, ' ', surname) AS text
@@ -550,6 +692,8 @@ class UserService {
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
+  
+// ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ COURSE_WORK
   getAllCws(){
     const query = {
       query: `SELECT
@@ -581,6 +725,40 @@ class UserService {
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
+  
+  getCwById(id){
+    const query = {
+      query: `SELECT *, TO_CHAR(expiration_date , 'YYYY-MM-DD') AS expiration_date from contracts where 
+      id='${id}';`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  addCw(listener_id, payer_id,required_amount, expiration_date){
+    const query = {
+      query: `INSERT INTO contracts (listener_id, payer_id, required_amount, expiration_date)
+      VALUES()
+        '${listener_id}',
+        '${payer_id}',
+        '${required_amount}',
+        '${expiration_date}'
+    );`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  updateCwById(id, listener_id, payer_id,required_amount, expiration_date){
+    const query = {
+      query: ` "listener_id" ='${listener_id}',
+      "payer_id" ='${payer_id}',
+      "required_amount"= '${required_amount}',
+      "expiration_date"= '${expiration_date}'
+  WHERE
+      "id" = '${id}';`,
+    };
+    return axios.put(API_URL +"contracts", query, { headers: authHeader() });
+  }
+  
+// ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ PAYERS
   getAllPayers(){
     const query = {
       query: `SELECT
@@ -594,6 +772,16 @@ class UserService {
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
+
+  getPayersAsIdText(){
+    const query = {
+      query: `SELECT id AS id, CONCAT(lastname, ' ', name, ' ', surname) AS text
+      FROM "payers";`,
+    };
+    
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
   getPayerById(id){
     const query = {
       query: `SELECT *, TO_CHAR(issue_date , 'YYYY-MM-DD') AS issue_date from payers where 
@@ -601,6 +789,7 @@ class UserService {
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
+
   addPayer(name, surname,lastname, snils, passport, issued_by, issue_date, department_code, registration_address, phone_number, email){
     const query = {
       query: `INSERT INTO "payers" (
@@ -651,48 +840,8 @@ class UserService {
     return axios.put(API_URL +"payers", query, { headers: authHeader() });
   }
 
-  getCwById(id){
-    const query = {
-      query: `SELECT *, TO_CHAR(expiration_date , 'YYYY-MM-DD') AS expiration_date from contracts where 
-      id='${id}';`,
-    };
-    return axios.post(API_URL, query, { headers: authHeader() });
-  }
-  addCw(listener_id, payer_id,required_amount, expiration_date){
-    const query = {
-      query: `INSERT INTO contracts (listener_id, payer_id, required_amount, expiration_date)
-      VALUES()
-        '${listener_id}',
-        '${payer_id}',
-        '${required_amount}',
-        '${expiration_date}'
-    );`,
-    };
-    return axios.post(API_URL, query, { headers: authHeader() });
-  }
 
-  updateCwById(id, listener_id, payer_id,required_amount, expiration_date){
-    const query = {
-      query: ` "listener_id" ='${listener_id}',
-      "payer_id" ='${payer_id}',
-      "required_amount"= '${required_amount}',
-      "expiration_date"= '${expiration_date}'
-  WHERE
-      "id" = '${id}';`,
-    };
-    return axios.put(API_URL +"contracts", query, { headers: authHeader() });
-  }
-  getStudentsAsIdText(){
-    const query = {
-      query: `SELECT student_id AS id, CONCAT(last_name, ' ', first_name, ' ', patronymic) AS text
-      FROM "students";`,
-    };
-    
-    return axios.post(API_URL, query, { headers: authHeader() });
-  }
-
-
-
+// ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ PROGRAMS
   getAllPrograms(){
     const query = {
       query: `SELECT
@@ -709,7 +858,6 @@ class UserService {
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
-
   getProgramById(id){
     const query = {
       query: `SELECT *, TO_CHAR(start_date , 'YYYY-MM-DD') AS start_date, TO_CHAR(end_date , 'YYYY-MM-DD') AS end_date from programs where 
@@ -717,6 +865,7 @@ class UserService {
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
+
   addProgram(required_amount, program_name,hours, start_date, end_date){
     const query = {
       query: `INSERT INTO "programs" (
@@ -749,7 +898,8 @@ class UserService {
     return axios.put(API_URL +"programs", query, { headers: authHeader() });
   }
 
-   
+
+// ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ PAY_GRAPH   
   getAllPayments(){
     const query = {
       query: `SELECT

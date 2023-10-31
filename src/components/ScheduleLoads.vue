@@ -1,21 +1,6 @@
 <template>
     <div class="col col-xs-9 col-lg-12 mt-4 offset-md-1">
         <div class="col col-10 align-self-end">
-            <div class="mb-3 col col-12">
-                <div id="v-model-select" class="demo">
-                    <select class="form-select w-25" v-model="selected_group">
-                        <option disabled value="">Выберите группу</option>
-                        <option v-for="group in groups" :key="group.group_id" :value=group>
-                            {{ group.group_number }}
-                        </option>
-                    </select>
-                    <div v-if="selected_group">Выбрана {{ selected_group.group_number }} группа, направление {{ selected_group.dir_code }}</div>
-                </div>
-                <!-- <div class="col col-3 float-end">
-                    <input class="form-control" v-model="searchQuery" @input="updateSearchQuery" placeholder="Поиск..."> 
-                </div> -->
-            </div>
-            <!-- список студентов -->
             <table v-if="loading" class="table">
                 <tbody>
                 <tr v-for="n in subjects" :key="n">
@@ -29,60 +14,73 @@
                 </tbody>
             </table>
             <div  v-else>
-                <table class="table table-sm">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                </table>
+                <div class="d-flex">
+                    <!-- Выбор группы -->
+                    <table class="table" id="table_group">
+                        <thead>
+                            <tr><th>Группа</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="group in this.groups" :key="group.group_id">
+                                <th
+                                    @click="this.selected_group = group.group_id; findWl(group.group_id)"
+                                    v-bind:class="{ 'table-active': this.selected_group == group.group_id }"
+                                >
+                                    {{ group.group_number }}
+                                </th>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <!-- Выбор предмета -->
 
+                    <table class="table table-sm" v-if="this.selected_group >= 0" id="table_subject">
+                        <thead>
+                            <tr><th>Предмет</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="subject in this.subjects" :key="subject.subject_id">
+                                <th
+                                    @click="this.selected_subject = subject.subject_id; this.loadTeachersData(subject.subject_id)"
+                                    v-bind:class="{ 'table-active': this.selected_subject == subject.subject_id, 'text-success bold': this.findWl(this.selected_group, subject.subject_id) != -1 }"
+                                >
+                                {{ subject.subject_name }}
+                                </th>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
 
-
-                <table class="table">
-                    <!-- таблица -->
-                    <thead>
-                        <!-- колонки -->
-                        <tr>
-                            <th>Дисциплина</th>
-                            <th>Лекции</th>
-                            <th>Лабы</th>
-                            <th>Практики</th>
-                        </tr>
-                    </thead>
-                    <!-- тело таблицы -->
-                    <tbody>
-                        <tr v-for="subject in subjects" :key="subject.subject_id">
-                            <th>{{ subject.subject_name }}</th>
-                            <th>
-                                <select class="form-select" v-model="selected_teacher_lc[subject.subject_id]">
-                                    <option disabled value="">Выберите преподавателя</option>
-                                    <option v-for="teacher in teachersForSub(subject.subject_id)" :key="teacher.teacher_id">
-                                        {{ this.teachers[teacher].teacher_name }}
-                                    </option>
-                                </select>
-                            </th>
-                            <th>
-                                <select class="form-select" v-model="selected_teacher_lab[subject.subject_id]">
-                                    <option disabled value="">Выберите преподавателя</option>
-                                    <option v-for="teacher in teachersForSub(subject.subject_id)" :key="teacher.teacher_id">
-                                        {{ this.teachers[teacher].teacher_name }}
-                                    </option>
-                                </select>
-                            </th>
-                            <th>
-                                <select class="form-select" v-model="selected_teacher_pr[subject.subject_id]">
-                                    <option disabled value="">Выберите преподавателя</option>
-                                    <option v-for="teacher in teachersForSub(subject.subject_id)" :key="teacher.teacher_id">
-                                        {{ this.teachers[teacher].teacher_name }}
-                                    </option>
-                                </select>
-                            </th>
-                        </tr>
-                
-                    </tbody>
-                </table>
+                    <!-- Выбор препода -->
+                    <table class="table table-sm" v-if="this.selected_subject >= 0" id="table_teacher">
+                        <thead>
+                            <tr><th>Преподаватель</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="teacher in this.teachers" :key="teacher.teacher_id">
+                                <th
+                                    @click="this.selected_teacher = teacher.teacher_id"
+                                    v-bind:class="{ 'table-active': this.selected_teacher == teacher.teacher_id, 'table-success': this.findWl(this.selected_group, this.selected_subject) == teacher.teacher_id}"
+                                >
+                                {{ teacher.last_name }}
+                                </th>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <button class="btn btn-primary btn-block" @click="saveRel">Сохранить связь</button>
+                </div>
+            </div>
+            
+            <div v-if="saved" class="info">
+                Сохранена связь: <br>
+                {<br>
+                    &emsp;"id связи": {{ this.saved_num }} <br>
+                    &emsp;"id группы": {{ this.saved_group }} <br>
+                    &emsp;"id предмета": {{ this.saved_subject }} <br>
+                    &emsp;"id препода": {{ this.saved_teacher }} <br>
+                }
             </div>
         </div>
     </div>
@@ -94,107 +92,30 @@ import UserService from "../services/user.service";
 export default {
     data() {
         return {
-            selected_group: '',
             groups: [
 
             ], // массив всех групп
-            subjects: [
-                {
-                    subject_id: 0,
-                    subject_name: "Math"
-                },
-                {
-                    subject_id: 1,
-                    subject_name: "Comp Scie"
-                },
-                {
-                    subject_id: 2,
-                    subject_name: "Web"
-                },
-                {
-                    subject_id: 3,
-                    subject_name: "Foreign"
-                },
-                {
-                    subject_id: 4,
-                    subject_name: "Assembler"
-                },
+            subjects: [ 
+
             ], // массив предметов
             teachers: [
-                {
-                    teacher_id: 0,
-                    teacher_name: "John"
-                },
-                {
-                    teacher_id: 1,
-                    teacher_name: "Alexa"
-                },
-                {
-                    teacher_id: 2,
-                    teacher_name: "Ivan"
-                },
-                {
-                    teacher_id: 3,
-                    teacher_name: "Rebecca"
-                },
-                {
-                    teacher_id: 4,
-                    teacher_name: "Henry"
-                },
-                {
-                    teacher_id: 5,
-                    teacher_name: "Steve"
-                },
+
             ], // массив преподов
-            teachers_subs: [
-                {
-                    teacher_id: 0,
-                    subject_id: 0
-                },
-                {
-                    teacher_id: 0,
-                    subject_id: 1
-                },
-                {
-                    teacher_id: 0,
-                    subject_id: 2
-                },
-                {
-                    teacher_id: 1,
-                    subject_id: 1
-                },
-                {
-                    teacher_id: 2,
-                    subject_id: 0
-                },
-                {
-                    teacher_id: 2,
-                    subject_id: 2
-                },
-                {
-                    teacher_id: 3,
-                    subject_id: 3
-                },
-                {
-                    teacher_id: 4,
-                    subject_id: 0
-                },
-                {
-                    teacher_id: 5,
-                    subject_id: 2
-                },
-                {
-                    teacher_id: 1,
-                    subject_id: 4
-                },
-                {
-                    teacher_id: 2,
-                    subject_id: 4
-                },
+            employment: [
+                
             ], // связь многие-ко-многим преподы/предметы
-            selected_teacher_lc: [],
-            selected_teacher_lab: [],
-            selected_teacher_pr: [],
+            wl: [
+
+            ], // конечная связь
+            rels: [], // связи группа+предмет / препод
+            selected_group: -1,
+            selected_subject: -1,
+            selected_teacher: -1,
+            saved_num: -1,
+            saved_group: 0,
+            saved_subject: 0,
+            saved_teacher: 0,
+            saved: false,
             loading: true,
             searchQuery: ''
         };
@@ -210,15 +131,53 @@ export default {
             console.error('Error loading groups data:', error);
             }
         },
-        async loadTeachersData() {
+        async loadTeachersData(id) {
             try {
-                const response = await UserService.getAllTeachers(); // Replace with your API endpoint
-                this.groups = Array.isArray(response.data) ? response.data : [response.data];
+                const response = await UserService.getTeachersForSubject(id); // Replace with your API endpoint
+                this.teachers = Array.isArray(response.data) ? response.data : [response.data];
                 this.loading=false;
             } catch (error) {
-            console.error('Error loading groups data:', error);
+                console.error('Error loading teachers data:', error);
             }
         },
+        async loadSubjectsData() {
+            try {
+                const response = await UserService.getAllSubjects(); // Replace with your API endpoint
+                this.subjects = Array.isArray(response.data) ? response.data : [response.data];
+                this.loading=false;
+            } catch (error) {
+                console.error('Error loading subjects data:', error);
+            }
+        },
+        async loadEmploymentData() {
+            try {
+                const response = await UserService.getAllEmployments(); // Replace with your API endpoint
+                this.employment = Array.isArray(response.data) ? response.data : [response.data];
+                this.loading=false;
+            } catch (error) {
+                console.error('Error loading employments data:', error);
+            }
+        },
+        async loadWorkloads(){
+            try {
+                const response = await UserService.getAllWorkloads(); // Replace with your API endpoint
+                this.wl = Array.isArray(response.data) ? response.data : [response.data];
+                this.loading=false;
+            } catch (error) {
+                console.error('Error loading employments data:', error);
+            }
+        },
+
+
+        saveRel(){
+            this.saved_num += 1;
+            this.saved_group = this.selected_group;
+            this.saved_subject = this.selected_subject;
+            this.saved_teacher = this.selected_teacher;
+            this.saved = true;
+        },
+        
+
 
         // смотрим детали о группе
         viewGroupDetail(groupId) {
@@ -241,20 +200,32 @@ export default {
 
         teachersForSub(sub) {
             var ts = []
-            
-            this.teachers_subs.forEach(function(entry){
+            this.employment.forEach(function(entry){
                 if (sub == entry.subject_id){
-                    ts.push(entry.teacher_id)
+                    ts.push(entry);
                 }
             });
             return ts;
+        },
+        
+        findWl(group_id, subject_id){
+            var i;
+            for (i in this.wl) {
+                if (this.wl[i].group_id == group_id) {
+                    if (this.wl[i].subject_id == subject_id) return this.wl[i].teacher_id;
+                }
             }
+            return -1;
+        }
     },
     created() {
         const query = this.$route.query;
         this.currentPage = parseInt(query.page) || 1;
         this.searchQuery = query.search || '';
         this.loadGroupsData();
+        this.loadSubjectsData();
+        this.loadEmploymentData();
+        this.loadWorkloads();
     },
 };
 </script>
@@ -333,36 +304,58 @@ export default {
     align-items: center;
 }
 .form-control:focus {
-border-color: rgba(1, 20, 8, 0.815);
-box-shadow: inset 0 1px 1px rgba(6, 215, 29, 0.075), 0 0 8px rgba(6, 215, 29, 0.6);
+    border-color: rgba(1, 20, 8, 0.815);
+    box-shadow: inset 0 1px 1px rgba(6, 215, 29, 0.075), 0 0 8px rgba(6, 215, 29, 0.6);
 }
 .form-select:focus {
-border-color: rgba(1, 20, 8, 0.815);
-box-shadow: inset 0 1px 1px rgba(6, 215, 29, 0.075), 0 0 8px rgba(6, 215, 29, 0.6);
+    border-color: rgba(1, 20, 8, 0.815);
+    box-shadow: inset 0 1px 1px rgba(6, 215, 29, 0.075), 0 0 8px rgba(6, 215, 29, 0.6);
 }
 .page-link{
-height: 40px;
-width: 40px;
-margin: 2px;
-display: flex;
-justify-content: center;
-align-items: center;
+    height: 40px;
+    width: 40px;
+    margin: 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .active{
-.page-link{
-    background-color: rgb(68,99,52);
-    border: none;
-    --bs-btn-hover-bg:rgb(6 215 29);
-    --bs-btn-hover-border-color: rgb(6 215 29);
+    .page-link{
+        background-color: rgb(68,99,52);
+        border: none;
+        --bs-btn-hover-bg:rgb(6 215 29);
+        --bs-btn-hover-border-color: rgb(6 215 29);
 
-}
+    }
 }
 .disabled{
-.page-link{
-    background-color: rgb(57, 79, 46);
-    border: none;
-    --bs-btn-hover-bg:rgb(6 215 29);
-    --bs-btn-hover-border-color: rgb(6 215 29);
+    .page-link{
+        background-color: rgb(57, 79, 46);
+        border: none;
+        --bs-btn-hover-bg:rgb(6 215 29);
+        --bs-btn-hover-border-color: rgb(6 215 29);
+    }
 }
+tbody th{
+    font-weight: normal;
+}
+
+table{
+    margin: 2%;
+    height: fit-content;
+}
+
+#table_group{
+    width: 15%;
+}
+#table_subject{
+    width: 35%;
+}
+#table_teacher{
+    width: 35%;
+}
+
+.bold{
+    font-weight: bold !important;
 }
 </style>
