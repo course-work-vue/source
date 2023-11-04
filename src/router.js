@@ -52,6 +52,11 @@ const AddCourse = () => import("./components/AddCourse.vue")
 const CourseList = () => import("./components/CourseList.vue")
 const CourseDetail = () => import("./components/CourseDetail.vue")
 
+
+const AuditList = () => import("./components/AuditList.vue")
+const AuditDetail = () => import("./components/AuditDetail.vue")
+
+
 const routes = [
   { 
     path: "/",
@@ -116,10 +121,17 @@ const routes = [
   { path: '/AddProgram', component: AddProgram },
 
   { path: '/payments', component: PaymentList },
+
+
+  { path: '/audits', component: AuditList },
+  { path: '/audits/:groupId', component: AuditDetail, props: true },
+  
+
   { path: '/payments/:paymentID', component: PaymentDetail },
   { path: '/AddPayment', component: AddPayment },
 
   
+
 
   {
     path: "/user",
