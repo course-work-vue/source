@@ -746,6 +746,60 @@ class UserService {
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
+  //Аудитории
+  getAuditAsIdText(){
+    const query = {
+      query: `SELECT aud_id AS id, number AS text
+      FROM "auditorium";`,
+    };
+    
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  getSubjectAsIdText(){
+    const query = {
+      query: `SELECT subject_id AS id, subject_name AS text
+      FROM "subjects";`,
+    };
+    
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  getTeachersAsIdText(){
+    const query = {
+      query: `SELECT teacher_id AS id, 
+      CONCAT_WS(' ',last_name, first_name,patronymic) AS text
+      FROM "teachers";`,
+    };
+    
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  getDaysAsIdText(){
+    const query = {
+      query: `SELECT day_id AS id, dayofweek AS text
+      FROM "days";`,
+    };
+    
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  savesSchedule(day_id, subject_id, aud_id){
+    
+      const query = {
+        query: `INSERT INTO "schedule" (
+          "day_id",
+          "aud_id",
+          "subject_id"
+      ) VALUES (
+          '${day_id}',
+          '${subject_id}',
+          '${aud_id}'
+      );`,
+      };
+      return axios.post(API_URL, query, { headers: authHeader() });
+    }
+
 }
 
 export default new UserService();
