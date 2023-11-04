@@ -46,6 +46,11 @@ const ProgramDetail = () => import("./components/ProgramDetail.vue")
 
 const PaymentList = () => import("./components/PaymentList.vue")
 
+
+const AuditList = () => import("./components/AuditList.vue")
+const AuditDetail = () => import("./components/AuditDetail.vue")
+
+
 const routes = [
   { 
     path: "/",
@@ -105,6 +110,10 @@ const routes = [
   { path: '/AddProgram', component: AddProgram },
 
   { path: '/payments', component: PaymentList },
+
+  { path: '/audits', component: AuditList },
+  { path: '/audits/:groupId', component: AuditDetail, props: true },
+  
   {
     path: "/user",
     name: "user",
