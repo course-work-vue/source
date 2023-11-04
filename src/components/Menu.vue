@@ -52,6 +52,10 @@
               link: "/groups",
             },
             {
+              label: "Курсы",
+              link: "/courses",
+            },
+            {
               label: "Курсовые",
               link: "/courseworks",
             }
@@ -97,6 +101,17 @@
               link: "/audits",
             }
           ],
+        },
+        {
+          label: "Расписание",
+          link: "",
+          icon: "calendar_month",
+          children: [
+            {
+              label: "Нагрузка",
+              link: "/ScheduleLoads",
+            },
+          ]
         },
         {
           label: "Настройки",

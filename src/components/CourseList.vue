@@ -2,22 +2,20 @@
 
 
   <div class="col col-xs-9 col-lg-12 mt-4 list">
+    <div class="col col-12 ">
     <div class="col col-12">
-    <div class="mb-3 col col-12">
     
-      <button @click="navigateToAddProgram" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить программу</button>
-      
-        <div class="col col-6 float-end d-inline-flex align-items-center mb-2 ">
+      <button @click="navigateToAddCourse" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить курс</button>
+      <div class="col col-6 float-end d-inline-flex align-items-center mb-2 ">
       <button @click="clearFilters" :disabled="!filters" class="btn btn-sm btn-primary text-nowrap mx-2" type="button"><i class="material-icons-outlined">close</i>Очистить фильтры</button>
       <input class="form-control" type="text" v-model="quickFilterValue" id="filter-text-box" v-on:input="onFilterTextBoxChanged()" placeholder="Поиск..."> 
-
     </div>
   </div>
 </div>
 
 
 
-<div style="height: 50vh">
+<div style="height: 95vh">
 <div class="h-100 pt-5">
   <ag-grid-vue
     class="ag-theme-alpine"
@@ -27,6 +25,7 @@
     :defaultColDef="defaultColDef"
     rowSelection="multiple"
     animateRows="true"
+    includeHiddenColumnsInQuickFilter = true
     @cell-clicked="cellWasClicked"
     @grid-ready="onGridReady"
     @firstDataRendered="onFirstDataRendered"
@@ -44,18 +43,19 @@
 
 import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
 import { reactive, onMounted, ref } from "vue";
-import ButtonCell from "@/components/ProgramButtonCell.vue";
-import GroupHref from "@/components/GroupHrefCellRenderer.vue";
+import ButtonCell from "@/components/StudentButtonCell.vue";
+import StudentHref from "@/components/StudentHrefCellRenderer.vue";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import UserService from "../services/user.service";
+
 /* eslint-disable vue/no-unused-components */
 export default {
   name: "App",
   components: {
     AgGridVue,
     ButtonCell,
-    GroupHref
+    StudentHref
   },
   setup() {
     const gridApi = ref(null); // Optional - for accessing Grid's API
@@ -85,30 +85,21 @@ export default {
       sortable: false,
       filter: false,
       headerName: 'Действия',
+      headerClass: 'text-center',
       cellRenderer: 'ButtonCell',
       cellRendererParams: {
         onClick: navigateToStudent,
         label: 'View Details', // Button label
       },
       maxWidth: 120, resizable: false
-
+     
     },
-          
-           { field: "required_amount", headerName: 'Цена за обучение', hide: true },
-           {
-            field: 'program_name',
-            headerName: 'Название программы'
-           },
-           {
-            field: 'hours',
-            headerName: 'Часы'
-           },
-           { field: "start_date", headerName: 'Дата начала', hide: true },
-           { field: "end_date", headerName: 'Дата окончания', hide: true },
-
-
+        
+           { field: "course", headerName: 'Курс', minWidth:250 },
+           { field: "group_number", headerName: 'Группа', maxWidth:129 },
            
-         
+           
+           { field: "formatted_date_of_birth", filter: 'agDateColumnFilter', filterParams: filterParams, headerName: 'Дата рождения', minWidth: 170, hide: true }
       ],
     });
 
@@ -118,12 +109,12 @@ export default {
       filter: true,
       flex: 1,
       resizable: true,
-      minWidth: 300
+      minWidth: 150
     };
 
     // Example load data from server
     onMounted(() => {
-
+    
     });
 
     const onFilterTextBoxChanged = () => {
@@ -148,7 +139,7 @@ export default {
       onFilterTextBoxChanged,
       paginationPageSize,
       navigateToStudent,
-
+     
 
       
 
@@ -163,18 +154,18 @@ export default {
 
   methods: {
 
-    async loadListenersData() {
+    async loadStudentsData() {
         try {
-          const response = await UserService.getAllPrograms(); // Replace with your API endpoint
+          const response = await UserService.getAllCourses(); // Replace with your API endpoint
           this.rowData.value = Array.isArray(response.data) ? response.data : [response.data];
           this.loading=false;
         } catch (error) {
           console.error('Error loading students data:', error);
         }
       },
-      navigateToAddProgram() {
+      navigateToAddCourse() {
     
-    this.$router.push(`/addProgram`); // Navigate to the AddStudent route
+    this.$router.push(`/addCourse`); // Navigate to the AddStudent route
 },
 
 onFirstDataRendered(params) {
@@ -235,21 +226,50 @@ onFirstDataRendered(params) {
     this.filters=false;
   },
 
+  
     },
 
     created() {
     
-    this.loadListenersData();
+    this.loadStudentsData();
 
     },
 
     
 };
-
+var filterParams = {
+  comparator: (filterLocalDateAtMidnight, cellValue) => {
+    var dateAsString = cellValue;
+    if (dateAsString == null) return -1;
+    var dateParts = dateAsString.split('/');
+    var cellDate = new Date(
+      Number(dateParts[2]),
+      Number(dateParts[1]) - 1,
+      Number(dateParts[0])
+    );
+    if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
+      return 0;
+    }
+    if (cellDate < filterLocalDateAtMidnight) {
+      return -1;
+    }
+    if (cellDate > filterLocalDateAtMidnight) {
+      return 1;
+    }
+    return 0;
+  },
+};
 
 </script>
 
 <style lang="scss" scoped>
+
+.ag-row .ag-cell {
+  display: flex;
+  justify-content: center; /* align horizontal */
+  align-items: center;
+}
+
 .skeleton {
   width: 100%;
   height: 1.2em;
@@ -259,8 +279,16 @@ onFirstDataRendered(params) {
   border-radius: 4px;
   margin: 0.2em 0;
 }
+  .list{
+    padding-left: 100px;
+    font-size: 5px;
 
+  }
 
+    .text-center * {
+      justify-content: center;
+      display:flex 
+  }
 
 @keyframes skeletonShimmer {
   0% {

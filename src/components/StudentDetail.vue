@@ -78,12 +78,6 @@
             <ErrorMessage name="enrolled_date" class="error-feedback" />
           </div>
           <div class="d-flex flex-wrap">
-          <div class="form-group d-inline-flex align-items-center mb-2 col-2">
-            <label for="course">Курс:</label>
-            <Field name="course" type="text" class="form-control" value="" :class="{'is-invalid': errors.course}" v-model="editedStudent.course"/>
-            <ErrorMessage name="course" class="error-feedback" />
-          </div>
-          
           <div class="form-group d-inline-flex align-items-center mb-2">
             <label for="group_id">Группа:</label>
             
@@ -287,7 +281,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
 
           const response = await UserService.updateStudentById(this.student.student_id, this.editedStudent.first_name, this.editedStudent.last_name, this.editedStudent.patronymic, 
           this.editedStudent.gender, this.editedStudent.date_of_birth, this.editedStudent.passport_series_and_number, this.editedStudent.INN, this.editedStudent.SNILS, this.editedStudent.place_of_birth, this.editedStudent.email,
-          this.editedStudent.student_login, this.editedStudent.enrollment_order, this.editedStudent.enrolled_date, this.editedStudent.course, this.editedStudent.group_id, this.editedStudent.subgroup);
+          this.editedStudent.student_login, this.editedStudent.enrollment_order, this.editedStudent.enrolled_date, this.editedStudent.group_id, this.editedStudent.subgroup);
           response.data;
           this.student = { ...this.editedStudent };
           this.loading=false;

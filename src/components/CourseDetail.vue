@@ -1,73 +1,58 @@
 <template>
   <div class="col-md-12 list">
-    <div v-if="contract" >
-      <Form @submit="updateContract" :validation-schema="schema" v-slot="{ errors }">
+    <div v-if="student" >
+      <Form  @submit="updateStudent" :validation-schema="schema" v-slot="{ errors }">
         
-        <div >
+        <div>
 
-          
-          <div class="form-group">
-            <label for="listener_id">Слушатель</label>
+          <div class="form-group d-inline-flex align-items-center float-none mb-2 col-3">
+            <label for="course">Подгруппа:</label>
+            <Field name="course" type="text" class="form-control" :class="{'is-invalid': errors.course}" v-model="editedCourse.course"/>
+            <ErrorMessage name="course" class="error-feedback" />
             
-            <Select2 :class="{'form-control is-invalid': errors.listener_id}" v-model="editedContract.listener_id" 
-            :options="listeners" 
+          </div>
+          <div class="d-flex flex-wrap">
+          <div class="form-group d-inline-flex align-items-center mb-2">
+            <label for="group_id">Группа:</label>
+            
+            <Select2 :class="{'form-control is-invalid': errors.group_id}" v-model="editedCourse.group_id" 
+            :options="groups" 
             :settings=" { theme: 'bootstrap-5', width: '100%'}"
             
              />
 
-             <Field  name="listener_id" as="select" v-model="editedContract.listener_id" hidden>
-              <option v-for="listener in listeners" :key="listener.id" :value="listener.id">{{ listener.text }}</option>
+             <Field  name="group_id" as="select" v-model="editedCourse.group_id" hidden>
+              <option v-for="group in groups" :key="group.id" :value="group.id">{{ group.text }}</option>
             </Field>
-            <ErrorMessage name="listener_id" class="error-feedback" />
+            <ErrorMessage name="group_id" class="error-feedback" />
           </div>
 
-          <div class="form-group">
-            <label for="payer_id">Законный представитель</label>
+         
+        </div>
+          <div class="form-group  mt-3">
             
-            <Select2 :class="{'form-control is-invalid': errors.payer_id}" v-model="editedContract.payer_id" 
-            :options="payers" 
-            :settings=" { theme: 'bootstrap-5', width: '100%'}"
-            
-             />
-
-             <Field  name="payer_id" as="select" v-model="editedContract.payer_id" hidden>
-              <option v-for="payer in payers" :key="payer.id" :value="payer.id">{{ payer.text }}</option>
-            </Field>
-            <ErrorMessage name="payer_id" class="error-feedback" />
+            <router-link to="/courses" class="mx-2 btn btn-secondary  float-start">Отмена</router-link>
           </div>
-
-          <div class="form-group">
-            <label for="contr_number">Номер договра</label>
-            <Field name="contr_number" type="text" value="" class="form-control" :class="{'is-invalid': errors.contr_number}" v-model="editedContract.contr_number"/>
-            <ErrorMessage name="contr_number" class="error-feedback" />
+          <div class="form-group float-end">
+            <button class="btn btn-danger float-end" @click="deleteCourse">
+              Удалить студента
+            </button>
           </div>
-          <div class="form-group">
-            <label for="program_id">Программа</label>
-            
-            <Select2 :class="{'form-control is-invalid': errors.program_id}" v-model="editedContract.program_id" 
-            :options="programs" 
-            :settings=" { theme: 'bootstrap-5', width: '100%'}"
-            
-             />
-
-             <Field  name="program_id" as="select" v-model="editedContract.program_id" hidden>
-              <option v-for="program in programs" :key="program.id" :value="program.id">{{ program.text }}</option>
-            </Field>
-            <ErrorMessage name="program_id" class="error-feedback" />
-          </div>
-
           <div class="form-group mt-3">
-            <button class="btn btn-primary btn-block float-start" :disabled="loading">
+            <button class="btn btn-primary btn-block" :disabled="loading">
               <span
                 v-show="loading"
                 class="spinner-border spinner-border-sm"
               ></span>
-              Обновить контракт
+              Обновить курс
             </button>
-            <router-link to="/contracts" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
+        
           </div>
+     
+        
         </div>
       </Form>
+
     </div>
     <div v-else>
       <div class="form-group">
@@ -114,7 +99,11 @@
         <label class="form-control skeleton-text skeleton-animate"></label>
         <input type="text" class="form-control skeleton skeleton-animate">
       </div>
-  
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+
     </div>
       
       
@@ -154,7 +143,16 @@ import { Form, Field, ErrorMessage } from "vee-validate";
     data() {
       const schema = yup.object().shape({
         
+        email: yup
+          .string()
+          .required("Email is required!")
+          .email("Email is invalid!")
+          .max(50, "Must be maximum 50 characters!"),
 
+
+          group_id: yup
+          .string()
+          .required("Email is required!")
           
        
       });
@@ -162,81 +160,79 @@ import { Form, Field, ErrorMessage } from "vee-validate";
       return {
         schema,
         loading:false,
-        contract: null, // заглушка для данных студента
-        editedContract: null, // заглушка для новых данных студента
-        listeners: null,
-        payers: null,
-        programs:null
+        student: null, // заглушка для данных студента
+        editedStudent: null, // заглушка для новых данных студента
+        groups: null,
 
       };
     },
     methods: {
       // грузим студента из psql по id 
-      async loadContractDetail() {
-        const contractId = this.$route.params.contractId;
+      async loadCourseDetail() {
+        const courseId = this.$route.params.courseId;
         try {
-          const response = await UserService.getContractById(contractId);
-          this.contract = response.data;
+          const response = await UserService.getCourseById(courseId);
+          this.student = response.data;
           // Клонирование объекта, для избежание редактирования данных сразу
-          this.editedContract = { ...response.data };
+          this.editedCourse = { ...response.data };
         } catch (error) {
-          console.error('Error loading contract details:', error);
+          console.error('Error loading student details:', error);
         }
       },
       // Метод для обновления данных о студенте
-      async updateContract() {
+      async updateCourse() {
         try {
           // запрос в psql
           this.loading=true;
 
-          const response = await UserService.updateContractById(this.contract.id, this.editedContract.listener_id, this.editedContract.payer_id, this.editedContract.contr_number, 
-          this.editedContract.program_id);
+          const response = await UserService.updateCourseById(this.course.course_id, this.editedCourse.course, this.editedCourse.group_id);
           response.data;
-          this.contract = { ...this.editedContract };
+          this.course = { ...this.editedCourse };
           this.loading=false;
-          this.toast.success("Успешно обновили!");
+          this.toast.success("Успешно обновили студента!");
         } catch (error) {
-          console.error('Ошибка загрузки данных:', error);
+          console.error('Ошибка загрузки данных о студенте:', error);
         }
       },
-      async loadListenersData() {
+      async deleteCourse() {
         try {
-          const response = await UserService.getListenersAsIdText(); 
-          this.listeners = Array.isArray(response.data) ? response.data : [response.data];
-        } catch (error) {
-          console.error('Ошибка загрузки данных:', error);
-        }
-      },
+          // запрос в psql
+          this.loading=true;
 
-      async loadPayersData() {
-        try {
-          const response = await UserService.getPayersAsIdText(); 
-          this.payers = Array.isArray(response.data) ? response.data : [response.data];
+          const response = await UserService.deleteStudentById(this.student.student_id);
+          response.data;
+          this.student = { ...this.editedStudent };
+          this.loading=false;
+          this.toast.success("Успешно удалили курс!");
         } catch (error) {
-          console.error('Ошибка загрузки данных:', error);
+          console.error('Ошибка загрузки данных о курс:', error);
         }
       },
-      async loadProgramsData() {
+      async loadGroupsData() {
         try {
-          const response = await UserService.getProgramsAsIdText(); 
-          this.programs = Array.isArray(response.data) ? response.data : [response.data];
+          const response = await UserService.getGroupsAsIdText(); 
+          this.groups = Array.isArray(response.data) ? response.data : [response.data];
         } catch (error) {
-          console.error('Ошибка загрузки данных:', error);
+          console.error('Ошибка загрузки данных о курсе:', error);
         }
       }
     },
     created() {
-      this.loadContractDetail();
-      this.loadListenersData();
-      this.loadPayersData();
-      this.loadProgramsData();
-
+      this.loadCourseDetail();
+      this.loadStudentDetail();
+     
     },
   };
   </script>
 
 <style lang="scss" scoped>
-
+label{
+  margin-right: 15px;
+  white-space: nowrap;
+}
+.form-group{
+  margin-right: 20px;
+}
 .skeleton-text {
   width: 15%;
   height: 1.0em;
@@ -318,7 +314,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
     --bs-btn-hover-border-color: rgb(6 215 29);
     --bs-btn-active-bg: rgb(68,99,52);
     --bs-btn-disabled-bg: rgb(68,99,52);
-    display: flex;
+
   justify-content: center;
   align-items: center;
 }

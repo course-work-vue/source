@@ -36,7 +36,7 @@ const ContractList = () => import("./components/ContractList.vue")
 const ContractDetail = () => import("./components/ContractDetail.vue")
 const AddContract = () => import("./components/AddContract.vue")
 
-
+const ScheduleLoads = () => import("./components/ScheduleLoads.vue")
 
 const CWList = () => import("./components/CwList.vue")
 
@@ -44,7 +44,13 @@ const ProgramList = () => import("./components/ProgramList.vue")
 const AddProgram = () => import("./components/AddProgram.vue")
 const ProgramDetail = () => import("./components/ProgramDetail.vue")
 
+const AddPayment = () => import("./components/AddPayment.vue")
 const PaymentList = () => import("./components/PaymentList.vue")
+const PaymentDetail = () => import("./components/PaymentDetail.vue")
+
+const AddCourse = () => import("./components/AddCourse.vue")
+const CourseList = () => import("./components/CourseList.vue")
+const CourseDetail = () => import("./components/CourseDetail.vue")
 
 
 const AuditList = () => import("./components/AuditList.vue")
@@ -90,6 +96,10 @@ const routes = [
   { path: '/groups/:groupId', component: GroupDetail },
   { path: '/AddGroup', component: AddGroup },
 
+  { path: '/courses', component: CourseList },
+  { path: '/courses/:courseID', component: CourseDetail },
+  { path: '/AddCourse', component: AddCourse },
+
   { path: '/listeners', component: ListenerList },
   { path: '/listeners/:listenerId', component: ListenerDetail },
   { path: '/AddListener', component: AddListener },
@@ -102,8 +112,9 @@ const routes = [
   { path: '/contracts/:contractId', component: ContractDetail },
   { path: '/AddContract', component: AddContract },
 
-  { path: '/courseworks', component: CWList },
+  { path: '/ScheduleLoads', component: ScheduleLoads },
 
+  { path: '/courseworks', component: CWList },
 
   { path: '/programs', component: ProgramList },
   { path: '/programs/:programId', component: ProgramDetail },
@@ -111,9 +122,17 @@ const routes = [
 
   { path: '/payments', component: PaymentList },
 
+
   { path: '/audits', component: AuditList },
   { path: '/audits/:groupId', component: AuditDetail, props: true },
   
+
+  { path: '/payments/:paymentID', component: PaymentDetail },
+  { path: '/AddPayment', component: AddPayment },
+
+  
+
+
   {
     path: "/user",
     name: "user",

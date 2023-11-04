@@ -415,3 +415,176 @@ VALUES (1, 12345, 2, 3);
 INSERT INTO contracts (listener_id, payer_id, contr_number, program_id)
 VALUES
     (1, 1, 1001, 1);
+
+
+CREATE TABLE audit_table (LIKE users INCLUDING ALL);
+ALTER TABLE audit_table
+ADD COLUMN operation CHAR(1),
+ADD COLUMN timestamp TIMESTAMPTZ DEFAULT current_timestamp;
+
+CREATE TABLE audit_table_students (
+    audit_id SERIAL PRIMARY KEY,
+    student_id INT,
+    first_name VARCHAR(255),
+    last_name VARCHAR(255),
+    patronymic VARCHAR(255),
+    gender CHAR(1),
+    date_of_birth DATE,
+    passport_series_and_number VARCHAR(20),
+    "INN" VARCHAR(20),
+    "SNILS" VARCHAR(20),
+    place_of_birth VARCHAR(255),
+    email VARCHAR(255),
+    student_login VARCHAR(255),
+    enrollment_order VARCHAR(50),
+    enrolled_date DATE,
+    course INT,
+    course_work_id INT,
+    group_id INT,
+    operation CHAR(1),
+    timestamp TIMESTAMPTZ DEFAULT current_timestamp
+);
+
+
+CREATE OR REPLACE FUNCTION students_audit_trigger()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        -- Insert operation for insert
+        INSERT INTO audit_table_students (
+            student_id,
+            first_name,
+            last_name,
+            patronymic,
+            gender,
+            date_of_birth,
+            passport_series_and_number,
+            inn,
+            snils,
+            place_of_birth,
+            email,
+            student_login,
+            enrollment_order,
+            enrolled_date,
+            course,
+            course_work_id,
+            group_id,
+            operation
+        )
+        VALUES (
+            NEW.student_id,
+            NEW.first_name,
+            NEW.last_name,
+            NEW.patronymic,
+            NEW.gender,
+            NEW.date_of_birth,
+            NEW.passport_series_and_number,
+            NEW."INN",
+            NEW."SNILS",
+            NEW.place_of_birth,
+            NEW.email,
+            NEW.student_login,
+            NEW.enrollment_order,
+            NEW.enrolled_date,
+            NEW.course,
+            NEW.course_work_id,
+            NEW.group_id,
+            'I'
+        );
+    ELSIF TG_OP = 'UPDATE' THEN
+        -- Insert operation for update
+        INSERT INTO audit_table_students (
+            student_id,
+            first_name,
+            last_name,
+            patronymic,
+            gender,
+            date_of_birth,
+            passport_series_and_number,
+            inn
+            snils,
+            place_of_birth,
+            email,
+            student_login,
+            enrollment_order,
+            enrolled_date,
+            course,
+            course_work_id,
+            group_id,
+            operation
+        )
+        VALUES (
+            OLD.student_id,
+            OLD.first_name,
+            OLD.last_name,
+            OLD.patronymic,
+            OLD.gender,
+            OLD.date_of_birth,
+            OLD.passport_series_and_number,
+            OLD."INN",
+            OLD."SNILS",
+            OLD.place_of_birth,
+            OLD.email,
+            OLD.student_login,
+            OLD.enrollment_order,
+            OLD.enrolled_date,
+            OLD.course,
+            OLD.course_work_id,
+            OLD.group_id,
+            'U'
+        );
+    ELSIF TG_OP = 'DELETE' THEN
+        -- Insert operation for delete
+        INSERT INTO audit_table_students (
+            student_id,
+            first_name,
+            last_name,
+            patronymic,
+            gender,
+            date_of_birth,
+            passport_series_and_number,
+            INN,
+            SNILS,
+            place_of_birth,
+            email,
+            student_login,
+            enrollment_order,
+            enrolled_date,
+            course,
+            course_work_id,
+            group_id,
+            operation
+        )
+        VALUES (
+            OLD.student_id,
+            OLD.first_name,
+            OLD.last_name,
+            OLD.patronymic,
+            OLD.gender,
+            OLD.date_of_birth,
+            OLD.passport_series_and_number,
+            OLD."INN",
+            OLD."SNILS",
+            OLD.place_of_birth,
+            OLD.email,
+            OLD.student_login,
+            OLD.enrollment_order,
+            OLD.enrolled_date,
+            OLD.course,
+            OLD.course_work_id,
+            OLD.group_id,
+            'D'
+        );
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER students_audit
+AFTER INSERT OR UPDATE OR DELETE
+ON students
+FOR EACH ROW
+EXECUTE FUNCTION students_audit_trigger();
+
+ALTER TABLE "Users"
+ADD CONSTRAINT unique_username UNIQUE ("Username");
