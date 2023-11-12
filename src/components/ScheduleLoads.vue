@@ -33,7 +33,18 @@
                     </table>
                     
                     <!-- Выбор предмета -->
-                    <table class="table table-sm" v-if="this.selected_group >= 0" id="table_subject">
+                    <table v-if="s_loading" class="table skelet">
+                        <tbody>
+                            <tr></tr>
+                            <tr v-for="n in subjects" :key="n">
+                                <td><div class="skeleton skeleton-animate"></div></td>
+                                <td><div class="skeleton skeleton-animate"></div></td>
+                                <td><div class="skeleton skeleton-animate"></div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                
+                    <table class="table table-sm" v-else-if="this.selected_group >= 0" id="table_subject">
                         <thead>
                             <tr><th>Предмет</th></tr>
                         </thead>
@@ -54,7 +65,7 @@
                     </table>
                     
                     <!-- Выбор препода -->
-                    <table v-if="t_loading" class="table">
+                    <table v-if="t_loading" class="table skelet">
                         <tbody>
                             <tr v-for="n in subjects" :key="n">
                                 <td><div class="skeleton skeleton-animate"></div></td>
@@ -63,38 +74,28 @@
                             </tr>
                         </tbody>
                     </table>
-                    
-                        <table class="table table-sm" v-else-if="this.selected_subject >= 0" id="table_teacher">
-                            <thead>
-                                <tr><th>Преподаватель</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(teacher, index) in this.teachers" :key="teacher.teacher_id">
-                                    <th
-                                        @click="this.selected_teacher = teacher.teacher_id"
-                                        v-bind:class="{ 'table-active': this.selected_teacher == teacher.teacher_id, 'table-success': this.findWl(this.selected_group, this.selected_subject) == teacher.teacher_id}"
-                                    >
-                                    {{ teacher.last_name }}
-                                    {{ this.teacher_load[index].length }}
-                                    <!-- при length жалуется на undefined -->
-                                    </th>
-                                </tr>
-                            </tbody>
-                        </table>
+                
+                    <table class="table table-sm" v-else-if="this.selected_subject >= 0" id="table_teacher">
+                        <thead>
+                            <tr><th>Преподаватель</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(teacher, index) in this.teachers" :key="teacher.teacher_id">
+                                <th
+                                    @click="this.selected_teacher = teacher.teacher_id"
+                                    v-bind:class="{ 'table-active': this.selected_teacher == teacher.teacher_id, 'table-success': this.findWl(this.selected_group, this.selected_subject) == teacher.teacher_id}"
+                                >
+                                {{ teacher.last_name }}
+                                {{ this.teacher_load[index].length }}
+                                <!-- при length жалуется на undefined -->
+                                </th>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
                 <div>
                     <button class="btn btn-primary btn-block" @click="saveRel">Сохранить связь</button>
                 </div>
-            </div>
-            
-            <div v-if="saved" class="info">
-                Сохранена связь: <br>
-                {<br>
-                    &emsp;"id связи": {{ this.saved_num }} <br>
-                    &emsp;"id группы": {{ this.saved_group }} <br>
-                    &emsp;"id предмета": {{ this.saved_subject }} <br>
-                    &emsp;"id препода": {{ this.saved_teacher }} <br>
-                }
             </div>
         </div>
     </div>
@@ -122,6 +123,8 @@ export default {
             saved_teacher: 0,
             saved: false,
             t_loading: true,
+            s_loading: true,
+            wl_loading: true,
             loading: true,
             searchQuery: ''
         };
@@ -142,7 +145,7 @@ export default {
                 const response = await UserService.getTeachersForSubject(id); // Replace with your API endpoint
                 this.teachers = Array.isArray(response.data) ? response.data : [response.data];
                 this.loadTeacherLoad(this.teachers);
-                this.loading=false;
+                this.s_loading=false;
             } catch (error) {
                 console.error('Error loading teachers data:', error);
             }
@@ -169,7 +172,7 @@ export default {
             try {
                 const response = await UserService.getAllWorkloads(); // Replace with your API endpoint
                 this.wl = Array.isArray(response.data) ? response.data : [response.data];
-                this.loading=false;
+                this.wl_loading=false;
             } catch (error) {
                 console.error('Error loading employments data:', error);
             }
@@ -197,10 +200,12 @@ export default {
 
 
         saveRel(){
-            this.saved_num += 1;
-            this.saved_group = this.selected_group;
-            this.saved_subject = this.selected_subject;
-            this.saved_teacher = this.selected_teacher;
+            UserService.addWorkload(this.selected_group, this.selected_subject, this.selected_teacher);
+            this.loadData();
+            this.loadTeachersData(this.selected_subject);
+            while (this.loading == true && this.wl_loading == true){
+                this.findWl(this.selected_group, this.selected_subject);
+            }
             this.saved = true;
         },
         
@@ -242,17 +247,22 @@ export default {
                     if (this.wl[i].subject_id == subject_id) return this.wl[i].teacher_id;
                 }
             }
+            this.s_loading = false;
             return -1;
+        },
+
+        loadData(){
+            this.loadGroupsData();
+            this.loadSubjectsData();
+            this.loadEmploymentData();
+            this.loadWorkloads();
         }
     },
     created() {
         const query = this.$route.query;
         this.currentPage = parseInt(query.page) || 1;
         this.searchQuery = query.search || '';
-        this.loadGroupsData();
-        this.loadSubjectsData();
-        this.loadEmploymentData();
-        this.loadWorkloads();
+        this.loadData();
     }
 };
 </script>
@@ -384,5 +394,9 @@ table{
 
 .bold{
     font-weight: bold !important;
+}
+
+.skelet{
+    width: 25%;
 }
 </style>
