@@ -416,15 +416,13 @@ getAllWorkloads(){
   return axios.post(API_URL, query, { headers: authHeader() });
 }
 
-addWorkload(wl_id, group_id, subject_id, teacher_id){
+addWorkload(group_id, subject_id, teacher_id){
   const query = {
     query: `INSERT INTO "workload" (
-      "wl_id",
       "group_id",
       "subject_id",
       "teacher_id"
   ) VALUES (
-      '${wl_id}',
       '${group_id}',
       '${subject_id}',
       '${teacher_id}'
