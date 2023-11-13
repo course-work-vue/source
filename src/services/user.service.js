@@ -1094,6 +1094,10 @@ addWorkload(wl_id, group_id, subject_id, teacher_id){
       query: `SELECT teacher_id AS id, 
       CONCAT_WS(' ',last_name, first_name,patronymic) AS text
       FROM "teachers";`,
+      };
+    
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
 
   updatePaymentById(id, listener_id, contract_id,payer_id, expiration_date, deposited_amount){
     const query = {
