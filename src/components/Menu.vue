@@ -91,17 +91,6 @@
 
           ]
         },
-          {
-          label: "Доп списки",
-          link: "",
-          icon: "book",
-          children: [
-            {
-              label: "Аудитории",
-              link: "/audits",
-            }
-          ],
-        },
         {
           label: "Расписание",
           link: "",
@@ -111,6 +100,10 @@
               label: "Нагрузка",
               link: "/ScheduleLoads",
             },
+            {
+              label: "Аудитории",
+              link: "/audits",
+            }
           ]
         },
         {
