@@ -416,6 +416,30 @@ getAllWorkloads(){
   return axios.post(API_URL, query, { headers: authHeader() });
 }
 
+getWorkload(group_id){
+  const query = {
+    query: `SELECT * FROM workload
+    WHERE
+     "group_id" = '${group_id}'
+    `,
+  };
+  return axios.post(API_URL, query, { headers: authHeader() });
+}
+
+
+
+editWorkload(wl_id, teacher_id){
+  const query = {
+    query: `UPDATE "workload"
+    SET
+      "teacher_id" = '${teacher_id}'
+    WHERE
+      "wl_id" = '${wl_id}'
+    ;`,
+  };
+  return axios.post(API_URL, query, { headers: authHeader() });
+}
+
 addWorkload(group_id, subject_id, teacher_id){
   const query = {
     query: `INSERT INTO "workload" (
