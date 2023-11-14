@@ -82,7 +82,9 @@
                         <tbody>
                             <tr v-for="(teacher, index) in this.teachers" :key="teacher.teacher_id">
                                 <th
-                                    @click="this.selected_teacher = teacher.teacher_id"
+                                    @click="
+                                        this.selected_teacher = teacher.teacher_id;
+                                    "
                                     v-bind:class="{ 'table-active': this.selected_teacher == teacher.teacher_id, 'table-success': this.findWl(this.selected_group, this.selected_subject) == teacher.teacher_id}"
                                 >
                                 {{ teacher.last_name }}
@@ -188,7 +190,7 @@ export default {
                     item == "Пустой вывод." ? arr.push([]) : arr.push(item);
                     // console.log(item);
                 }
-                console.log(arr);
+                //console.log(arr);
                 this.teacher_load = arr;
                 this.loading=false;
                 this.t_loading = false;
@@ -200,8 +202,16 @@ export default {
 
 
         saveRel(){
-            UserService.addWorkload(this.selected_group, this.selected_subject, this.selected_teacher);
-            this.loadData();
+            if (this.findWl(this.selected_group, this.selected_subject) == -1){
+                UserService.addWorkload(this.selected_group, this.selected_subject, this.selected_teacher);
+            }
+            else if (this.findWl(this.selected_group, this.selected_subject) != this.selected_teacher){
+                UserService.editWorkload(this.findWlID(this.selected_group, this.selected_subject), this.selected_teacher);
+            }
+            else {
+                console.log(123);
+                return;
+            }
             this.loadTeachersData(this.selected_subject);
             while (this.loading == true && this.wl_loading == true){
                 this.findWl(this.selected_group, this.selected_subject);
@@ -244,7 +254,20 @@ export default {
             var i;
             for (i in this.wl) {
                 if (this.wl[i].group_id == group_id) {
-                    if (this.wl[i].subject_id == subject_id) return this.wl[i].teacher_id;
+                    if (this.wl[i].subject_id == subject_id) 
+                        return this.wl[i].teacher_id;
+                }
+            }
+            this.s_loading = false;
+            return -1;
+        },
+
+        findWlID(group_id, subject_id){
+            var i;
+            for (i in this.wl) {
+                if (this.wl[i].group_id == group_id) {
+                    if (this.wl[i].subject_id == subject_id) 
+                        return this.wl[i].wl_id;
                 }
             }
             this.s_loading = false;
