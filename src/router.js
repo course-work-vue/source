@@ -38,7 +38,9 @@ const AddContract = () => import("./components/AddContract.vue")
 
 const ScheduleLoads = () => import("./components/ScheduleLoads.vue")
 
+const AddCw = () => import("./components/AddCw.vue")
 const CWList = () => import("./components/CwList.vue")
+const CWdetail = () => import("./components/CwDetail.vue")
 
 const ProgramList = () => import("./components/ProgramList.vue")
 const AddProgram = () => import("./components/AddProgram.vue")
@@ -114,7 +116,9 @@ const routes = [
 
   { path: '/ScheduleLoads', component: ScheduleLoads },
 
+  { path: '/addcw', component: AddCw },
   { path: '/courseworks', component: CWList },
+  { path: '/courseworks/:CwId', component: CWdetail },
 
   { path: '/programs', component: ProgramList },
   { path: '/programs/:programId', component: ProgramDetail },

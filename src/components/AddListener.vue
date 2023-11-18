@@ -130,16 +130,7 @@
 
       
           
-          <div class="form-group d-inline-flex align-items-center mb-2">
-            <label for="people_count">Желаемое количество людей в группе</label>
-            <Field name="people_count" type="number" class="form-control"  value="" :class="{'is-invalid': errors.people_count}" />
-            <ErrorMessage name="people_count" class="error-feedback" />
-          </div>
-            <div class="form-group d-inline-flex align-items-center mb-2">
-            <label for="wanted_days">Желаемые дни</label>
-            <Field name="wanted_days" type="text" class="form-control"  value="" :class="{'is-invalid': errors.wanted_days}" />
-            <ErrorMessage name="wanted_days" class="error-feedback" />
-          </div>
+        
           <!--
           <div class="form-group">
               <label for="group_id">Желаемые дни недели</label>
@@ -240,7 +231,7 @@
 
           const response = await UserService.addListener(listener.name , listener.surname  , listener.lastname  , 
           listener.snils , listener.passport , listener.issued_by , listener.issue_date , listener.department_code , listener.registration_address , listener.phone_number ,
-          listener.email, listener.people_count, listener.wanted_days);
+          listener.email);
           response.data;
           this.loading=false;
           this.successful=true;

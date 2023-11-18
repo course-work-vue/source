@@ -15,7 +15,7 @@
 
 
 
-<div style="height: 50vh">
+<div style="height: 95vh">
 <div class="h-100 pt-5">
   <ag-grid-vue
     class="ag-theme-alpine"
@@ -44,6 +44,7 @@ import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
 import { reactive, onMounted, ref } from "vue";
 import ButtonCell from "@/components/ProfileButtonCell.vue";
 import ProfileHref from "@/components/ProfileHrefCellRenderer.vue";
+import ProfileHref2 from "@/components/ProfileHrefCellRenderer2.vue";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import UserService from "../services/user.service";
@@ -53,7 +54,8 @@ export default {
   components: {
     AgGridVue,
     ButtonCell,
-    ProfileHref
+    ProfileHref,
+    ProfileHref2
   },
   setup() {
     const gridApi = ref(null); // Optional - for accessing Grid's API
@@ -92,7 +94,7 @@ export default {
 
     },
           
-           { field: "prof_name", headerName: 'Название профиля' },
+           { field: "prof_name", headerName: 'Название профиля', cellRenderer: "ProfileHref2" },
            { field: "dir_code", headerName: 'Код направления', cellRenderer: "ProfileHref" },
            {
             field: 'dir_name',
