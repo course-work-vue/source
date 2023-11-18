@@ -159,7 +159,7 @@ export default {
 
     async loadGroupsData() {
         try {
-          const response = await UserService.getAllGroups(); // Replace with your API endpoint
+          const response = await UserService.getAllLgroups(); // Replace with your API endpoint
           this.rowData.value = Array.isArray(response.data) ? response.data : [response.data];
           this.loading=false;
         } catch (error) {

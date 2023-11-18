@@ -58,7 +58,8 @@ const CourseDetail = () => import("./components/CourseDetail.vue")
 const AuditList = () => import("./components/AuditList.vue")
 const AuditDetail = () => import("./components/AuditDetail.vue")
 
-
+const addLgroup = () => import("./components/AddListenergroup.vue")
+const lGroupList = () => import("./components/ListenergroupList.vue")
 const routes = [
   { 
     path: "/",
@@ -134,8 +135,8 @@ const routes = [
   { path: '/payments/:paymentID', component: PaymentDetail },
   { path: '/AddPayment', component: AddPayment },
 
-  
-
+  { path: '/lgroups', component: lGroupList },
+  { path: '/addlgroup', component: addLgroup },
 
   {
     path: "/user",

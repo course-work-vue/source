@@ -622,7 +622,39 @@ addWorkload(group_id, subject_id, teacher_id){
     return axios.put(API_URL +"groups", query, { headers: authHeader() });
   }
  
-  
+  getAllLgroups(){
+    const query = {
+      query: `SELECT
+      *
+  FROM
+      "l_groups" AS g;
+  `,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  addLgroup(group_number,group_program_id,hours,start_date,end_date,StartTime,EndTime){
+    const query = {
+      query: `INSERT INTO "l_groups" (
+        "group_number",
+        "group_program_id",
+        "hours",
+        "start_date",
+        "end_date",
+        "starttime",
+        "endtime"
+    ) VALUES (
+        '${group_number}',
+        '${group_program_id}',
+        '${hours}',
+        '${start_date}',
+        '${end_date}',
+        '${StartTime}',
+        '${EndTime}'
+    );`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
 // ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ LISTENERS
   getAllListeners(){
     const query = {
