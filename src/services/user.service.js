@@ -1151,19 +1151,76 @@ addWorkload(wl_id, group_id, subject_id, teacher_id){
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
-  savesSchedule(day_id, subject_id, aud_id){
+  savesSchedule(aud_id, day_id, subject_id,  teacher_id){
     
       const query = {
         query: `INSERT INTO "schedule" (
-          "day_id",
           "aud_id",
-          "subject_id"
+          "day_id",
+          "subject_id",
+          "teacher_id"
       ) VALUES (
+          '${aud_id}',
           '${day_id}',
           '${subject_id}',
-          '${aud_id}'
+          '${teacher_id}'
       );`,
       };
+      return axios.post(API_URL, query, { headers: authHeader() });
+    }
+
+  getAllAudit(){
+      const query = {
+        query: `SELECT
+       c.schedule_id,
+       a.number,
+       a.type,
+       a.count,
+       s.subject_name,
+       d.dayofweek,
+       CONCAT_WS(' ', t.last_name, t.first_name, t.patronymic) AS full_name
+       
+    FROM
+      schedule c
+      join
+      auditorium a on c.aud_id=a.aud_id
+      join
+      subjects s on c.subject_id=s.subject_id
+      join
+      days d on c.day_id=d.day_id
+      join 
+      teachers t on c.teacher_id=t.teacher_id;
+    `,
+      };
+      return axios.post(API_URL, query, { headers: authHeader() });
+    }
+
+    getAuditById(scheduleId){
+      const query = {
+        query: `SELECT * from schedule where 
+        schedule_id='${scheduleId}';`,
+      };
+      return axios.post(API_URL, query, { headers: authHeader() });
+    }
+
+    updateScheduleById(scheduleId,day_id,subject_id,teacher_id,aud_id){
+      const query = {
+        query: `"day_id = '${day_id}',
+        subject_id = '${subject_id}',
+        teacher_id = '${teacher_id}',
+        aud_id = '${aud_id}'
+    WHERE
+        "schedule_id" = '${scheduleId}';`,
+      };
+      
+      return axios.put(API_URL+"schedule", query, { headers: authHeader() });
+    }
+
+    deleteScheduleById(schedule_id){
+      const query = {
+        query: `DELETE FROM schedule where "schedule_id" = '${schedule_id}'`,
+      };
+  
       return axios.post(API_URL, query, { headers: authHeader() });
     }
 
