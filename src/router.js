@@ -57,6 +57,7 @@ const CourseDetail = () => import("./components/CourseDetail.vue")
 
 const AuditList = () => import("./components/AuditList.vue")
 const AuditDetail = () => import("./components/AuditDetail.vue")
+const AddAudit = () => import("./components/AddAudit.vue")
 
 const addLgroup = () => import("./components/AddListenergroup.vue")
 const lGroupList = () => import("./components/ListenergroupList.vue")
@@ -129,7 +130,8 @@ const routes = [
 
 
   { path: '/audits', component: AuditList },
-  { path: '/audits/:groupId', component: AuditDetail, props: true },
+  { path: '/audits/:scheduleId', component: AuditDetail},
+  { path: '/AddAudit', component: AddAudit },
   
 
   { path: '/payments/:paymentID', component: PaymentDetail },

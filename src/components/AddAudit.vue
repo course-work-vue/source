@@ -1,39 +1,57 @@
 <template>
+  <div class="list">
+  <div v-if="dataLoading">
+    <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+     
+
+  </div>
   <div class="col-md-12 list">
-    <div v-if="schedules" >
-      <Form @submit="updateSchedule" :validation-schema="schema" v-slot="{ errors }">
+      <Form @submit="saveSchedule" :validation-schema="schema" v-slot="{ errors }">
        
         <div >
           <div class="form-group d-inline-flex align-items-center mb-2">
-            <label for="group_id">Группа:</label>
-            
-            <Select2 :class="{'form-control is-invalid': errors.group_id}" v-model="editedSchedule.group_id" 
-            :options="groups" 
-            :settings=" { theme: 'bootstrap-5', width: '100%'}"
-            
-             />
+              <label for="group_id">Группа:</label>
+              
+              <Select2 :class="{'form-control is-invalid': errors.group_id}" v-model="myValue" 
+              :options="groups" 
+              :settings=" { theme: 'bootstrap-5', width: '100%'}"
+              
+               />
 
-             <Field  name="group_id" as="select" v-model="editedSchedule.group_id" hidden>
-              <option v-for="group in groups" :key="group.id" :value="group.id">{{ group.text }}</option>
-            </Field>
-            <ErrorMessage name="group_id" class="error-feedback" />
-          </div>
-          <div class="form-group d-inline-flex align-items-center float-none mb-2 col-3">
-            <label for="subgroup">Подгруппа:</label>
-            <Field name="subgroup" type="text" class="form-control" :class="{'is-invalid': errors.subgroup}" v-model="editedSchedule.subgroup"/>
-            <ErrorMessage name="subgroup" class="error-feedback" />
-            
-          </div>
+               <Field  name="group_id" as="select" v-model="myValue" hidden>
+                <option v-for="group in groups" :key="group.id" :value="group.id">{{ group.text }}</option>
+              </Field>
+              <ErrorMessage name="group_id" class="error-feedback" />
+            </div>
+
+            <div class="form-group d-inline-flex align-items-center float-none mb-2 col-3">
+              <label for="subgroup">Подгруппа:</label>
+              <Field name="subgroup" type="text" class="form-control" :class="{'is-invalid': errors.subgroup}"/>
+              <ErrorMessage name="subgroup" class="error-feedback" />
+              
+            </div>
+          
           <div class="form-group d-inline-flex align-items-center col-5 mb-2">
               <label for="audit_day_id">День недели</label>
               
-              <Select2 class="col-5" :class="{'form-control is-invalid': errors.day_id}" v-model="editedSchedule.day_id" 
+              <Select2 class="col-5" :class="{'form-control is-invalid': errors.day_id}" v-model="day_id" 
               :options="days" 
               :settings=" { theme: 'bootstrap-5', width: '100%'}"
               
                />
   
-               <Field name="audit_day_id" as="select" v-model="editedSchedule.day_id" hidden>
+               <Field name="audit_day_id" as="select" v-model="day_id" hidden>
                     <option v-for="day in days" :key="day.id" :value="day.id">{{ day.text }}</option>
                </Field>
               <ErrorMessage name="audit_day_id" class="error-feedback" />
@@ -42,13 +60,13 @@
             <div class="form-group d-inline-flex align-items-center col-5 mb-2">
               <label for="audit_subject_id">Предмет</label>
               
-              <Select2 class="col-10" :class="{'form-control is-invalid': errors.subject_id}" v-model="editedSchedule.subject_id" 
+              <Select2 class="col-10" :class="{'form-control is-invalid': errors.subject_id}" v-model="subject_id" 
               :options="subjects" 
               :settings=" { theme: 'bootstrap-5', width: '100%'}"
               
                />
   
-               <Field  name="audit_subject_id" as="select" v-model="editedSchedule.subject_id" hidden>
+               <Field  name="audit_subject_id" as="select" v-model="subject_id" hidden>
                 <option v-for="subject in subjects" :key="subject.id" :value="subject.id">{{ subject.text }}</option>
               </Field>
               <ErrorMessage name="audit_prof_id" class="error-feedback" />
@@ -57,13 +75,13 @@
             <div class="form-group d-inline-flex align-items-center col-5 mb-2">
               <label for="audit_teacher_id">Преподаватель</label>
               
-              <Select2 class="col-10" :class="{'form-control is-invalid': errors.teacher_id}" v-model="editedSchedule.teacher_id" 
+              <Select2 class="col-10" :class="{'form-control is-invalid': errors.teacher_id}" v-model="teacher_id" 
               :options="teachers" 
               :settings=" { theme: 'bootstrap-5', width: '100%'}"
               
                />
   
-               <Field  name="audit_teacher_id" as="select" v-model="editedSchedule.teacher_id" hidden>
+               <Field  name="audit_teacher_id" as="select" v-model="teacher_id" hidden>
                 <option v-for="teacher in teachers" :key="teacher.id" :value="teacher.id">{{ teacher.text }}</option>
               </Field>
               <ErrorMessage name="audit_prof_id" class="error-feedback" />
@@ -79,13 +97,13 @@
             <div class="form-group d-inline-flex align-items-center col-10 mb-2">
               <label for="audit_subject_id">Аудитория</label>
               
-              <Select2 class="col-5" :class="{'form-control is-invalid': errors.aud_id}" v-model="editedSchedule.aud_id" 
+              <Select2 class="col-5" :class="{'form-control is-invalid': errors.aud_id}" v-model="aud_id" 
               :options="auditorium" 
               :settings=" { theme: 'bootstrap-5', width: '100%'}"
               
                />
   
-            <Field name="audit_id" as="select" v-model="editedSchedule.aud_id" hidden>
+            <Field name="audit_id" as="select" v-model="aud_id" hidden>
                 <option v-for="audit in auditorium" :key="audit.id" :value="audit.id">{{ audit.text }}</option>
             </Field>
               <ErrorMessage name="audit_aud_id" class="error-feedback" />
@@ -94,103 +112,22 @@
             
             
 
-            <div class="form-group  mt-3">
-            
-            <router-link to="/audits" class="mx-2 btn btn-secondary  float-start">Отмена</router-link>
-          </div>
-          <div class="form-group float-end">
-            <button class="btn btn-danger float-end" @click="deleteAudit">
-              Удалить аудиторию
-            </button>
-          </div>
-          <div class="form-group mt-3">
-            <button class="btn btn-primary btn-block" :disabled="loading">
-              <span
-                v-show="loading"
-                class="spinner-border spinner-border-sm"
-              ></span>
-              Обновить аудиторию
-            </button>
-        
-          </div>
-        </div>
-      </Form>
+            <div class="form-group mt-3">
+             
+             <router-link to="/audits" class="btn btn-secondary ml-2 float-start">Отмена</router-link>
+             <button class="btn btn-primary btn-block float-end" :disabled="loading">
+               <span
+                 v-show="loading"
+                 class="spinner-border spinner-border-sm"
+               ></span>
+               Добавить аудиторию
+             </button>
+           </div>
+         </div>
+       </Form>
     </div>
   
-    <div v-else>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-    </div>
+   
       <div
         v-if="message"
         class="alert"
@@ -226,6 +163,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
       const toast = useToast();
       return { toast }
     },
+    name: "AddAudit",
     components: {
       Form,
       Field,
@@ -247,14 +185,12 @@ import { Form, Field, ErrorMessage } from "vee-validate";
         schema,
         loading:false,
         successful: false,
-        schedules: null,
-        groups: null, // заглушка для данных студента
-        editedSchedule: null, // заглушка для новых данных студента
-        profiles: null,
-        directions: null,
+        subjects: [],
         options: [],
-        auditorium: null,
-        teachers: null
+        teachers: [],
+        auditorium: [],
+        groups: [],
+        days: []
       };
     },
     mounted() {
@@ -266,41 +202,35 @@ import { Form, Field, ErrorMessage } from "vee-validate";
     methods: {
       // грузим студента из psql по id 
 
-      async updateSchedule() {
-        try {
-          // запрос в psql
-          this.loading=true;
+        async saveSchedule() {
+          try {
+              
+            // Подготовка данных для сохранения в расписании
+            const dayId = parseInt(this.day_id);
+            const subjectId = parseInt(this.subject_id);
+            const audId = parseInt(this.aud_id);
+            const teacherId = parseInt(this.teacher_id);
+            const groupId = parseInt(this.group_id);
+            // Отправка данных на сервер для сохранения в расписании
+            const response = await UserService.savesSchedule(dayId, subjectId, audId, teacherId, groupId);
+            response.data;
 
-          const response = await UserService.updateScheduleById(this.schedule.schedule_id,this.editedSchedule.day_id,
-          this.editedSchedule.subject_id,this.editedSchedule.teacher_id,this.editedSchedule.aud_id);
-          response.data;
-          this.schedules = { ...this.editedSchedule };
-          this.loading=false;
-          this.toast.success("Успешно обновили аудиторию!");
-        } catch (error) {
-          console.error('Ошибка загрузки данных :', error);
-        }
-      },
-      async deleteAudit() {
-        try {
-          // запрос в psql
-          this.loading=true;
-
-          const response = await UserService.deleteScheduleById(this.schedule.schedule_id);
-          response.data;
-          this.schedules = { ...this.editedSchedule };
-          this.loading=false;
-          this.toast.success("Успешно удалили аудиторию!");
-        } catch (error) {
-          console.error('Ошибка загрузки данных:', error);
-        }
-      },
+            this.loading = false;
+            this.successful=true;
+            this.toast.success("Сохранено!");
+            } catch (error) {
+              this.toast.error("Ошибка добавления аудитории");
+              console.error('Ошибка загрузки данных:', error);
+            }
+        },
+        
         async loadGroupsData() {
         try {
           const response = await UserService.getGroupsAsIdText(); 
           this.groups = Array.isArray(response.data) ? response.data : [response.data];
+          this.dataLoading=false;
         } catch (error) {
-          console.error('Ошибка загрузки данных :', error);
+          console.error('Error loading students data:', error);
         }
       },
       // Метод для обновления данных о студенте
@@ -308,6 +238,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
         try {
           const response = await UserService.getDaysAsIdText(); 
           this.days = Array.isArray(response.data) ? response.data : [response.data];
+          this.dataLoading=false;
         } catch (error) {
           console.error('Error:', error);
         }
@@ -316,25 +247,17 @@ import { Form, Field, ErrorMessage } from "vee-validate";
         try {
           const response = await UserService.getAuditAsIdText(); 
           this.auditorium = Array.isArray(response.data) ? response.data : [response.data];
+          this.dataLoading=false;
         } catch (error) {
           console.error('Error:', error);
         }
       },
-      async loadAuditoriumData() {
-        const scheduleId = this.$route.params.scheduleId;
-        try {
-          const response = await UserService.getAuditById(scheduleId);
-          this.schedules = response.data;
-          // Клонирование объекта, для избежание редактирования данных сразу
-          this.editedSchedule = { ...response.data };
-        } catch (error) {
-          console.error('Error', error);
-        }
-      },
+      
       async loadTeachersData() {
         try {
           const response = await UserService.getTeachersAsIdText(); 
           this.teachers = Array.isArray(response.data) ? response.data : [response.data];
+          this.dataLoading=false;
         } catch (error) {
           console.error('Error:', error);
         }
@@ -343,10 +266,11 @@ import { Form, Field, ErrorMessage } from "vee-validate";
         try {
           const response = await UserService.getSubjectAsIdText(); 
           this.subjects = Array.isArray(response.data) ? response.data : [response.data];
+          this.dataLoading=false;
         } catch (error) {
           console.error('Error:', error);
         }
-      }
+      },
       
     },
     created() {
@@ -355,7 +279,6 @@ import { Form, Field, ErrorMessage } from "vee-validate";
       this.loadGroupsData();
       this.loadAuditData();
       this.loadTeachersData();
-      this.loadAuditoriumData();
     },
   };
   </script>
