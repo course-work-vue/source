@@ -106,6 +106,11 @@
             }
           ]
         },
+          {
+          label: "Excel",
+          link: "/xlparse",
+          icon: "description"
+        },
         {
           label: "Настройки",
           link: "/profile",
