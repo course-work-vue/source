@@ -1317,7 +1317,106 @@ addWorkload(group_id, subject_id, teacher_id){
       return axios.post(API_URL, query, { headers: authHeader() });
     }
 
+  
+      clearTempKIT() {
+    const query = {
+      query: `TRUNCATE "temp_KIT";`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  clearTempKITdolj() {
+    const query = {
+      query: `TRUNCATE "temp_KIT_dolj" RESTART IDENTITY CASCADE;`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  clearTempKITdeg() {
+    const query = {
+      query: `TRUNCATE "temp_KIT_deg" RESTART IDENTITY CASCADE;`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  clearTempKITstatus() {
+    const query = {
+      query: `TRUNCATE "temp_KIT_status" RESTART IDENTITY CASCADE;`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  insertTempKIT(str) {
+    const query = {
+      query: `INSERT INTO "temp_KIT" (
+        "name1",
+        "name2",
+        "name3",
+        "dolj_id",
+        "deg_id",
+        "status_id") 
+        VALUES 
+        ${str}
+    ;`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  insertTempKITDolj(name) {
+    const query = {
+      query: `INSERT INTO "temp_KIT_dolj" (
+        "dolj") 
+        VALUES
+        ${name}
+    ;`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  insertTempKITDeg(name) {
+    const query = {
+      query: `INSERT INTO "temp_KIT_deg" (
+        "deg") 
+        VALUES
+        ${name}
+    ;`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  insertTempKITStatus(name) {
+    const query = {
+      query: `INSERT INTO "temp_KIT_status" (
+        "status") 
+        VALUES
+        ${name}
+    ;`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
 
+  getTempData(){
+    const query = {
+      query: `SELECT
+      t.name1,
+      t.name2,
+      t.name3,
+      d.dolj,
+      de.deg,
+      s.status
+      FROM 
+        "temp_KIT" AS t
+      JOIN 
+        "temp_KIT_dolj" AS d
+      ON
+        t.dolj_id = d.id
+      JOIN 
+        "temp_KIT_deg" AS de
+      ON
+        t.deg_id = de.id
+      JOIN 
+        "temp_KIT_status" AS s
+      ON
+        t.status_id = s.id;
+  `,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  
 }
 
 export default new UserService();
