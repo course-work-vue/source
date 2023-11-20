@@ -62,6 +62,12 @@ const AddAudit = () => import("./components/AddAudit.vue")
 const addLgroup = () => import("./components/AddListenergroup.vue")
 const lGroupList = () => import("./components/ListenergroupList.vue")
 const lGroupDetail = () => import("./components/LgroupDetail.vue")
+
+
+const xlparse = () => import("./components/xlparse.vue")
+const ManageExcel = () => import("./components/ManageExcel.vue")
+
+
 const routes = [
   { 
     path: "/",
@@ -85,6 +91,18 @@ const routes = [
     name: "profile",
     // lazy-loaded
     component: Profile,
+  },
+   {
+    path: "/xlparse",
+    name: "xlparse",
+    // lazy-loaded
+    component: xlparse,
+  },
+  {
+    path: "/ManageExcel",
+    name: "ManageExcel",
+    // lazy-loaded
+    component: ManageExcel,
   },
   { path: '/students', component: StudentList },
 
