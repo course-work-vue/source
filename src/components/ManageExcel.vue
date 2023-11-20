@@ -38,7 +38,7 @@
   
   import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
   import { reactive, onMounted, ref } from "vue";
-  import ButtonCell from "@/components/TestButton.vue";
+  import ButtonCell from "@/components/ProfileButtonCell.vue";
   import ProfileHref from "@/components/ProfileHrefCellRenderer.vue";
   import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
   import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
