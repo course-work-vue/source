@@ -14,7 +14,7 @@
 
 
 
-<div style="height: 50vh">
+<div style="height: 95vh">
 <div class="h-100 pt-5">
   <ag-grid-vue
     class="ag-theme-alpine"
@@ -41,7 +41,7 @@
 
 import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
 import { reactive, onMounted, ref } from "vue";
-import ButtonCell from "@/components/GroupButtonCell.vue";
+import ButtonCell from "@/components/CWButtonCell.vue";
 import GroupHref from "@/components/GroupHrefCellRenderer.vue";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
@@ -87,16 +87,14 @@ export default {
         onClick: navigateToStudent,
         label: 'View Details', // Button label
       },
-      minWidth: 150, // Adjust the width as needed
+      maxWidth: 120,
       cellClass: "grid-cell-centered",
 
     },
-           { field: "course_work_id", headerName: 'ID', filter: 'agSetColumnFilter'
-           },
-           { field: "course_work_kafedra", headerName: 'Кафедра'},
+           { field: "dep_name", headerName: 'Кафедра'},
            { field: "course_work_theme", headerName: 'Тема' },
            { field: "full_name", headerName: 'ФИО студента' },
-
+           { field: "full_name_t", headerName: 'ФИО препода' },
            
          
       ],

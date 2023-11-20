@@ -43,42 +43,10 @@
     <div v-else class="col-md-12">
         <Form @submit="addPayment" :validation-schema="schema" v-slot="{ errors }">
           <div>
-                      
-          <div class="form-group">
-            <label for="listener_id">Слушатель</label>
-            
-            <Select2 :class="{'form-control is-invalid': errors.listener_id}" v-model="myValue" 
-            :options="listeners" 
-            :settings=" { theme: 'bootstrap-5', width: '100%'}"
-            
-             />
-
-             <Field  name="listener_id" as="select" v-model="myValue" hidden>
-              <option v-for="listener in listeners" :key="listener.id" :value="listener.id">{{ listener.text }}</option>
-            </Field>
-            <ErrorMessage name="listener_id" class="error-feedback" />
-          </div>
-
-          <div class="form-group">
-            <label for="payer_id">Законный представитель</label>
-            
-            <Select2 :class="{'form-control is-invalid': errors.payer_id}" v-model="myValue2" 
-            :options="payers" 
-            :settings=" { theme: 'bootstrap-5', width: '100%'}"
-            
-             />
-
-             <Field  name="payer_id" as="select" v-model="myValue2" hidden>
-              <option v-for="payer in payers" :key="payer.id" :value="payer.id">{{ payer.text }}</option>
-            </Field>
-            <ErrorMessage name="payer_id" class="error-feedback" />
-          </div>
-
- 
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center col-5 mb-2">
             <label for="contract_id">Номер договора</label>
             
-            <Select2 :class="{'form-control is-invalid': errors.contract_id}" v-model="myValue3" 
+            <Select2 class="col-5" :class="{'form-control is-invalid': errors.contract_id}" v-model="myValue3" 
             :options="contracts" 
             :settings=" { theme: 'bootstrap-5', width: '100%'}"
             
@@ -96,10 +64,34 @@
               <ErrorMessage name="expiration_date" class="error-feedback" />
             </div>
 
-            <div class="form-group d-inline-flex align-items-center mb-2 col-2">
+            <div class="form-group d-inline-flex align-items-center mb-2">
+              <label for="date_40">Дата оплаты 40%:</label>
+              <Field name="date_40" type="date"  class="form-control" value="" :class="{'is-invalid': errors.date_40}"/>
+              <ErrorMessage name="date_40" class="error-feedback" />
+            </div>
+
+
+            <div class="form-group d-inline-flex align-items-center mb-2 col-6">
+              <label for="all_sum">Вся сумма:</label>
+              <Field name="all_sum" type="text" class="form-control" value="" :class="{'is-invalid': errors.all_sum}"/>
+              <ErrorMessage name="all_sum" class="error-feedback" />
+            </div>
+            <div class="form-group d-inline-flex align-items-center mb-2 col-5">
               <label for="deposited_amount">Внесённая сумма:</label>
-              <Field name="deposited_amount" type="text" class="form-control" value="" :class="{'is-invalid': errors.deposited_amount}"/>
+              <Field name="deposited_amount" type="number" class="form-control" value="" :class="{'is-invalid': errors.deposited_amount}"/>
               <ErrorMessage name="deposited_amount" class="error-feedback" />
+            </div>
+
+            <div class="form-group d-inline-flex align-items-center mb-2 col-5">
+              <label for="left_to_pay">Остаточная сумма:</label>
+              <Field name="left_to_pay" type="number" class="form-control" value="" :class="{'is-invalid': errors.left_to_pay}"/>
+              <ErrorMessage name="left_to_pay" class="error-feedback" />
+            </div>
+
+            <div class="form-group d-inline-flex align-items-center mb-2 col-6">
+              <label for="bank">Банк:</label>
+              <Field name="bank" type="text" class="form-control" value="" :class="{'is-invalid': errors.bank}"/>
+              <ErrorMessage name="bank" class="error-feedback" />
             </div>
           </div>
           <div class="form-group mt-3">
@@ -110,8 +102,9 @@
                 ></span>
                 Добавить платёж
               </button>
-              <router-link to="/contracts" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
+              <router-link to="/payments" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
             </div>
+
         </Form>
   
 
@@ -164,6 +157,7 @@
         listeners: null,
         payers: null,
         programs: null,
+        contracts:null
         
       };
     },
@@ -175,56 +169,31 @@
     },
     methods: {
 
-      async addContract(contract) {
+      async addPayment(payment) {
         try {
           // запрос в psql
           this.loading=true;
 
-          const response = await UserService.addContract(contract.listener_id, contract.payer_id, contract.contr_number, 
-          contract.program_id);
+          const response = await UserService.addPayment(payment.contract_id, 
+          payment.expiration_date, payment.date_40, payment.all_sum,payment.deposited_amount,payment.left_to_pay,payment.bank);
           response.data;
           this.loading=false;
           this.successful=true;
 
-          this.toast.success("Успешно добавили договор!");
+          this.toast.success("Успешно добавили платёж!");
         } catch (error) {
           this.message="Ошибка";
-          this.toast.error("Ошибка добавления договор");
+          this.toast.error("Ошибка добавления платежа");
           console.error('Error updating contract details:', error);
         }
       },
 
 
-      async loadListenersData() {
-        try {
-          const response = await UserService.getListenersAsIdText(); 
-          this.listeners = Array.isArray(response.data) ? response.data : [response.data];
-        } catch (error) {
-          console.error('Ошибка загрузки данных:', error);
-        }
-      },
 
-      async loadPayersData() {
-        try {
-          const response = await UserService.getPayersAsIdText(); 
-          this.payers = Array.isArray(response.data) ? response.data : [response.data];
-        } catch (error) {
-          console.error('Ошибка загрузки данных:', error);
-        }
-      },
-
-      async loadProgramsData() {
-        try {
-          const response = await UserService.getProgramsAsIdText(); 
-          this.programs = Array.isArray(response.data) ? response.data : [response.data];
-        } catch (error) {
-          console.error('Ошибка загрузки данных:', error);
-        }
-      },
       async loadContractsData() {
         try {
           const response = await UserService.getContractsAsIdText(); 
-          this.programs = Array.isArray(response.data) ? response.data : [response.data];
+          this.contracts = Array.isArray(response.data) ? response.data : [response.data];
           this.dataLoading=false;
         } catch (error) {
           console.error('Ошибка загрузки данных:', error);
@@ -234,16 +203,20 @@
     },
 
     created() {
-      this.loadListenersData();
-      this.loadPayersData();
-      this.loadProgramsData();
+
       this.loadContractsData();
     },
   };
   </script>
 
 <style lang="scss" scoped>
-
+label{
+  margin-right: 15px;
+  white-space: nowrap;
+}
+.form-group{
+  margin-right: 20px;
+}
 .skeleton-text {
   width: 15%;
   height: 1.0em;
@@ -265,24 +238,6 @@
 }
 
 
-
-@keyframes skeletonShimmer {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-@keyframes skeletonFade {
-  0%, 100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
-}
 
 @keyframes skeletonShimmer {
   0% {

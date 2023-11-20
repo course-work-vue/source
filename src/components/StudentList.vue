@@ -1,21 +1,59 @@
 <template>
 
+<div v-if="!loading">
 
-  <div class="col col-xs-9 col-lg-12 mt-4 list">
+  <div class="col col-xs-9 col-lg-12 list">
     <div class="col col-12 ">
+      <div class="d-inline-flex">
+        <div v-if="!spisok">
+        <h1> Список всех студентов </h1>
+      </div>
+    <h1 v-if="spisok"> Список студентов {{ groupn }} группы </h1>
+    <h1 v-if="subg">, {{ subgn }} подгруппы</h1>
+      </div>
+      
     <div class="col col-12">
     
       <button @click="navigateToAddStudent" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить студента</button>
-      <div class="col col-6 float-end d-inline-flex align-items-center mb-2 ">
+      <div class="col col-6 float-end d-inline-flex align-items-center">
       <button @click="clearFilters" :disabled="!filters" class="btn btn-sm btn-primary text-nowrap mx-2" type="button"><i class="material-icons-outlined">close</i>Очистить фильтры</button>
       <input class="form-control" type="text" v-model="quickFilterValue" id="filter-text-box" v-on:input="onFilterTextBoxChanged()" placeholder="Поиск..."> 
+
+      
     </div>
   </div>
+  
+
 </div>
+<div>
+<div class="col col-6 float-start">
+<div class="form-group d-inline-flex align-items-center">
+              <label class="bigger form-label" for="group_id">Фильтр по группе:</label>
 
+                <select class="form-select" id="group_id" v-model="myValue" @change="handleSelectChange(myValue)">
+                  <option selected="selected" value="">
+                      Нет
+                  </option>
+                  <option v-for="group in groups" :key="group.id" :value="group.text">{{ group.text }}</option>
+                </select>
+        
+            </div>
+          </div>
+          <div class="col col-6 float-start">
+<div class="form-group d-inline-flex align-items-center">
+              <label class="bigger form-label" for="subgroup_id">Фильтр по подгруппе:</label>
 
-
-<div style="height: 95vh">
+                <select class="form-select" id="subgroup_id" v-model="myValue4" @change="handleSelectChange2(myValue4)">
+                  <option selected="selected" value="">Нет</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                 
+                </select>
+        
+            </div>
+          </div>
+        </div>
+<div style="height: 90vh">
 <div class="h-100 pt-5">
   <ag-grid-vue
     class="ag-theme-alpine"
@@ -30,38 +68,42 @@
     @grid-ready="onGridReady"
     @firstDataRendered="onFirstDataRendered"
     @filter-changed="onFilterChanged"
-    :pagination="true"            
-    :paginationPageSize="paginationPageSize"  
+
   >
   </ag-grid-vue>
 </div>
 </div></div>
-
+</div>
 </template>
 
 <script>
-
+ import { Form, Field, ErrorMessage } from "vee-validate";
 import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
 import { reactive, onMounted, ref } from "vue";
 import ButtonCell from "@/components/StudentButtonCell.vue";
 import StudentHref from "@/components/StudentHrefCellRenderer.vue";
+import StudentHref2 from "@/components/StudentHrefCellRenderer2.vue";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import UserService from "../services/user.service";
-
+import { useRoute } from 'vue-router';
 /* eslint-disable vue/no-unused-components */
 export default {
   name: "App",
   components: {
     AgGridVue,
     ButtonCell,
-    StudentHref
+    StudentHref,
+    StudentHref2,
+    Form,
+    Field,
+    ErrorMessage
   },
   setup() {
     const gridApi = ref(null); // Optional - for accessing Grid's API
     const gridColumnApi = ref();
     // Obtain API from grid's onGridReady event
-
+    const route = useRoute();
     const paginationPageSize = 60;
 
 
@@ -95,9 +137,9 @@ export default {
      
     },
         
-           { field: "full_name", headerName: 'ФИО', minWidth:250 },
-           { field: "course", headerName: 'Курс', maxWidth:129 },
-           { field: "group_name", headerName: 'Группа', maxWidth:129 },
+           { field: "full_name", headerName: 'ФИО', minWidth:250, cellRenderer: "StudentHref2" },
+           { field: "group_number", headerName: 'Группа', maxWidth:129 },
+           { field: "subgroup", headerName: 'Подгруппа', maxWidth:129 },
            { field: "enrollment_order", headerName: 'Приказ о зачислении', minWidth: 200, hide: true },
            {
             field: 'formatted_enrolled_date', 
@@ -108,7 +150,85 @@ export default {
            { field: "formatted_date_of_birth", filter: 'agDateColumnFilter', filterParams: filterParams, headerName: 'Дата рождения', minWidth: 170, hide: true }
       ],
     });
+    const restoreFromHardCoded2 = (myValue3) => {
 
+      const filterModelQuery = route.query.filterModel;
+      if (filterModelQuery) {
+  // Parse the filterModel from the query parameter
+  const filterModel = JSON.parse(filterModelQuery);
+
+  // Your hardcoded filter
+  const hardcodedFilter = {
+    subgroup: { type: 'equals', filter: myValue3 }
+  };
+
+  // Merge the filterModel and hardcodedFilter using the spread operator
+  const mergedFilter = {
+    ...filterModel,
+    ...hardcodedFilter
+  };
+
+  // Now 'mergedFilter' contains the combined filters
+  console.log(mergedFilter);
+  gridApi.value.setFilterModel(mergedFilter);
+}
+else{
+  const hardcodedFilter = {
+    subgroup: { type: 'equals', filter: myValue3 }
+  };
+  gridApi.value.setFilterModel(hardcodedFilter);
+}
+     
+     
+    };
+
+    const handleSelectChange2 = (myValue3) => {
+      console.log(myValue3);
+      restoreFromHardCoded2(myValue3); 
+    };
+
+    const restoreFromHardCoded = (myValue2) => {
+
+
+
+
+const filterModelQuery = route.query.filterModel;
+      if (filterModelQuery) {
+  // Parse the filterModel from the query parameter
+  const filterModel = JSON.parse(filterModelQuery);
+
+  // Your hardcoded filter
+  const hardcodedFilter = {
+    group_number: { type: 'equals', filter: myValue2 }
+  };
+
+  // Merge the filterModel and hardcodedFilter using the spread operator
+  const mergedFilter = {
+    ...filterModel,
+    ...hardcodedFilter
+  };
+
+  // Now 'mergedFilter' contains the combined filters 
+  console.log(mergedFilter);
+  gridApi.value.setFilterModel(mergedFilter);
+}
+else{
+  const hardcodedFilter = {
+    group_number: { type: 'equals', filter: myValue2 }
+  };
+  gridApi.value.setFilterModel(hardcodedFilter);
+}
+
+
+      
+    };
+
+    const handleSelectChange = (myValue2) => {
+      restoreFromHardCoded(myValue2);
+    };
+ 
+
+    
     // DefaultColDef sets props common to all Columns
     const defaultColDef = {
       sortable: true,
@@ -117,6 +237,7 @@ export default {
       resizable: true,
       minWidth: 150
     };
+
 
     // Example load data from server
     onMounted(() => {
@@ -145,6 +266,10 @@ export default {
       onFilterTextBoxChanged,
       paginationPageSize,
       navigateToStudent,
+      restoreFromHardCoded,
+      restoreFromHardCoded2,
+      handleSelectChange,
+      handleSelectChange2
      
 
       
@@ -152,13 +277,34 @@ export default {
     };
   },
   data() {
+
+
+
   return {
     quickFilterValue: '',
-    filters:false
+    filters:false,
+    groups: ["Нет"],
+    myValue: '',
+    myValue4:'',
+    spisok:false,
+    subg:false,
+    groupn:null,
+    subgn:null
   };
 },
 
   methods: {
+    
+    async loadGroupsData() {
+        try {
+          const response = await UserService.getGroupsAsKOSTIL(); 
+
+          this.groups = Array.isArray(response.data) ? response.data : [response.data];
+       
+        } catch (error) {
+          console.error('Error loading students data:', error);
+        }
+      },
 
     async loadStudentsData() {
         try {
@@ -174,6 +320,7 @@ export default {
     this.$router.push(`/addStudent`); // Navigate to the AddStudent route
 },
 
+
 onFirstDataRendered(params) {
       this.gridApi = params.api;
       this.columnApi = params.columnApi;
@@ -184,15 +331,32 @@ onFirstDataRendered(params) {
         const filterModel = JSON.parse(filterModelQuery);
         this.gridApi.setFilterModel(filterModel);
         this.filters=true;
-        
+        if(filterModel.group_number){
+          this.myValue=filterModel.group_number.filter;
+        this.groupn=filterModel.group_number.filter;
+        if(this.groupn){
+        this.spisok=true;
       }
+        }
+        
+        if(filterModel.subgroup){
+          this.myValue4=filterModel.subgroup.filter;
+          this.subgn=filterModel.subgroup.filter;
 
+          if(this.subgn){
+        this.subg=true;
+      }
+        }
+
+      }
+      
       const quickFilterQuery = this.$route.query.quickFilter;
       if (quickFilterQuery) {
         const quickFilter = JSON.parse(quickFilterQuery);
         this.gridApi.setQuickFilter(quickFilter);
         this.quickFilterValue = quickFilter;
         this.filters=true;
+        
       }
     },
     onFilterChanged() {
@@ -216,7 +380,33 @@ onFirstDataRendered(params) {
   if (savedFilterModel && Object.keys(savedFilterModel).length > 0) {
     queryParams.filterModel = JSON.stringify(savedFilterModel);
     this.filters=true;
+    if(savedFilterModel.group_number){
+      this.myValue=savedFilterModel.group_number.filter;
+    this.groupn=savedFilterModel.group_number.filter;
+        if(this.groupn){
+        this.spisok=true;
+      }
+    }
+    else{
+      this.spisok=false;
+    }
+    if(savedFilterModel.subgroup){
+          this.myValue4=savedFilterModel.subgroup.filter;
+          this.subgn=savedFilterModel.subgroup.filter;
+
+          if(this.subgn){
+        this.subg=true;
+      }
+        }
+        else{
+          this.subg=false;
+        }
   }
+  else{
+    this.spisok=false;
+    this.subg=false;
+  }
+
 
   // Push the query parameters to the router
   this.$router.push({ query: queryParams });
@@ -229,6 +419,10 @@ onFirstDataRendered(params) {
     this.gridApi.setFilterModel();
     this.gridApi.setQuickFilter();
     this.quickFilterValue='';
+    this.myValue="";
+    this.myValue4="";
+    this.subg=false;
+    this.spisok=false;
     this.filters=false;
   },
 
@@ -236,7 +430,7 @@ onFirstDataRendered(params) {
     },
 
     created() {
-    
+    this.loadGroupsData();
     this.loadStudentsData();
 
     },
@@ -269,7 +463,10 @@ var filterParams = {
 </script>
 
 <style lang="scss" scoped>
-
+.bigger{
+  font-size: 30px;
+  white-space: nowrap;
+}
 .ag-row .ag-cell {
   display: flex;
   justify-content: center; /* align horizontal */

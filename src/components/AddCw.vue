@@ -17,86 +17,95 @@
 
   </div>
     <div v-else class="col-md-12">
-        <Form @submit="addGroup" :validation-schema="schema" v-slot="{ errors }">
+      <Form @submit="addCw" :validation-schema="schema" v-slot="{ errors }">
           <div>
 
           <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-              <label for="group_number">Номер группы:</label>
-              <Field name="group_number" type="text" class="form-control" :class="{'is-invalid': errors.group_number}"/>
-              <ErrorMessage name="group_number" class="error-feedback" />
+              <label for="course_work_theme">Тема работы:</label>
+              <Field name="course_work_theme" type="text" class="form-control" :class="{'is-invalid': errors.course_work_theme}"/>
+              <ErrorMessage name="course_work_theme" class="error-feedback" />
               
             </div>
 
           
            
 
-            <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-              <label for="group_dir_id">Направление:</label>
+            <div class="form-group d-inline-flex align-items-center col-6 mb-2">
+              <label for="course_work_teacher_id">Руководитель:</label>
               
-              <Select2 class="col-5" :class="{'form-control is-invalid': errors.group_dir_id}" v-model="myValue" 
-              :options="directions" 
+              <Select2 class="col-5" :class="{'form-control is-invalid': errors.course_work_teacher_id}" v-model="myValue" 
+              :options="teachers" 
               :settings=" { theme: 'bootstrap-5', width: '100%'}"
               
                />
 
-               <Field  name="group_dir_id" as="select" v-model="myValue" hidden>
-                <option v-for="direction in directions" :key="direction.id" :value="direction.id">{{ direction.text }}</option>
+               <Field  name="course_work_teacher_id" as="select" v-model="myValue" hidden>
+                <option v-for="teacher in teachers" :key="teacher.id" :value="teacher.id">{{ teacher.text }}</option>
               </Field>
-              <ErrorMessage name="group_dir_id" class="error-feedback" />
+              <ErrorMessage name="course_work_teacher_id" class="error-feedback" />
             </div>
 
 
             <div class="form-group d-inline-flex align-items-center col-10 mb-2">
-              <label for="group_prof_id">Профиль:</label>
+              <label for="course_work_student_id">Исполнитель:</label>
               
-              <Select2 class="col-5" :class="{'form-control is-invalid': errors.group_prof_id}" v-model="myValue2" 
-              :options="profiles" 
+              <Select2 class="col-5" :class="{'form-control is-invalid': errors.course_work_student_id}" v-model="myValue2" 
+              :options="students" 
               :settings=" { theme: 'bootstrap-5', width: '100%'}"
               
                />
 
-               <Field  name="group_prof_id" as="select" v-model="myValue2" hidden>
-                <option v-for="profile in profiles" :key="profile.id" :value="profile.id">{{ profile.text }}</option>
+               <Field  name="course_work_student_id" as="select" v-model="myValue2" hidden>
+                <option v-for="student in students" :key="student.id" :value="student.id">{{ student.text }}</option>
               </Field>
-              <ErrorMessage name="group_prof_id" class="error-feedback" />
+              <ErrorMessage name="course_work_student_id" class="error-feedback" />
             </div>
 
 
-            <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-              <label for="course">Курс:</label>
+            <div class="form-group d-inline-flex align-items-center col-6 mb-2">
+              <label for="course_work_kafedra">Кафедра:</label>
               
-              <Select2 class="col-5" :class="{'form-control is-invalid': errors.course}" v-model="myValue3" 
-              :options="courses" 
+              <Select2 class="col-6" :class="{'form-control is-invalid': errors.course_work_kafedra}" v-model="myValue3" 
+              :options="departaments" 
               :settings=" { theme: 'bootstrap-5', width: '100%'}"
               
                />
 
-               <Field  name="course" as="select" v-model="myValue3" hidden>
-                <option v-for="course in courses" :key="course.id" :value="course.id">{{ course.text }}</option>
+               <Field  name="course_work_kafedra" as="select" v-model="myValue3" hidden>
+                <option v-for="departament in departaments" :key="departament.id" :value="departament.id">{{ departament.text }}</option>
               </Field>
-              <ErrorMessage name="course" class="error-feedback" />
+              <ErrorMessage name="course_work_kafedra" class="error-feedback" />
             </div>
 
             <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-              <label for="magister">Магистратура:</label>
-              <Field name="magister" type="radio" id="magister2" value="false" class="form-check-input mt-0 ml-5" :class="{'is-invalid': errors.magister}"/>
-              <label for="magister2">Нет</label>
-              <Field name="magister" type="radio" id="magister1" value="true" class="form-check-input mt-0" :class="{'is-invalid': errors.magister}"/>
-              <label for="magister1">Да</label>
+              <Field name="course_work_vipysk" type="radio" id="course_work_vipysk1" value="false" class="form-check-input mt-0 ml-5" :class="{'is-invalid': errors.course_work_vipysk}"/>
+              <label for="course_work_vipysk1">Курсовая работа</label>
+              <Field name="course_work_vipysk" type="radio" id="course_work_vipysk2" value="true" class="form-check-input mt-0" :class="{'is-invalid': errors.course_work_vipysk}"/>
+              <label for="course_work_vipysk2">Выпускная работа</label>
              
               <ErrorMessage name="magister" class="error-feedback" />
               
             </div>
+            <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+              <label for="course_work_year">Год:</label>
+              <Field name="course_work_year" type="number" class="form-control" :class="{'is-invalid': errors.course_work_year}"/>
+              <ErrorMessage name="course_work_year" class="error-feedback" />
+            </div>
+            <div class="form-group d-inline-flex align-items-center col-3 mb-2">
+              <label for="course_work_ocenka">Оценка:</label>
+              <Field name="course_work_ocenka" type="number" class="form-control" :class="{'is-invalid': errors.course_work_ocenka}"/>
+              <ErrorMessage name="course_work_ocenka" class="error-feedback" />
+            </div>
 
             <div class="form-group mt-3">
              
-             <router-link to="/groups" class="btn btn-secondary ml-2 float-start">Отмена</router-link>
+             <router-link to="/courseworks" class="btn btn-secondary ml-2 float-start">Отмена</router-link>
              <button class="btn btn-primary btn-block float-end" :disabled="loading">
                <span
                  v-show="loading"
                  class="spinner-border spinner-border-sm"
                ></span>
-               Добавить группу
+               Добавить работу
              </button>
            </div>
           </div>
@@ -151,12 +160,9 @@
         groups: null,
         profiles: null,
         directions: null,
-        courses: [
-        { id: '1', text: '1' },
-        { id: '2', text: '2' },
-        { id: '3', text: '3' },
-        { id: '4', text: '4' }
-      ],
+        teachers:null,
+        students:null,
+        departaments:null,
         myValue: '',
       };
     },
@@ -168,53 +174,60 @@
     },
     methods: {
 
-      async addGroup(group) {
+      async addCw(cw) {
         try {
           // запрос в psql
           this.loading=true;
 
-          const response = await UserService.addGroup(group.group_dir_id,group.group_prof_id,group.group_number,group.course,group.magister);
+          const response = await UserService.addCw(cw.course_work_theme,cw.course_work_teacher_id,cw.course_work_student_id,cw.course_work_kafedra,cw.course_work_vipysk,cw.course_work_year,cw.course_work_ocenka);
           response.data;
           this.loading=false;
           this.successful=true;
 
-          this.toast.success("Успешно добавили группу!");
+          this.toast.success("Успешно добавили работу!");
         } catch (error) {
           this.message="Ошибка";
-          this.toast.error("Ошибка добавления группы");
+          this.toast.error("Ошибка добавления работы");
+          console.error('Error:', error);
+        }
+      },
+      async loadTeachersData() {
+        try {
+          const response = await UserService.getTeachersAsIdText(); 
+          this.teachers = Array.isArray(response.data) ? response.data : [response.data];
+        } catch (error) {
           console.error('Error:', error);
         }
       },
 
-
-
-      async loadDirectionsData() {
+      async loadStudentsData() {
         try {
-          const response = await UserService.getDirectionsAsIdText(); 
-          this.directions = Array.isArray(response.data) ? response.data : [response.data];
+          const response = await UserService.getStudentsAsIdText(); 
+          this.students = Array.isArray(response.data) ? response.data : [response.data];
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      },
+    
+      async loadDepartamentsData() {
+        try {
+          const response = await UserService.getDepartamentsAsIdText(); 
+          this.departaments = Array.isArray(response.data) ? response.data : [response.data];
           this.dataLoading=false;
         } catch (error) {
           console.error('Error:', error);
         }
       },
-      async loadProfilesData() {
-        try {
-          const response = await UserService.getProfilesAsIdText(); 
-          this.profiles = Array.isArray(response.data) ? response.data : [response.data];
-          this.dataLoading=false;
-        } catch (error) {
-          console.error('Error:', error);
-        }
-      }
-
+    
 
 
     },
 
     created() {
 
-    this.loadDirectionsData();
-    this.loadProfilesData();
+    this.loadTeachersData();
+    this.loadStudentsData();
+    this.loadDepartamentsData();
     },
   };
   </script>

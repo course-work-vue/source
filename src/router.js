@@ -36,9 +36,11 @@ const ContractList = () => import("./components/ContractList.vue")
 const ContractDetail = () => import("./components/ContractDetail.vue")
 const AddContract = () => import("./components/AddContract.vue")
 
+const ScheduleLoads = () => import("./components/ScheduleLoads.vue")
 
-
+const AddCw = () => import("./components/AddCw.vue")
 const CWList = () => import("./components/CwList.vue")
+const CWdetail = () => import("./components/CwDetail.vue")
 
 const ProgramList = () => import("./components/ProgramList.vue")
 const AddProgram = () => import("./components/AddProgram.vue")
@@ -48,6 +50,18 @@ const AddPayment = () => import("./components/AddPayment.vue")
 const PaymentList = () => import("./components/PaymentList.vue")
 const PaymentDetail = () => import("./components/PaymentDetail.vue")
 
+const AddCourse = () => import("./components/AddCourse.vue")
+const CourseList = () => import("./components/CourseList.vue")
+const CourseDetail = () => import("./components/CourseDetail.vue")
+
+
+const AuditList = () => import("./components/AuditList.vue")
+const AuditDetail = () => import("./components/AuditDetail.vue")
+const AddAudit = () => import("./components/AddAudit.vue")
+
+const addLgroup = () => import("./components/AddListenergroup.vue")
+const lGroupList = () => import("./components/ListenergroupList.vue")
+const lGroupDetail = () => import("./components/LgroupDetail.vue")
 const routes = [
   { 
     path: "/",
@@ -87,6 +101,10 @@ const routes = [
   { path: '/groups/:groupId', component: GroupDetail },
   { path: '/AddGroup', component: AddGroup },
 
+  { path: '/courses', component: CourseList },
+  { path: '/courses/:courseID', component: CourseDetail },
+  { path: '/AddCourse', component: AddCourse },
+
   { path: '/listeners', component: ListenerList },
   { path: '/listeners/:listenerId', component: ListenerDetail },
   { path: '/AddListener', component: AddListener },
@@ -99,8 +117,11 @@ const routes = [
   { path: '/contracts/:contractId', component: ContractDetail },
   { path: '/AddContract', component: AddContract },
 
-  { path: '/courseworks', component: CWList },
+  { path: '/ScheduleLoads', component: ScheduleLoads },
 
+  { path: '/addcw', component: AddCw },
+  { path: '/courseworks', component: CWList },
+  { path: '/courseworks/:CwId', component: CWdetail },
 
   { path: '/programs', component: ProgramList },
   { path: '/programs/:programId', component: ProgramDetail },
@@ -110,6 +131,16 @@ const routes = [
   { path: '/payments/:paymentID', component: PaymentDetail },
   { path: '/AddPayment', component: AddPayment },
 
+  { path: '/audits', component: AuditList },
+  { path: '/audits/:scheduleId', component: AuditDetail},
+  { path: '/AddAudit', component: AddAudit },
+  
+
+
+
+  { path: '/lgroups', component: lGroupList },
+  { path: '/addlgroup', component: addLgroup },
+  { path: '/lgroups/:groupId', component: lGroupDetail },
   {
     path: "/user",
     name: "user",

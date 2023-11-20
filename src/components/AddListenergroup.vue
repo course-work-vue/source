@@ -31,66 +31,64 @@
            
 
             <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-              <label for="group_dir_id">Направление:</label>
+              <label for="group_program_id">Программа:</label>
               
-              <Select2 class="col-5" :class="{'form-control is-invalid': errors.group_dir_id}" v-model="myValue" 
-              :options="directions" 
+              <Select2 class="col-5" :class="{'form-control is-invalid': errors.group_program_id}" v-model="myValue" 
+              :options="programs" 
               :settings=" { theme: 'bootstrap-5', width: '100%'}"
               
                />
 
-               <Field  name="group_dir_id" as="select" v-model="myValue" hidden>
-                <option v-for="direction in directions" :key="direction.id" :value="direction.id">{{ direction.text }}</option>
+               <Field  name="group_program_id" as="select" v-model="myValue" hidden>
+                <option v-for="program in programs" :key="program.id" :value="program.id">{{ program.text }}</option>
               </Field>
-              <ErrorMessage name="group_dir_id" class="error-feedback" />
+              <ErrorMessage name="group_program_id" class="error-feedback" />
             </div>
 
-
-            <div class="form-group d-inline-flex align-items-center col-10 mb-2">
-              <label for="group_prof_id">Профиль:</label>
+            <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+              <label for="hours">Общее количество часов:</label>
+              <Field name="hours" type="number" class="form-control" :class="{'is-invalid': errors.hours}"/>
+              <ErrorMessage name="hours" class="error-feedback" />
               
-              <Select2 class="col-5" :class="{'form-control is-invalid': errors.group_prof_id}" v-model="myValue2" 
-              :options="profiles" 
-              :settings=" { theme: 'bootstrap-5', width: '100%'}"
-              
-               />
+            </div>
 
-               <Field  name="group_prof_id" as="select" v-model="myValue2" hidden>
-                <option v-for="profile in profiles" :key="profile.id" :value="profile.id">{{ profile.text }}</option>
-              </Field>
-              <ErrorMessage name="group_prof_id" class="error-feedback" />
+            <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+              <label for="start_date">Дата начала:</label>
+              <Field name="start_date" type="date" class="form-control" :class="{'is-invalid': errors.start_date }"/>
+              <ErrorMessage name="start_date" class="error-feedback" />
+              
+            </div>
+
+            <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+              <label for="end_date">Дата окончания:</label>
+              <Field name="end_date" type="date" class="form-control" :class="{'is-invalid': errors.end_date}"/>
+              <ErrorMessage name="end_date" class="error-feedback" />
+              
             </div>
 
 
             <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-              <label for="course">Курс:</label>
+              <label for="StartTime">Время начала:</label>
+              <Field name="StartTime" type="time" class="form-control" :class="{'is-invalid': errors.StartTime}"/>
+              <ErrorMessage name="StartTime" class="error-feedback" />
               
-              <Select2 class="col-5" :class="{'form-control is-invalid': errors.course}" v-model="myValue3" 
-              :options="courses" 
-              :settings=" { theme: 'bootstrap-5', width: '100%'}"
-              
-               />
-
-               <Field  name="course" as="select" v-model="myValue3" hidden>
-                <option v-for="course in courses" :key="course.id" :value="course.id">{{ course.text }}</option>
-              </Field>
-              <ErrorMessage name="course" class="error-feedback" />
             </div>
-
             <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-              <label for="magister">Магистратура:</label>
-              <Field name="magister" type="radio" id="magister2" value="false" class="form-check-input mt-0 ml-5" :class="{'is-invalid': errors.magister}"/>
-              <label for="magister2">Нет</label>
-              <Field name="magister" type="radio" id="magister1" value="true" class="form-check-input mt-0" :class="{'is-invalid': errors.magister}"/>
-              <label for="magister1">Да</label>
-             
-              <ErrorMessage name="magister" class="error-feedback" />
+              <label for="EndTime">Время окончания:</label>
+              <Field name="EndTime" type="time" class="form-control" :class="{'is-invalid': errors.EndTime}"/>
+              <ErrorMessage name="EndTime" class="error-feedback" />
+              
+            </div>
+            <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+              <label for="pc">Общее количество человек:</label>
+              <Field name="pc" type="number" class="form-control" :class="{'is-invalid': errors.pc}"/>
+              <ErrorMessage name="pc" class="error-feedback" />
               
             </div>
 
             <div class="form-group mt-3">
              
-             <router-link to="/groups" class="btn btn-secondary ml-2 float-start">Отмена</router-link>
+             <router-link to="/lgroups" class="btn btn-secondary ml-2 float-start">Отмена</router-link>
              <button class="btn btn-primary btn-block float-end" :disabled="loading">
                <span
                  v-show="loading"
@@ -151,12 +149,7 @@
         groups: null,
         profiles: null,
         directions: null,
-        courses: [
-        { id: '1', text: '1' },
-        { id: '2', text: '2' },
-        { id: '3', text: '3' },
-        { id: '4', text: '4' }
-      ],
+        programs:null,
         myValue: '',
       };
     },
@@ -168,12 +161,12 @@
     },
     methods: {
 
-      async addGroup(group) {
+      async addGroup(lgroup) {
         try {
           // запрос в psql
           this.loading=true;
 
-          const response = await UserService.addGroup(group.group_dir_id,group.group_prof_id,group.group_number,group.course,group.magister);
+          const response = await UserService.addLgroup(lgroup.group_number,lgroup.group_program_id,lgroup.hours,lgroup.start_date,lgroup.end_date,lgroup.StartTime,lgroup.EndTime, lgroup.pc); 
           response.data;
           this.loading=false;
           this.successful=true;
@@ -188,24 +181,16 @@
 
 
 
-      async loadDirectionsData() {
+      async loadProgramsData() {
         try {
-          const response = await UserService.getDirectionsAsIdText(); 
-          this.directions = Array.isArray(response.data) ? response.data : [response.data];
+          const response = await UserService.getProgramsAsIdText(); 
+          this.programs = Array.isArray(response.data) ? response.data : [response.data];
           this.dataLoading=false;
         } catch (error) {
           console.error('Error:', error);
         }
       },
-      async loadProfilesData() {
-        try {
-          const response = await UserService.getProfilesAsIdText(); 
-          this.profiles = Array.isArray(response.data) ? response.data : [response.data];
-          this.dataLoading=false;
-        } catch (error) {
-          console.error('Error:', error);
-        }
-      }
+
 
 
 
@@ -213,8 +198,8 @@
 
     created() {
 
-    this.loadDirectionsData();
-    this.loadProfilesData();
+    this.loadProgramsData();
+
     },
   };
   </script>

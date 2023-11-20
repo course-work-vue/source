@@ -1,75 +1,89 @@
 <template>
   <div class="col-md-12 list">
-    <div v-if="payment" >
-      <Form @submit="updatePayment" :validation-schema="schema" v-slot="{ errors }">
+    <div v-if="group" >
+      <Form @submit="updateGroup" :validation-schema="schema" v-slot="{ errors }">
         
-        <div >
-          <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-            <label for="contract_id">Номер договора</label>
-            
-            <Select2 class="col-5" :class="{'form-control is-invalid': errors.contract_id}" v-model="editedPayment.contract_id" 
-            :options="contracts" 
-            :settings=" { theme: 'bootstrap-5', width: '100%'}"
-            
-             />
+        <div>
 
-             <Field  name="contract_id" as="select" v-model="contract_id" hidden>
-              <option v-for="contract in contracts" :key="contract.id" :value="contract.id">{{ contract.text }}</option>
-            </Field>
-            <ErrorMessage name="contract_id" class="error-feedback" />
-          </div>
-
-          <div class="form-group d-inline-flex align-items-center mb-2">
-              <label for="expiration_date">Дата просрочки:</label>
-              <Field name="expiration_date" type="date"  class="form-control" value="" :class="{'is-invalid': errors.expiration_date}" v-model="editedPayment.expiration_date"/>
-              <ErrorMessage name="expiration_date" class="error-feedback" />
-            </div>
-
-            <div class="form-group d-inline-flex align-items-center mb-2">
-              <label for="date_40">Дата оплаты 40%:</label>
-              <Field name="date_40" type="date"  class="form-control" value="" :class="{'is-invalid': errors.date_40}" v-model="editedPayment.date_40"/>
-              <ErrorMessage name="date_40" class="error-feedback" />
-            </div>
+<div class="form-group d-inline-flex align-items-center col-5 mb-2">
+    <label for="group_number">Номер группы:</label>
+    <Field name="group_number" type="text" class="form-control" :class="{'is-invalid': errors.group_number}" v-model="editedGroup.group_number"/>
+    <ErrorMessage name="group_number" class="error-feedback" />
+    
+  </div>
 
 
-            <div class="form-group d-inline-flex align-items-center mb-2 col-6">
-              <label for="all_sum">Вся сумма:</label>
-              <Field name="all_sum" type="text" class="form-control" value="" :class="{'is-invalid': errors.all_sum}" v-model="editedPayment.all_sum"/>
-              <ErrorMessage name="all_sum" class="error-feedback" />
-            </div>
-            <div class="form-group d-inline-flex align-items-center mb-2 col-5">
-              <label for="deposited_amount">Внесённая сумма:</label>
-              <Field name="deposited_amount" type="number" class="form-control" value="" :class="{'is-invalid': errors.deposited_amount}" v-model="editedPayment.deposited_amount"/>
-              <ErrorMessage name="deposited_amount" class="error-feedback" />
-            </div>
+ 
 
-            <div class="form-group d-inline-flex align-items-center mb-2 col-5">
-              <label for="left_to_pay">Остаточная сумма:</label>
-              <Field name="left_to_pay" type="number" class="form-control" value="" :class="{'is-invalid': errors.left_to_pay}" v-model="editedPayment.left_to_pay"/>
-              <ErrorMessage name="left_to_pay" class="error-feedback" />
-            </div>
+  <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+    <label for="group_program_id">Программа:</label>
+    
+    <Select2 class="col-5" :class="{'form-control is-invalid': errors.group_program_id}" v-model="editedGroup.group_program_id" 
+    :options="programs" 
+    :settings=" { theme: 'bootstrap-5', width: '100%'}"
+    
+     />
 
-            <div class="form-group d-inline-flex align-items-center mb-2 col-6">
-              <label for="bank">Банк:</label>
-              <Field name="bank" type="text" class="form-control" value="" :class="{'is-invalid': errors.bank}" v-model="editedPayment.bank"/>
-              <ErrorMessage name="bank" class="error-feedback" />
-            </div>
+     <Field  name="group_program_id" as="select" v-model="editedGroup.group_program_id" hidden>
+      <option v-for="program in programs" :key="program.id" :value="program.id">{{ program.text }}</option>
+    </Field>
+    <ErrorMessage name="group_program_id" class="error-feedback" />
+  </div>
 
-         
+  <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+    <label for="hours">Общее количество часов:</label>
+    <Field name="hours" type="number" class="form-control" :class="{'is-invalid': errors.hours}" v-model="editedGroup.hours"/>
+    <ErrorMessage name="hours" class="error-feedback" />
+    
+  </div>
+
+  <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+    <label for="start_date">Дата начала:</label>
+    <Field name="start_date" type="date" class="form-control" :class="{'is-invalid': errors.start_date }" v-model="editedGroup.start_date"/>
+    <ErrorMessage name="start_date" class="error-feedback" />
+    
+  </div>
+
+  <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+    <label for="end_date">Дата окончания:</label>
+    <Field name="end_date" type="date" class="form-control" :class="{'is-invalid': errors.end_date}" v-model="editedGroup.end_date"/>
+    <ErrorMessage name="end_date" class="error-feedback" />
+    
+  </div>
 
 
+  <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+    <label for="starttime">Время начала:</label>
+    <Field name="starttime" type="time" class="form-control" :class="{'is-invalid': errors.starttime}" v-model="editedGroup.starttime"/>
+    <ErrorMessage name="starttime" class="error-feedback" />
+    
+  </div>
+  <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+    <label for="endtime">Время окончания:</label>
+    <Field name="endtime" type="time" class="form-control" :class="{'is-invalid': errors.endtime}" v-model="editedGroup.endtime"/>
+    <ErrorMessage name="endtime" class="error-feedback" />
+    
+  </div>
 
-          <div class="form-group mt-3">
-            <button class="btn btn-primary btn-block float-start" :disabled="loading">
-              <span
-                v-show="loading"
-                class="spinner-border spinner-border-sm"
-              ></span>
-              Обновить платёж
-            </button>
-            <router-link to="/payments" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
-          </div>
-        </div>
+  <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+    <label for="people_count">Общее количество человек:</label>
+    <Field name="people_count" type="number" class="form-control" :class="{'is-invalid': errors.pc}" v-model="editedGroup.people_count"/>
+    <ErrorMessage name="people_count" class="error-feedback" />
+    
+  </div>
+
+  <div class="form-group mt-3">
+   
+   <router-link to="/lgroups" class="btn btn-secondary ml-2 float-start">Отмена</router-link>
+   <button class="btn btn-primary btn-block float-end" :disabled="loading">
+     <span
+       v-show="loading"
+       class="spinner-border spinner-border-sm"
+     ></span>
+     Добавить группу
+   </button>
+ </div>
+</div>
       </Form>
     </div>
     <div v-else>
@@ -125,7 +139,26 @@
         <label class="form-control skeleton-text skeleton-animate"></label>
         <input type="text" class="form-control skeleton skeleton-animate">
       </div>
-
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
     </div>
       
       
@@ -165,64 +198,68 @@ import { Form, Field, ErrorMessage } from "vee-validate";
     data() {
       const schema = yup.object().shape({
         
-
+      
        
       });
 
       return {
         schema,
-        loading:false,
-        payment: null, // заглушка для данных студента
-        editedPayment: null, // заглушка для новых данных студента
-        groups: null,
-        contracts:null
+        dataLoading:false,
+        group: null, // заглушка для данных студента
+        editedGroup: null, // заглушка для новых данных студента
+        profiles: null,
+        directions: null,
+        programs:null
 
       };
     },
     methods: {
       // грузим студента из psql по id 
-      async loadPaymentDetail() {
-        const paymentID = this.$route.params.paymentID;
-        try {
-          const response = await UserService.getPaymentById(paymentID);
-          this.payment = response.data;
-          // Клонирование объекта, для избежание редактирования данных сразу
-          this.editedPayment = { ...response.data };
-        } catch (error) {
-          console.error('Error loading payer details:', error);
-        }
-      },
-      // Метод для обновления данных о студенте
-      async updatePayment() {
+
+      async updateGroup() {
         try {
           // запрос в psql
           this.loading=true;
 
-          const response = await UserService.updatePaymentById(this.payment.id, this.editedPayment.contract_id, this.editedPayment.expiration_date,this.editedPayment.date_40, this.editedPayment.all_sum, this.editedPayment.deposited_amount, this.editedPayment.left_to_pay, this.editedPayment.bank);
+          const response = await UserService.updateLgroupById(this.group.group_id, this.editedGroup.group_number,this.editedGroup.group_program_id,this.editedGroup.hours,this.editedGroup.start_date,this.editedGroup.end_date,this.editedGroup.starttime,this.editedGroup.endtime, this.editedGroup.people_count);
           response.data;
-          this.payer = { ...this.editedPayer };
-          this.loading=false;
-          this.toast.success("Успешно обновили плательщика!");
+          this.group = { ...this.editedgroup };
+          this.toast.success("Успешно обновили группу!");
         } catch (error) {
-          console.error('Ошибка :', error);
+          console.error('Ошибка загрузки данных о группе:', error);
         }
       },
-      async loadContractsData() {
+      async loadGroupDetail() {
+        const groupId = this.$route.params.groupId;
         try {
-          const response = await UserService.getContractsAsIdText(); 
-          this.contracts = Array.isArray(response.data) ? response.data : [response.data];
+          const response = await UserService.getLgroupById(groupId);
+          this.group = response.data;
+          // Клонирование объекта, для избежание редактирования данных сразу
+          this.editedGroup = { ...response.data };
+        } catch (error) {
+          console.error('Error', error);
+        }
+      },
+      async loadProgramsData() {
+        try {
+          const response = await UserService.getProgramsAsIdText(); 
+          this.programs = Array.isArray(response.data) ? response.data : [response.data];
           this.dataLoading=false;
         } catch (error) {
-          console.error('Ошибка загрузки данных:', error);
+          console.error('Error:', error);
         }
       },
+
+
     },
     created() {
-      this.loadPaymentDetail();
-     this.loadContractsData();
+      this.loadGroupDetail();
+      this.loadProgramsData();
+     
     },
   };
   </script>
+
 <style lang="scss" scoped>
 label{
   margin-right: 15px;

@@ -83,7 +83,20 @@
             <Field name="surname" type="text" class="form-control" value="" :class="{'is-invalid': errors.patronymic}" />
             <ErrorMessage name="surname" class="error-feedback" />
           </div>
-         
+          <div class="form-group d-inline-flex align-items-center mb-2 col-6">
+              <label for="group_id">Группа:</label>
+              
+              <Select2 class="col-5" :class="{'form-control is-invalid': errors.group_id}" v-model="myValue" 
+              :options="groups" 
+              :settings=" { theme: 'bootstrap-5', width: '100%'}"
+              
+               />
+
+               <Field  name="group_id" as="select" v-model="myValue" hidden>
+                <option v-for="group in groups" :key="group.id" :value="group.id">{{ group.text }}</option>
+              </Field>
+              <ErrorMessage name="group_id" class="error-feedback" />
+            </div>
      
           <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="passport">Серия и номер паспорта</label>
@@ -128,18 +141,15 @@
           </div>
 
 
-      
-          
           <div class="form-group d-inline-flex align-items-center mb-2">
-            <label for="people_count">Желаемое количество людей в группе</label>
-            <Field name="people_count" type="number" class="form-control"  value="" :class="{'is-invalid': errors.people_count}" />
-            <ErrorMessage name="people_count" class="error-feedback" />
+            <label for="email">Email</label>
+            <Field name="email" type="text" class="form-control"  value="" :class="{'is-invalid': errors.email}" />
+            <ErrorMessage name="email" class="error-feedback" />
           </div>
-            <div class="form-group d-inline-flex align-items-center mb-2">
-            <label for="wanted_days">Желаемые дни</label>
-            <Field name="wanted_days" type="text" class="form-control"  value="" :class="{'is-invalid': errors.wanted_days}" />
-            <ErrorMessage name="wanted_days" class="error-feedback" />
-          </div>
+
+
+          
+        
           <!--
           <div class="form-group">
               <label for="group_id">Желаемые дни недели</label>
@@ -221,6 +231,7 @@
         message: "",
         schema,
         days_of_week: null,
+        groups:null,
 
         myValue: '',
       };
@@ -238,9 +249,9 @@
           // запрос в psql
           this.loading=true;
 
-          const response = await UserService.addListener(listener.name , listener.surname  , listener.lastname  , 
+          const response = await UserService.addListener(listener.name , listener.surname  , listener.lastname  , listener.group_id,
           listener.snils , listener.passport , listener.issued_by , listener.issue_date , listener.department_code , listener.registration_address , listener.phone_number ,
-          listener.email, listener.people_count, listener.wanted_days);
+          listener.email);
           response.data;
           this.loading=false;
           this.successful=true;
@@ -252,7 +263,15 @@
           console.error('Error updating student details:', error);
         }
       },
-
+      async loadGroupsData() {
+        try {
+          const response = await UserService.getLgroupsAsIdText(); 
+          this.groups = Array.isArray(response.data) ? response.data : [response.data];
+          this.dataLoading=false;
+        } catch (error) {
+          console.error('Error loading students data:', error);
+        }
+      },
 
 
 
@@ -260,7 +279,7 @@
     },
 
     created() {
-
+      this.loadGroupsData();
     },
   };
   </script>

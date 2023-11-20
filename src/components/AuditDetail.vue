@@ -1,99 +1,122 @@
 <template>
   <div class="col-md-12 list">
-    <div v-if="group" >
-      <Form @submit="updateGroup" :validation-schema="schema" v-slot="{ errors }">
-        
+    <div v-if="schedules" >
+      <Form @submit="updateSchedule" :validation-schema="schema" v-slot="{ errors }">
+       
         <div >
-          <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-            <label for="group_number">Номер группы</label>
-            <Field name="group_number" type="text" class="form-control" :class="{'is-invalid': errors.group_number}" v-model="editedGroup.group_number"/>
-            <ErrorMessage name="group_number" class="error-feedback" />
+          <div class="form-group d-inline-flex align-items-center mb-2">
+            <label for="group_id">Группа:</label>
             
-          </div>
-          
-          <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-            <label for="group_dir_id">Направление</label>
-            
-            <Select2 class="col-5" :class="{'form-control is-invalid': errors.group_dir_id}" v-model="editedGroup.group_dir_id" 
-            :options="directions" 
+            <Select2 :class="{'form-control is-invalid': errors.group_id}" v-model="editedSchedule.group_id" 
+            :options="groups" 
             :settings=" { theme: 'bootstrap-5', width: '100%'}"
             
              />
 
-             <Field  name="group_dir_id" as="select" v-model="editedGroup.group_dir_id" hidden>
-              <option v-for="direction in directions" :key="direction.id" :value="direction.id">{{ direction.text }}</option>
+             <Field  name="group_id" as="select" v-model="editedSchedule.group_id" hidden>
+              <option v-for="group in groups" :key="group.id" :value="group.id">{{ group.text }}</option>
             </Field>
-            <ErrorMessage name="group_dir_id" class="error-feedback" />
+            <ErrorMessage name="group_id" class="error-feedback" />
           </div>
-
-          <div class="form-group d-inline-flex align-items-center col-10 mb-2">
-            <label for="group_prof_id">Профиль</label>
+          <div class="form-group d-inline-flex align-items-center float-none mb-2 col-3">
+            <label for="subgroup">Подгруппа:</label>
+            <Field name="subgroup" type="text" class="form-control" :class="{'is-invalid': errors.subgroup}" v-model="editedSchedule.subgroup"/>
+            <ErrorMessage name="subgroup" class="error-feedback" />
             
-            <Select2 class="col-5" :class="{'form-control is-invalid': errors.group_prof_id}" v-model="editedGroup.group_prof_id" 
-            :options="profiles" 
-            :settings=" { theme: 'bootstrap-5', width: '100%'}"
-            
-             />
-
-             <Field  name="group_prof_id" as="select" v-model="editedGroup.group_prof_id" hidden>
-              <option v-for="profile in profiles" :key="profile.id" :value="profile.id">{{ profile.text }}</option>
-            </Field>
-            <ErrorMessage name="group_prof_id" class="error-feedback" />
           </div>
-
-    
           <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-              <label for="course">Курс:</label>
+              <label for="audit_day_id">День недели</label>
               
-              <Select2 class="col-5" :class="{'form-control is-invalid': errors.course}" v-model="editedGroup.course"
-              :options="courses" 
+              <Select2 class="col-5" :class="{'form-control is-invalid': errors.day_id}" v-model="editedSchedule.day_id" 
+              :options="days" 
               :settings=" { theme: 'bootstrap-5', width: '100%'}"
               
                />
-
-               <Field  name="course" as="select" v-model="editedGroup.course" hidden>
-                <option v-for="course in courses" :key="course.id" :value="course.id">{{ course.text }}</option>
-              </Field>
-              <ErrorMessage name="course" class="error-feedback" />
+  
+               <Field name="audit_day_id" as="select" v-model="editedSchedule.day_id" hidden>
+                    <option v-for="day in days" :key="day.id" :value="day.id">{{ day.text }}</option>
+               </Field>
+              <ErrorMessage name="audit_day_id" class="error-feedback" />
             </div>
 
-
-            
             <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-              <label for="magister">Магистратура:</label>
-
-              <Field v-slot="{ field2 }" name="magister" type="radio" :value="true">
-                <label>
-                  <input type="radio" name="magister" v-bind="field2" value="false" class="form-check-input mt-0 ml-5" v-model="editedGroup.magister" :checked="editedGroup.magister == false" />
-                  Нет
-                </label>
+              <label for="audit_subject_id">Предмет</label>
+              
+              <Select2 class="col-10" :class="{'form-control is-invalid': errors.subject_id}" v-model="editedSchedule.subject_id" 
+              :options="subjects" 
+              :settings=" { theme: 'bootstrap-5', width: '100%'}"
+              
+               />
+  
+               <Field  name="audit_subject_id" as="select" v-model="editedSchedule.subject_id" hidden>
+                <option v-for="subject in subjects" :key="subject.id" :value="subject.id">{{ subject.text }}</option>
               </Field>
-              <ErrorMessage name="magister" class="error-feedback" />
-              <Field v-slot="{ field }" name="magister" type="radio" :value="true">
-                <label>
-                  <input type="radio" name="magister" v-bind="field" value="true" class="form-check-input mt-0 ml-5" v-model="editedGroup.magister" :checked="editedGroup.magister == true" />
-                  Да
-                </label>
-              </Field>
+              <ErrorMessage name="audit_prof_id" class="error-feedback" />
             </div>
-             
-             
 
-             
+            <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+              <label for="audit_teacher_id">Преподаватель</label>
+              
+              <Select2 class="col-10" :class="{'form-control is-invalid': errors.teacher_id}" v-model="editedSchedule.teacher_id" 
+              :options="teachers" 
+              :settings=" { theme: 'bootstrap-5', width: '100%'}"
+              
+               />
+  
+               <Field  name="audit_teacher_id" as="select" v-model="editedSchedule.teacher_id" hidden>
+                <option v-for="teacher in teachers" :key="teacher.id" :value="teacher.id">{{ teacher.text }}</option>
+              </Field>
+              <ErrorMessage name="audit_prof_id" class="error-feedback" />
+            </div>
+
+            <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+            <label for="audit_para_id">Пара</label>
+            <select id="numberSelect">
+              <option v-for="option in options" :value="option.value" :key="option.value">{{ option.label }}</option>
+            </select>
+          </div>
+
+            <div class="form-group d-inline-flex align-items-center col-10 mb-2">
+              <label for="audit_subject_id">Аудитория</label>
+              
+              <Select2 class="col-5" :class="{'form-control is-invalid': errors.aud_id}" v-model="editedSchedule.aud_id" 
+              :options="auditorium" 
+              :settings=" { theme: 'bootstrap-5', width: '100%'}"
+              
+               />
+  
+            <Field name="audit_id" as="select" v-model="editedSchedule.aud_id" hidden>
+                <option v-for="audit in auditorium" :key="audit.id" :value="audit.id">{{ audit.text }}</option>
+            </Field>
+              <ErrorMessage name="audit_aud_id" class="error-feedback" />
+            </div>
           
+            
+            
+
+            <div class="form-group  mt-3">
+            
+            <router-link to="/audits" class="mx-2 btn btn-secondary  float-start">Отмена</router-link>
+          </div>
+          <div class="form-group float-end">
+            <button class="btn btn-danger float-end" @click="deleteAudit">
+              Удалить аудиторию
+            </button>
+          </div>
           <div class="form-group mt-3">
-            <button class="btn btn-primary btn-block float-start" :disabled="loading">
+            <button class="btn btn-primary btn-block" :disabled="loading">
               <span
                 v-show="loading"
                 class="spinner-border spinner-border-sm"
               ></span>
-              Обновить группу
+              Обновить аудиторию
             </button>
-            <router-link to="/groups" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
+        
           </div>
         </div>
       </Form>
     </div>
+  
     <div v-else>
       <div class="form-group">
         <label class="form-control skeleton-text skeleton-animate"></label>
@@ -168,9 +191,6 @@
         <input type="text" class="form-control skeleton skeleton-animate">
       </div>
     </div>
-      
-      
-   
       <div
         v-if="message"
         class="alert"
@@ -178,7 +198,7 @@
       >
         {{ message }}
       </div>
-    </div>
+  </div>
 
 </template>
 
@@ -188,7 +208,19 @@ import { Form, Field, ErrorMessage } from "vee-validate";
   import * as yup from "yup";
   import UserService from "../services/user.service";
   import { useToast } from "vue-toastification";
+
+  document.addEventListener("DOMContentLoaded", function() {
+    const select = document.getElementById('numberSelect');
+    
+    for (let i = 1; i <= 8; i++) {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = i;
+        select.appendChild(option);
+    }
+});
   export default {
+    
 
     setup() {
       const toast = useToast();
@@ -209,75 +241,121 @@ import { Form, Field, ErrorMessage } from "vee-validate";
       
        
       });
+      
 
       return {
         schema,
         loading:false,
-        group: null, // заглушка для данных студента
-        editedGroup: null, // заглушка для новых данных студента
+        successful: false,
+        schedules: null,
+        groups: null, // заглушка для данных студента
+        editedSchedule: null, // заглушка для новых данных студента
         profiles: null,
         directions: null,
-        courses: [
-        { id: '1', text: '1' },
-        { id: '2', text: '2' },
-        { id: '3', text: '3' },
-        { id: '4', text: '4' }
-      ],
+        options: [],
+        auditorium: null,
+        teachers: null
       };
+    },
+    mounted() {
+    // Генерация вариантов с 1 по 10 и добавление их в массив options
+      for (let i = 1; i <= 8; i++) {
+        this.options.push({ value: i, label: i });
+      }
     },
     methods: {
       // грузим студента из psql по id 
 
-      async updateGroup() {
+      async updateSchedule() {
         try {
           // запрос в psql
           this.loading=true;
 
-          const response = await UserService.updateGroupById(this.group.group_id, this.editedGroup.group_dir_id, this.editedGroup.group_prof_id, this.editedGroup.group_number, this.editedGroup.course, this.editedGroup.magister);
+          const response = await UserService.updateScheduleById(this.schedule.schedule_id,this.editedSchedule.day_id,
+          this.editedSchedule.subject_id,this.editedSchedule.teacher_id,this.editedSchedule.aud_id);
           response.data;
-          this.group = { ...this.editedgroup };
+          this.schedules = { ...this.editedSchedule };
           this.loading=false;
-          this.toast.success("Успешно обновили группу!");
+          this.toast.success("Успешно обновили аудиторию!");
         } catch (error) {
-          console.error('Ошибка загрузки данных о студенте:', error);
+          console.error('Ошибка загрузки данных :', error);
         }
       },
-      async loadGroupDetail() {
-        const groupId = this.$route.params.groupId;
+      async deleteAudit() {
         try {
-          const response = await UserService.getGroupById(groupId);
-          this.group = response.data;
+          // запрос в psql
+          this.loading=true;
+
+          const response = await UserService.deleteScheduleById(this.schedule.schedule_id);
+          response.data;
+          this.schedules = { ...this.editedSchedule };
+          this.loading=false;
+          this.toast.success("Успешно удалили аудиторию!");
+        } catch (error) {
+          console.error('Ошибка загрузки данных:', error);
+        }
+      },
+        async loadGroupsData() {
+        try {
+          const response = await UserService.getGroupsAsIdText(); 
+          this.groups = Array.isArray(response.data) ? response.data : [response.data];
+        } catch (error) {
+          console.error('Ошибка загрузки данных :', error);
+        }
+      },
+      // Метод для обновления данных о студенте
+      async loadDaysData() {
+        try {
+          const response = await UserService.getDaysAsIdText(); 
+          this.days = Array.isArray(response.data) ? response.data : [response.data];
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      },
+      async loadAuditData() {
+        try {
+          const response = await UserService.getAuditAsIdText(); 
+          this.auditorium = Array.isArray(response.data) ? response.data : [response.data];
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      },
+      async loadAuditoriumData() {
+        const scheduleId = this.$route.params.scheduleId;
+        try {
+          const response = await UserService.getAuditById(scheduleId);
+          this.schedules = response.data;
           // Клонирование объекта, для избежание редактирования данных сразу
-          this.editedGroup = { ...response.data };
+          this.editedSchedule = { ...response.data };
         } catch (error) {
           console.error('Error', error);
         }
       },
-      // Метод для обновления данных о студенте
-      async loadDirectionsData() {
+      async loadTeachersData() {
         try {
-          const response = await UserService.getDirectionsAsIdText(); 
-          this.directions = Array.isArray(response.data) ? response.data : [response.data];
-          this.dataLoading=false;
+          const response = await UserService.getTeachersAsIdText(); 
+          this.teachers = Array.isArray(response.data) ? response.data : [response.data];
         } catch (error) {
           console.error('Error:', error);
         }
       },
-      async loadProfilesData() {
+      async loadSubjectsData() {
         try {
-          const response = await UserService.getProfilesAsIdText(); 
-          this.profiles = Array.isArray(response.data) ? response.data : [response.data];
-          this.dataLoading=false;
+          const response = await UserService.getSubjectAsIdText(); 
+          this.subjects = Array.isArray(response.data) ? response.data : [response.data];
         } catch (error) {
           console.error('Error:', error);
         }
       }
+      
     },
     created() {
-      this.loadDirectionsData();
-    this.loadProfilesData();
-      this.loadGroupDetail();
-     
+      this.loadDaysData();
+      this.loadSubjectsData();
+      this.loadGroupsData();
+      this.loadAuditData();
+      this.loadTeachersData();
+      this.loadAuditoriumData();
     },
   };
   </script>
@@ -373,7 +451,8 @@ label{
     --bs-btn-disabled-bg: rgb(68,99,52);
     display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; 
+  margin-right: 10px;
 }
 
 .btn-primary:active{

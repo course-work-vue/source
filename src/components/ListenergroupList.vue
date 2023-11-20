@@ -3,14 +3,14 @@
 
   <div class="col col-xs-9 col-lg-12 mt-4 list">
     <div class="col col-12">
-      <div class="col col-12">
+    <div class="mb-3 col col-12">
     
-    <button @click="navigateToAddProfile" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить профиль</button>
-    <div class="col col-6 float-end d-inline-flex align-items-center mb-2 ">
-    <button @click="clearFilters" :disabled="!filters" class="btn btn-sm btn-primary text-nowrap mx-2" type="button"><i class="material-icons-outlined">close</i>Очистить фильтры</button>
-    <input class="form-control" type="text" v-model="quickFilterValue" id="filter-text-box" v-on:input="onFilterTextBoxChanged()" placeholder="Поиск..."> 
+      <button @click="navigateToAddGroup" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить группу</button>
+      <div class="col col-6 float-end d-inline-flex align-items-center mb-2 ">
+      <button @click="clearFilters" :disabled="!filters" class="btn btn-sm btn-primary text-nowrap mx-2" type="button"><i class="material-icons-outlined">close</i>Очистить фильтры</button>
+      <input class="form-control" type="text" v-model="quickFilterValue" id="filter-text-box" v-on:input="onFilterTextBoxChanged()" placeholder="Поиск..."> 
+    </div>
   </div>
-</div>
 </div>
 
 
@@ -42,9 +42,9 @@
 
 import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
 import { reactive, onMounted, ref } from "vue";
-import ButtonCell from "@/components/ProfileButtonCell.vue";
-import ProfileHref from "@/components/ProfileHrefCellRenderer.vue";
-import ProfileHref2 from "@/components/ProfileHrefCellRenderer2.vue";
+import ButtonCell from "@/components/LgroupButtonCell.vue";
+import GroupHref from "@/components/LgroupHrefCellRenderer.vue";
+import GroupHref2 from "@/components/LgroupHrefCellRenderer2.vue";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import UserService from "../services/user.service";
@@ -54,8 +54,8 @@ export default {
   components: {
     AgGridVue,
     ButtonCell,
-    ProfileHref,
-    ProfileHref2
+    GroupHref,
+    GroupHref2,
   },
   setup() {
     const gridApi = ref(null); // Optional - for accessing Grid's API
@@ -93,9 +93,10 @@ export default {
       maxWidth: 120, resizable: false
 
     },
-          
-           { field: "prof_name", headerName: 'Название профиля', cellRenderer: "ProfileHref2" },
-           { field: "dir_code", headerName: 'Код направления', cellRenderer: "ProfileHref" },
+           { field: "group_number", headerName: 'Номер группы', cellRenderer: "GroupHref" },
+           { field: "program_name", headerName: 'Программа', cellRenderer: "GroupHref2" },
+
+           { field: "dir_code", headerName: 'Код направления', hide: true },
            {
             field: 'dir_name',
             filter: 'agDateColumnFilter',
@@ -158,16 +159,16 @@ export default {
 
     async loadGroupsData() {
         try {
-          const response = await UserService.getAllProfiles(); // Replace with your API endpoint
+          const response = await UserService.getAllLgroups(); // Replace with your API endpoint
           this.rowData.value = Array.isArray(response.data) ? response.data : [response.data];
           this.loading=false;
         } catch (error) {
           console.error('Error loading students data:', error);
         }
       },
-      navigateToAddProfile() {
+      navigateToAddGroup() {
     
-    this.$router.push(`/addProfile`); // Navigate to the AddStudent route
+    this.$router.push(`/addLgroup`); // Navigate to the AddStudent route
 },
 
 onFirstDataRendered(params) {
@@ -228,7 +229,6 @@ onFirstDataRendered(params) {
     this.filters=false;
   },
 
-  
     },
 
     created() {

@@ -1,98 +1,60 @@
 <template>
   <div class="col-md-12 list">
-    <div v-if="listener" >
-      <Form @submit="updateListener" :validation-schema="schema" v-slot="{ errors }">
+    <div v-if="student" >
+      <Form  @submit="updateStudent" :validation-schema="schema" v-slot="{ errors }">
         
-        <div >
-          <div class="form-group d-inline-flex align-items-center col-12 mb-2">
-            <label for="lastname">Фамилия</label>
-            <Field name="lastname" type="text" value="" class="form-control" :class="{'is-invalid': errors.lastname}" v-model="editedListener.lastname"/>
-            <ErrorMessage name="lastname" class="error-feedback" />
-          </div>
-          <div class="form-group d-inline-flex align-items-center col-12 mb-2">
-            <label for="name">Имя</label>
-            <Field name="name" type="text" class="form-control" value="" :class="{'is-invalid': errors.name}" v-model="editedListener.name"/>
-            <ErrorMessage name="name" class="error-feedback" />
-          </div>
-          <div class="form-group d-inline-flex align-items-center col-12 mb-2">
-            <label for="surname">Отчество</label>
-            <Field name="surname" type="text" class="form-control" value="" :class="{'is-invalid': errors.patronymic}" v-model="editedListener.surname"/>
-            <ErrorMessage name="surname" class="error-feedback" />
-          </div>
-          <div class="form-group d-inline-flex align-items-center mb-2 col-6">
-              <label for="group_id">Группа:</label>
-              
-              <Select2 class="col-5" :class="{'form-control is-invalid': errors.group_id}" v-model="editedListener.group_id"
-              :options="groups" 
-              :settings=" { theme: 'bootstrap-5', width: '100%'}"
-              
-               />
+        <div>
 
-               <Field  name="group_id" as="select" v-model="editedListener.group_id" hidden>
-                <option v-for="group in groups" :key="group.id" :value="group.id">{{ group.text }}</option>
-              </Field>
-              <ErrorMessage name="group_id" class="error-feedback" />
-            </div>
-     
-            <div class="form-group d-inline-flex align-items-center mb-2 col-5">
-            <label for="passport ">Серия и номер паспорта</label>
-            <Field name="passport " type="text" class="form-control" value="" :class="{'is-invalid': errors.passport }" v-model="editedListener.passport "/>
-            <ErrorMessage name="passport " class="error-feedback" />
+          <div class="form-group d-inline-flex align-items-center float-none mb-2 col-3">
+            <label for="course">Подгруппа:</label>
+            <Field name="course" type="text" class="form-control" :class="{'is-invalid': errors.course}" v-model="editedCourse.course"/>
+            <ErrorMessage name="course" class="error-feedback" />
+            
           </div>
-          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
-            <label for="issue_date">Дата выдачи</label>
-            <Field name="issue_date" type="date" class="form-control" value="" :class="{'is-invalid': errors.date}" v-model="editedListener.issue_date "/>
-         
-            <ErrorMessage name="issue_date " class="error-feedback" />
-          </div>
-          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
-            <label for="department_code ">Код подразделения</label>
-            <Field name="department_code " type="text" class="form-control" value="" :class="{'is-invalid': errors.department_code }" v-model="editedListener.department_code "/>
-            <ErrorMessage name="department_code " class="error-feedback" />
-          </div>
-          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
-            <label for="registration_address ">Адресс регистрации</label>
-            <Field name="registration_address " type="text" class="form-control" value="" :class="{'is-invalid': errors.registration_address }" v-model="editedListener.registration_address "/>
-            <ErrorMessage name="registration_address " class="error-feedback" />
-          </div>
-          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
-            <label for="SNILS">СНИЛС</label>
-            <Field name="SNILS" type="text" class="form-control" value="" :class="{'is-invalid': errors.SNILS}" v-model="editedListener.snils "/>
-            <ErrorMessage name="SNILS" class="error-feedback" />
-          </div>
-          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
-            <label for="phone_number ">Телефон</label>
-            <Field name="phone_number " type="text" class="form-control" value="" :class="{'is-invalid': errors.phone_number }" v-model="editedListener.phone_number "/>
-            <ErrorMessage name="phone_number " class="error-feedback" />
-          </div>
-          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
-            <label for="email">Email</label>
-            <Field name="email" type="text" class="form-control"  value="" :class="{'is-invalid': errors.email}"  v-model="editedListener.email"/>
-            <ErrorMessage name="email" class="error-feedback" />
+          <div class="d-flex flex-wrap">
+          <div class="form-group d-inline-flex align-items-center mb-2">
+            <label for="group_id">Группа:</label>
+            
+            <Select2 :class="{'form-control is-invalid': errors.group_id}" v-model="editedCourse.group_id" 
+            :options="groups" 
+            :settings=" { theme: 'bootstrap-5', width: '100%'}"
+            
+             />
+
+             <Field  name="group_id" as="select" v-model="editedCourse.group_id" hidden>
+              <option v-for="group in groups" :key="group.id" :value="group.id">{{ group.text }}</option>
+            </Field>
+            <ErrorMessage name="group_id" class="error-feedback" />
           </div>
 
          
-
-
-
+        </div>
+          <div class="form-group  mt-3">
+            
+            <router-link to="/courses" class="mx-2 btn btn-secondary  float-start">Отмена</router-link>
+          </div>
+          <div class="form-group float-end">
+            <button class="btn btn-danger float-end" @click="deleteCourse">
+              Удалить студента
+            </button>
+          </div>
           <div class="form-group mt-3">
-            <button class="btn btn-primary btn-block float-start" :disabled="loading">
+            <button class="btn btn-primary btn-block" :disabled="loading">
               <span
                 v-show="loading"
                 class="spinner-border spinner-border-sm"
               ></span>
-              Обновить студента
+              Обновить курс
             </button>
-            <router-link to="/listeners" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
+        
           </div>
+     
+        
         </div>
       </Form>
+
     </div>
     <div v-else>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
       <div class="form-group">
         <label class="form-control skeleton-text skeleton-animate"></label>
         <input type="text" class="form-control skeleton skeleton-animate">
@@ -181,73 +143,89 @@ import { Form, Field, ErrorMessage } from "vee-validate";
     data() {
       const schema = yup.object().shape({
         
+        email: yup
+          .string()
+          .required("Email is required!")
+          .email("Email is invalid!")
+          .max(50, "Must be maximum 50 characters!"),
 
+
+          group_id: yup
+          .string()
+          .required("Email is required!")
+          
        
       });
 
       return {
         schema,
         loading:false,
-        listener: null, // заглушка для данных студента
-        editedListener: null, // заглушка для новых данных студента
+        student: null, // заглушка для данных студента
+        editedStudent: null, // заглушка для новых данных студента
         groups: null,
 
       };
     },
     methods: {
       // грузим студента из psql по id 
-      async loadListenerDetail() {
-        const listenerId = this.$route.params.listenerId;
+      async loadCourseDetail() {
+        const courseId = this.$route.params.courseId;
         try {
-          const response = await UserService.getListenerById(listenerId);
-          this.listener = response.data;
+          const response = await UserService.getCourseById(courseId);
+          this.student = response.data;
           // Клонирование объекта, для избежание редактирования данных сразу
-          this.editedListener = { ...response.data };
+          this.editedCourse = { ...response.data };
         } catch (error) {
-          console.error('Error loading listener details:', error);
+          console.error('Error loading student details:', error);
         }
       },
       // Метод для обновления данных о студенте
-      async updateListener() {
+      async updateCourse() {
         try {
           // запрос в psql
           this.loading=true;
 
-          const response = await UserService.updateListenerById(this.listener.id, this.editedListener.name , this.editedListener.surname  , this.editedListener.lastname  , this.editedListener.group_id,
-          this.editedListener.snils , this.editedListener.passport , this.editedListener.issued_by , this.editedListener.issue_date , this.editedListener.department_code , this.editedListener.registration_address , this.editedListener.phone_number ,
-          this.editedListener.email);
+          const response = await UserService.updateCourseById(this.course.course_id, this.editedCourse.course, this.editedCourse.group_id);
           response.data;
-          this.listener = { ...this.editedListener };
+          this.course = { ...this.editedCourse };
           this.loading=false;
-          this.toast.success("Успешно обновили слушателя!");
+          this.toast.success("Успешно обновили студента!");
         } catch (error) {
-          console.error('Ошибка :', error);
+          console.error('Ошибка загрузки данных о студенте:', error);
+        }
+      },
+      async deleteCourse() {
+        try {
+          // запрос в psql
+          this.loading=true;
+
+          const response = await UserService.deleteStudentById(this.student.student_id);
+          response.data;
+          this.student = { ...this.editedStudent };
+          this.loading=false;
+          this.toast.success("Успешно удалили курс!");
+        } catch (error) {
+          console.error('Ошибка загрузки данных о курс:', error);
         }
       },
       async loadGroupsData() {
         try {
-          const response = await UserService.getLgroupsAsIdText(); 
+          const response = await UserService.getGroupsAsIdText(); 
           this.groups = Array.isArray(response.data) ? response.data : [response.data];
-          this.dataLoading=false;
         } catch (error) {
-          console.error('Error loading students data:', error);
+          console.error('Ошибка загрузки данных о курсе:', error);
         }
-      },
+      }
     },
     created() {
-      this.loadGroupsData();
-      this.loadListenerDetail();
+      this.loadCourseDetail();
+      this.loadStudentDetail();
      
     },
   };
   </script>
 
 <style lang="scss" scoped>
-.error-feedback{
-  white-space: nowrap;
-  margin-left:5px;
-}
-
 label{
   margin-right: 15px;
   white-space: nowrap;
@@ -276,24 +254,6 @@ label{
 }
 
 
-
-@keyframes skeletonShimmer {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-@keyframes skeletonFade {
-  0%, 100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
-}
 
 @keyframes skeletonShimmer {
   0% {
@@ -354,7 +314,7 @@ label{
     --bs-btn-hover-border-color: rgb(6 215 29);
     --bs-btn-active-bg: rgb(68,99,52);
     --bs-btn-disabled-bg: rgb(68,99,52);
-    display: flex;
+
   justify-content: center;
   align-items: center;
 }

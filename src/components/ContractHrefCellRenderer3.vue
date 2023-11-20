@@ -1,6 +1,6 @@
 <template>
 
-<a :href="'#/students?filterModel=' + JSON.stringify({ group_number: { filterType: 'text', type: 'contains', filter: this.params.data.group_number } })">{{ this.params.data.group_number }}</a>
+<a :href="'#/payments?filterModel=' + JSON.stringify({ contr_number: { filterType: 'text', type: 'contains', filter: this.params.data.contr_number } })">{{ this.params.data.contr_number }}</a>
 
 
   </template>

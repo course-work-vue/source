@@ -153,19 +153,12 @@
               <ErrorMessage name="enrolled_date" class="error-feedback" />
             </div>
             <div class="d-flex flex-wrap">
-            <div class="form-group d-inline-flex align-items-center mb-2 col-2">
-              <label for="course">Курс:</label>
-              <Field name="course" type="text" class="form-control" value="" :class="{'is-invalid': errors.course}"/>
-              <ErrorMessage name="course" class="error-feedback" />
-            </div>
-            
-
             <div class="form-group d-inline-flex align-items-center mb-2">
               <label for="group_id">Группа:</label>
               
               <Select2 :class="{'form-control is-invalid': errors.group_id}" v-model="myValue" 
               :options="groups" 
-              :settings=" { theme: 'bootstrap-5', width: '100%'}"
+              :settings=" {  theme: 'bootstrap-5', width: '100%'}"
               
                />
 
@@ -177,10 +170,35 @@
 
             <div class="form-group d-inline-flex align-items-center float-none mb-2 col-3">
               <label for="subgroup">Подгруппа:</label>
-              <Field name="subgroup" type="text" class="form-control" :class="{'is-invalid': errors.subgroup}"/>
+              <Field  name="subgroup" as="select" class="form-select">
+                <option value="Нет">Нет</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+              </Field>
               <ErrorMessage name="subgroup" class="error-feedback" />
               
             </div>
+
+            <div class="form-group d-inline-flex align-items-center float-none mb-2 col-5">
+              <label for="zachetka_number">Номер зачётки:</label>
+              <Field name="zachetka_number" type="text" class="form-control" :class="{'is-invalid': errors.zachetka_number}"/>
+              <ErrorMessage name="zachetka_number" class="error-feedback" />
+              
+            </div>
+
+            <div class="form-group d-inline-flex align-items-center float-none mb-2 col-6">
+              <label for="phonenumber">Номер телефона:</label>
+              <Field name="phonenumber" type="text" class="form-control" :class="{'is-invalid': errors.phonenumber}"/>
+              <ErrorMessage name="phonenumber" class="error-feedback" />
+              
+            </div>
+            <div class="form-group d-inline-flex align-items-center float-none mb-2 col-8">
+              <label for="phonenumber_rod">Номер телефона родителей:</label>
+              <Field name="phonenumber_rod" type="text" class="form-control" :class="{'is-invalid': errors.phonenumber_rod}"/>
+              <ErrorMessage name="phonenumber_rod" class="error-feedback" />
+              
+            </div>
+           
           </div>
             <div class="form-group mt-3">
              
@@ -244,7 +262,6 @@
   student_login: yup.string().required('Требуется указать логин студента'),
   enrollment_order: yup.string().required('Требуется указать приказ о зачислении'),
   enrolled_date: yup.date().required('Требуется указать дату зачисления'),
-  course: yup.string().required('Требуется указать курс'),
   group_id: yup.string().required('Требуется указать группу'),
 
 
@@ -257,7 +274,11 @@
         message: "",
         schema,
         groups: null,
-
+        courses: [
+        { id: 'Нет', text: 'Нет' },
+        { id: '1', text: '1' },
+        { id: '2', text: '2' },
+      ],
         myValue: '',
       };
     },
@@ -276,7 +297,7 @@
 
           const response = await UserService.addStudent(student.last_name, student.first_name, student.patronymic, 
           student.gender, student.date_of_birth, student.passport_series_and_number, student.INN, student.SNILS, student.place_of_birth, student.email,
-           student.student_login, student.enrollment_order, student.enrolled_date, student.course, student.group_id, student.subgroup);
+           student.student_login, student.enrollment_order, student.enrolled_date, student.group_id, student.subgroup, student.zachetka_number, student.phonenumber,student.phonenumber_rod);
           response.data;
           this.loading=false;
           this.successful=true;

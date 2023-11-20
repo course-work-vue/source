@@ -1,149 +1,120 @@
 <template>
-  <div class="col-md-12 list">
-    <div v-if="payment" >
-      <Form @submit="updatePayment" :validation-schema="schema" v-slot="{ errors }">
-        
-        <div >
-          <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-            <label for="contract_id">Номер договора</label>
+  <div class="list">
+  <div v-if="dataLoading">
+    <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      <div class="form-group">
+        <label class="form-control skeleton-text skeleton-animate"></label>
+        <input type="text" class="form-control skeleton skeleton-animate">
+      </div>
+      
+
+  </div>
+    <div v-else class="col-md-12">
+        <Form @submit="addCourse" :validation-schema="schema" v-slot="{ errors }">
+          <div>
             
-            <Select2 class="col-5" :class="{'form-control is-invalid': errors.contract_id}" v-model="editedPayment.contract_id" 
-            :options="contracts" 
-            :settings=" { theme: 'bootstrap-5', width: '100%'}"
-            
-             />
-
-             <Field  name="contract_id" as="select" v-model="contract_id" hidden>
-              <option v-for="contract in contracts" :key="contract.id" :value="contract.id">{{ contract.text }}</option>
-            </Field>
-            <ErrorMessage name="contract_id" class="error-feedback" />
-          </div>
-
-          <div class="form-group d-inline-flex align-items-center mb-2">
-              <label for="expiration_date">Дата просрочки:</label>
-              <Field name="expiration_date" type="date"  class="form-control" value="" :class="{'is-invalid': errors.expiration_date}" v-model="editedPayment.expiration_date"/>
-              <ErrorMessage name="expiration_date" class="error-feedback" />
-            </div>
-
             <div class="form-group d-inline-flex align-items-center mb-2">
-              <label for="date_40">Дата оплаты 40%:</label>
-              <Field name="date_40" type="date"  class="form-control" value="" :class="{'is-invalid': errors.date_40}" v-model="editedPayment.date_40"/>
-              <ErrorMessage name="date_40" class="error-feedback" />
+              <label for="course">Курс:</label>
+              <Field name="course" type="number" class="form-control" value="" :class="{'is-invalid': errors.course}"/>
+              <ErrorMessage name="course" class="error-feedback" />
+            </div>
+            <div class="d-flex flex-wrap">
+            <div class="form-group d-inline-flex align-items-center mb-2">
+              <label for="group_id">Группа:</label>
+              
+              <Select2 :class="{'form-control is-invalid': errors.group_id}" v-model="myValue" 
+              :options="groups" 
+              :settings=" { theme: 'bootstrap-5', width: '100%'}"
+              
+               />
+
+               <Field  name="group_id" as="select" v-model="myValue" hidden>
+                <option v-for="group in groups" :key="group.id" :value="group.id">{{ group.text }}</option>
+              </Field>
+              <ErrorMessage name="group_id" class="error-feedback" />
             </div>
 
-
-            <div class="form-group d-inline-flex align-items-center mb-2 col-6">
-              <label for="all_sum">Вся сумма:</label>
-              <Field name="all_sum" type="text" class="form-control" value="" :class="{'is-invalid': errors.all_sum}" v-model="editedPayment.all_sum"/>
-              <ErrorMessage name="all_sum" class="error-feedback" />
-            </div>
-            <div class="form-group d-inline-flex align-items-center mb-2 col-5">
-              <label for="deposited_amount">Внесённая сумма:</label>
-              <Field name="deposited_amount" type="number" class="form-control" value="" :class="{'is-invalid': errors.deposited_amount}" v-model="editedPayment.deposited_amount"/>
-              <ErrorMessage name="deposited_amount" class="error-feedback" />
-            </div>
-
-            <div class="form-group d-inline-flex align-items-center mb-2 col-5">
-              <label for="left_to_pay">Остаточная сумма:</label>
-              <Field name="left_to_pay" type="number" class="form-control" value="" :class="{'is-invalid': errors.left_to_pay}" v-model="editedPayment.left_to_pay"/>
-              <ErrorMessage name="left_to_pay" class="error-feedback" />
-            </div>
-
-            <div class="form-group d-inline-flex align-items-center mb-2 col-6">
-              <label for="bank">Банк:</label>
-              <Field name="bank" type="text" class="form-control" value="" :class="{'is-invalid': errors.bank}" v-model="editedPayment.bank"/>
-              <ErrorMessage name="bank" class="error-feedback" />
-            </div>
-
-         
-
-
-
-          <div class="form-group mt-3">
-            <button class="btn btn-primary btn-block float-start" :disabled="loading">
-              <span
-                v-show="loading"
-                class="spinner-border spinner-border-sm"
-              ></span>
-              Обновить платёж
-            </button>
-            <router-link to="/payments" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
           </div>
+            <div class="form-group mt-3">
+             
+              <router-link to="/courses" class="btn btn-secondary ml-2 float-start">Отмена</router-link>
+              <button class="btn btn-primary btn-block float-end" :disabled="loading">
+                <span
+                  v-show="loading"
+                  class="spinner-border spinner-border-sm"
+                ></span>
+                Добавить курс
+              </button>
+            </div>
+          </div>
+        </Form>
+  
+        <div
+          v-if="message"
+          class="alert"
+          :class="successful ? 'alert-success' : 'alert-danger'"
+        >
+          {{ message }}
         </div>
-      </Form>
-    </div>
-    <div v-else>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-
-    </div>
-      
-      
-   
-      <div
-        v-if="message"
-        class="alert"
-        :class="successful ? 'alert-success' : 'alert-danger'"
-      >
-        {{ message }}
       </div>
     </div>
-
-</template>
-
+  </template>
+  
   <script>
 
-import { Form, Field, ErrorMessage } from "vee-validate";
+
+  import { Form, Field, ErrorMessage } from "vee-validate";
   import * as yup from "yup";
   import UserService from "../services/user.service";
   import { useToast } from "vue-toastification";
@@ -153,6 +124,8 @@ import { Form, Field, ErrorMessage } from "vee-validate";
       const toast = useToast();
       return { toast }
     },
+
+    name: "AddStudent",
     components: {
       Form,
       Field,
@@ -160,70 +133,78 @@ import { Form, Field, ErrorMessage } from "vee-validate";
 
       
     },
-
-
     data() {
       const schema = yup.object().shape({
-        
 
-       
-      });
 
+
+});
+  
       return {
+        successful: false,
+        loading: false,
+        dataLoading:true,
+        message: "",
         schema,
-        loading:false,
-        payment: null, // заглушка для данных студента
-        editedPayment: null, // заглушка для новых данных студента
         groups: null,
-        contracts:null
 
+        myValue: '',
       };
     },
+    computed: {
+
+    },
+    mounted() {
+    
+    },
     methods: {
-      // грузим студента из psql по id 
-      async loadPaymentDetail() {
-        const paymentID = this.$route.params.paymentID;
-        try {
-          const response = await UserService.getPaymentById(paymentID);
-          this.payment = response.data;
-          // Клонирование объекта, для избежание редактирования данных сразу
-          this.editedPayment = { ...response.data };
-        } catch (error) {
-          console.error('Error loading payer details:', error);
-        }
-      },
-      // Метод для обновления данных о студенте
-      async updatePayment() {
+
+      async addCourse(course) {
         try {
           // запрос в psql
           this.loading=true;
 
-          const response = await UserService.updatePaymentById(this.payment.id, this.editedPayment.contract_id, this.editedPayment.expiration_date,this.editedPayment.date_40, this.editedPayment.all_sum, this.editedPayment.deposited_amount, this.editedPayment.left_to_pay, this.editedPayment.bank);
+          const response = await UserService.addCourse(course.course, course.group_id);
           response.data;
-          this.payer = { ...this.editedPayer };
           this.loading=false;
-          this.toast.success("Успешно обновили плательщика!");
+          this.successful=true;
+
+          this.toast.success("Успешно добавили курс!");
         } catch (error) {
-          console.error('Ошибка :', error);
+          this.message="Ошибка";
+          this.toast.error("Ошибка добавления курса");
+          console.error('Error updating student details:', error);
         }
       },
-      async loadContractsData() {
+
+
+      async loadGroupsData() {
         try {
-          const response = await UserService.getContractsAsIdText(); 
-          this.contracts = Array.isArray(response.data) ? response.data : [response.data];
+          const response = await UserService.getGroupsAsIdText(); 
+          this.groups = Array.isArray(response.data) ? response.data : [response.data];
           this.dataLoading=false;
         } catch (error) {
-          console.error('Ошибка загрузки данных:', error);
+          console.error('Error loading students data:', error);
         }
       },
+
+
+
     },
+
     created() {
-      this.loadPaymentDetail();
-     this.loadContractsData();
+    this.loadGroupsData();
     },
   };
   </script>
+
 <style lang="scss" scoped>
+
+.error-feedback{
+  white-space: nowrap;
+  margin-left:5px;
+}
+
 label{
   margin-right: 15px;
   white-space: nowrap;
@@ -252,6 +233,24 @@ label{
 }
 
 
+
+@keyframes skeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes skeletonFade {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
 
 @keyframes skeletonShimmer {
   0% {

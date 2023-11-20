@@ -42,7 +42,10 @@
 import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
 import { reactive, onMounted, ref } from "vue";
 import ButtonCell from "@/components/ContractButtonCell.vue";
-import GroupHref from "@/components/GroupHrefCellRenderer.vue";
+import ContractHref from "@/components/ContractHrefCellRenderer.vue";
+import ContractHref2 from "@/components/ContractHrefCellRenderer2.vue";
+import ContractHref3 from "@/components/ContractHrefCellRenderer3.vue";
+import ContractHref4 from "@/components/ContractHrefCellRenderer4.vue";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import UserService from "../services/user.service";
@@ -52,7 +55,10 @@ export default {
   components: {
     AgGridVue,
     ButtonCell,
-    GroupHref
+    ContractHref,
+    ContractHref2,
+    ContractHref3,
+    ContractHref4
   },
   setup() {
     const gridApi = ref(null); // Optional - for accessing Grid's API
@@ -91,16 +97,16 @@ export default {
       maxWidth: 120, resizable: false
 
     },
-           { field: "listener_full_name", headerName: 'ФИО слушателя' },
+           { field: "listener_full_name", headerName: 'ФИО слушателя', cellRenderer:'ContractHref' },
            {
             field: 'payer_full_name',
-            headerName: 'ФИО законного представителя'
+            headerName: 'ФИО законного представителя', cellRenderer:'ContractHref2'
            },
            {
             field: 'contr_number',
-            headerName: 'Номер договора'
+            headerName: 'Номер договора', cellRenderer:'ContractHref3'
            },
-           { field: "program_name", headerName: 'Название курса' }
+           { field: "program_name", headerName: 'Название курса', cellRenderer:'ContractHref4' }
 
 
            
