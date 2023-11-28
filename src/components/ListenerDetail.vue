@@ -2,7 +2,7 @@
   <div class="col-md-12 list">
     <div v-if="listener" >
       <Form @submit="updateListener" :validation-schema="schema" v-slot="{ errors }">
-        
+        <h2>Данные слушателя</h2>
         <div >
           <div class="form-group d-inline-flex align-items-center col-12 mb-2">
             <label for="lastname">Фамилия</label>
@@ -71,7 +71,53 @@
             <ErrorMessage name="email" class="error-feedback" />
           </div>
 
-         
+          <hr  size="2"  />
+<h2>Пожелания слушателя</h2>
+          <div class="form-group d-inline-flex align-items-center mb-2 col-12">
+              <label for="suitable_days">Пожелания слушателя по дням:</label>
+              
+              <Select2 type="number" class="col-5 d-inline-flex" :class="{'form-control is-invalid': errors.group_id}"    v-model="editedListener.suitable_days"
+              :options="days" 
+              :settings=" { theme: 'bootstrap-5', width: '100%', multiple:'true'}"
+              
+               />
+
+               <Field type="number" name="suitable_days" as="select" v-model="editedListener.suitable_days" hidden>
+                <option v-for="day in days" :key="day.id" :value="day.id">{{ day.text }}</option>
+              </Field>
+              <ErrorMessage name="suitable_days" class="error-feedback" />
+            </div>
+    
+            <div class="form-group d-inline-flex align-items-center mb-2 col-5">
+            <label for="people_count">Количество человек:</label>
+            <Field name="people_count" type="number" class="form-control" value="" :class="{'is-invalid': errors.people_count }" v-model="editedListener.people_count"/>
+            <ErrorMessage name="people_count" class="error-feedback" />
+          </div>
+
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
+            <label for="hours">Количество часов:</label>
+            <Field name="hours" type="number" class="form-control" value="" :class="{'is-invalid': errors.hours }" v-model="editedListener.hours" />
+            <ErrorMessage name="hours" class="error-feedback" />
+          </div>
+
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
+            <label for="start_date">Начало:</label>
+            <Field name="start_date" type="date" class="form-control" value="" :class="{'is-invalid': errors.start_date }" v-model="editedListener.start_date" />
+            <ErrorMessage name="start_date" class="error-feedback" />
+          </div>
+
+
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
+            <label for="end_date">Конец:</label>
+            <Field name="end_date" type="date" class="form-control" value="" :class="{'is-invalid': errors.end_date }" v-model="editedListener.end_date"/>
+            <ErrorMessage name="end_date" class="error-feedback" />
+          </div>
+          
+          <div class="form-group d-inline-flex align-items-center mb-2 col-12">
+            <label for="wish_description">Дополнительный комментарий:</label>
+            <Field name="wish_description" type="text" class="form-control" value="" :class="{'is-invalid': errors.wish_description}" v-model="editedListener.wish_description"/>
+            <ErrorMessage name="wish_description" class="error-feedback" />
+          </div>
 
 
 
@@ -81,7 +127,7 @@
                 v-show="loading"
                 class="spinner-border spinner-border-sm"
               ></span>
-              Обновить студента
+              Обновить слушателя
             </button>
             <router-link to="/listeners" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
           </div>
@@ -190,6 +236,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
         loading:false,
         listener: null, // заглушка для данных студента
         editedListener: null, // заглушка для новых данных студента
+        days_of_week: null,
         groups: null,
 
       };
@@ -215,7 +262,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
 
           const response = await UserService.updateListenerById(this.listener.id, this.editedListener.name , this.editedListener.surname  , this.editedListener.lastname  , this.editedListener.group_id,
           this.editedListener.snils , this.editedListener.passport , this.editedListener.issued_by , this.editedListener.issue_date , this.editedListener.department_code , this.editedListener.registration_address , this.editedListener.phone_number ,
-          this.editedListener.email);
+          this.editedListener.email,this.editedListener.people_count, this.editedListener.hours, this.editedListener.start_date, this.editedListener.end_date,this.editedListener.wish_description, Object.values(this.editedListener.suitable_days).map(value => parseInt(value, 10)));
           response.data;
           this.listener = { ...this.editedListener };
           this.loading=false;
@@ -233,9 +280,19 @@ import { Form, Field, ErrorMessage } from "vee-validate";
           console.error('Error loading students data:', error);
         }
       },
+      async loadDaysData() {
+        try {
+          const response = await UserService.getDaysAsIdText(); 
+          this.days = Array.isArray(response.data) ? response.data : [response.data];
+          this.dataLoading=false;
+        } catch (error) {
+          console.error('Error loading data:', error);
+        }
+      },
     },
     created() {
       this.loadGroupsData();
+      this.loadDaysData();
       this.loadListenerDetail();
      
     },
