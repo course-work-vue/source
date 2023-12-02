@@ -52,10 +52,6 @@
               link: "/groups",
             },
             {
-              label: "Курсы",
-              link: "/courses",
-            },
-            {
               label: "Курсовые",
               link: "/courseworks",
             }
@@ -71,8 +67,12 @@
               link: "/listeners",
             },
             {
-              label: "Список законных представителей",
+              label: "Плательщики",
               link: "/payers",
+            },
+            {
+              label: "Группы",
+              link: "/groups",
             },
             {
               label: "Договора",

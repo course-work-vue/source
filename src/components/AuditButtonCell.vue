@@ -11,7 +11,7 @@
         },
         methods: {
           onClick() {
-            this.$router.push(`/audits/${this.params.data.group_id}`);
+            this.$router.push(`/audits/${this.params.data.schedule_id}`);
           },
         },
       };
