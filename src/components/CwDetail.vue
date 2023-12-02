@@ -1,122 +1,110 @@
 <template>
   <div class="col-md-12 list">
-    <div v-if="schedules" >
-      <Form @submit="updateSchedule" :validation-schema="schema" v-slot="{ errors }">
-       
+    <div v-if="Cw" >
+      <Form @submit="updateCw" :validation-schema="schema" v-slot="{ errors }">
+        
         <div >
-          <div class="form-group d-inline-flex align-items-center mb-2">
-            <label for="group_id">Группа:</label>
-            
-            <Select2 :class="{'form-control is-invalid': errors.group_id}" v-model="editedSchedule.group_id" 
-            :options="groups" 
-            :settings=" { theme: 'bootstrap-5', width: '100%'}"
-            
-             />
-
-             <Field  name="group_id" as="select" v-model="editedSchedule.group_id" hidden>
-              <option v-for="group in groups" :key="group.id" :value="group.id">{{ group.text }}</option>
-            </Field>
-            <ErrorMessage name="group_id" class="error-feedback" />
-          </div>
-          <div class="form-group d-inline-flex align-items-center float-none mb-2 col-3">
-            <label for="subgroup">Подгруппа:</label>
-            <Field name="subgroup" type="text" class="form-control" :class="{'is-invalid': errors.subgroup}" v-model="editedSchedule.subgroup"/>
-            <ErrorMessage name="subgroup" class="error-feedback" />
-            
-          </div>
           <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-              <label for="audit_day_id">День недели</label>
+              <label for="course_work_theme">Тема работы:</label>
+              <Field name="course_work_theme" type="text" class="form-control" :class="{'is-invalid': errors.course_work_theme}" v-model="editedCw.course_work_theme"/>
+              <ErrorMessage name="course_work_theme" class="error-feedback" />
               
-              <Select2 class="col-5" :class="{'form-control is-invalid': errors.day_id}" v-model="editedSchedule.day_id" 
-              :options="days" 
-              :settings=" { theme: 'bootstrap-5', width: '100%'}"
-              
-               />
-  
-               <Field name="audit_day_id" as="select" v-model="editedSchedule.day_id" hidden>
-                    <option v-for="day in days" :key="day.id" :value="day.id">{{ day.text }}</option>
-               </Field>
-              <ErrorMessage name="audit_day_id" class="error-feedback" />
             </div>
 
-            <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-              <label for="audit_subject_id">Предмет</label>
+          <div class="form-group d-inline-flex align-items-center col-6 mb-2">
+              <label for="course_work_teacher_id">Руководитель:</label>
               
-              <Select2 class="col-10" :class="{'form-control is-invalid': errors.subject_id}" v-model="editedSchedule.subject_id" 
-              :options="subjects" 
-              :settings=" { theme: 'bootstrap-5', width: '100%'}"
-              
-               />
-  
-               <Field  name="audit_subject_id" as="select" v-model="editedSchedule.subject_id" hidden>
-                <option v-for="subject in subjects" :key="subject.id" :value="subject.id">{{ subject.text }}</option>
-              </Field>
-              <ErrorMessage name="audit_prof_id" class="error-feedback" />
-            </div>
-
-            <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-              <label for="audit_teacher_id">Преподаватель</label>
-              
-              <Select2 class="col-10" :class="{'form-control is-invalid': errors.teacher_id}" v-model="editedSchedule.teacher_id" 
+              <Select2 class="col-5" :class="{'form-control is-invalid': errors.course_work_teacher_id}" v-model="editedCw.course_work_teacher_id" 
               :options="teachers" 
               :settings=" { theme: 'bootstrap-5', width: '100%'}"
               
                />
-  
-               <Field  name="audit_teacher_id" as="select" v-model="editedSchedule.teacher_id" hidden>
+
+               <Field  name="course_work_teacher_id" as="select" v-model="editedCw.course_work_teacher_id" hidden>
                 <option v-for="teacher in teachers" :key="teacher.id" :value="teacher.id">{{ teacher.text }}</option>
               </Field>
-              <ErrorMessage name="audit_prof_id" class="error-feedback" />
+              <ErrorMessage name="course_work_teacher_id" class="error-feedback" />
             </div>
 
-            <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-            <label for="audit_para_id">Пара</label>
-            <select id="numberSelect">
-              <option v-for="option in options" :value="option.value" :key="option.value">{{ option.label }}</option>
-            </select>
-          </div>
 
             <div class="form-group d-inline-flex align-items-center col-10 mb-2">
-              <label for="audit_subject_id">Аудитория</label>
+              <label for="course_work_student_id">Исполнитель:</label>
               
-              <Select2 class="col-5" :class="{'form-control is-invalid': errors.aud_id}" v-model="editedSchedule.aud_id" 
-              :options="auditorium" 
+              <Select2 class="col-5" :class="{'form-control is-invalid': errors.course_work_student_id}" v-model="editedCw.course_work_student_id" 
+              :options="students" 
               :settings=" { theme: 'bootstrap-5', width: '100%'}"
               
                />
-  
-            <Field name="audit_id" as="select" v-model="editedSchedule.aud_id" hidden>
-                <option v-for="audit in auditorium" :key="audit.id" :value="audit.id">{{ audit.text }}</option>
-            </Field>
-              <ErrorMessage name="audit_aud_id" class="error-feedback" />
-            </div>
-          
-            
-            
 
-            <div class="form-group  mt-3">
-            
-            <router-link to="/audits" class="mx-2 btn btn-secondary  float-start">Отмена</router-link>
-          </div>
-          <div class="form-group float-end">
-            <button class="btn btn-danger float-end" @click="deleteAudit">
-              Удалить аудиторию
-            </button>
-          </div>
+               <Field  name="course_work_student_id" as="select" v-model="editedCw.course_work_student_id" hidden>
+                <option v-for="student in students" :key="student.id" :value="student.id">{{ student.text }}</option>
+              </Field>
+              <ErrorMessage name="course_work_student_id" class="error-feedback" />
+            </div>
+
+
+            <div class="form-group d-inline-flex align-items-center col-6 mb-2">
+              <label for="course_work_kafedra">Кафедра:</label>
+              
+              <Select2 class="col-6" :class="{'form-control is-invalid': errors.course_work_kafedra}" v-model="editedCw.course_work_kafedra" 
+              :options="departaments" 
+              :settings=" { theme: 'bootstrap-5', width: '100%'}"
+              
+               />
+
+               <Field  name="course_work_kafedra" as="select" v-model="editedCw.course_work_kafedra" hidden>
+                <option v-for="departament in departaments" :key="departament.id" :value="departament.id">{{ departament.text }}</option>
+              </Field>
+              <ErrorMessage name="course_work_kafedra" class="error-feedback" />
+            </div>
+
+            <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+              <label for="course_work_vipysk">Магистратура:</label>
+
+              <Field v-slot="{ field2 }" name="course_work_vipysk" type="radio" :value="true">
+                <label>
+                  <input type="radio" name="course_work_vipysk" v-bind="field2" value="false" class="form-check-input mt-0 ml-5" v-model="editedCw.course_work_vipysk" :checked="editedCw.course_work_vipysk == false" />
+                  Нет
+                </label>
+              </Field>
+              <ErrorMessage name="course_work_vipysk" class="error-feedback" />
+              <Field v-slot="{ field }" name="editedCw.course_work_vipysk" type="radio" :value="true">
+                <label>
+                  <input type="radio" name="editedCw.course_work_vipysk" v-bind="field" value="true" class="form-check-input mt-0 ml-5" v-model="editedCw.course_work_vipysk" :checked="editedCw.course_work_vipysk == true" />
+                  Да
+                </label>
+              </Field>
+            </div>
+
+
+            <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+              <label for="course_work_year">Год:</label>
+              <Field name="course_work_year" type="number" class="form-control" :class="{'is-invalid': errors.course_work_year}" v-model="editedCw.course_work_year"/>
+              <ErrorMessage name="course_work_year" class="error-feedback" />
+            </div>
+            <div class="form-group d-inline-flex align-items-center col-3 mb-2">
+              <label for="course_work_ocenka">Оценка:</label>
+              <Field name="course_work_ocenka" type="number" class="form-control" :class="{'is-invalid': errors.course_work_ocenka}" v-model="editedCw.course_work_ocenka"/>
+              <ErrorMessage name="course_work_ocenka" class="error-feedback" />
+            </div>
+             
+             
+
+             
+          
           <div class="form-group mt-3">
-            <button class="btn btn-primary btn-block" :disabled="loading">
+            <button class="btn btn-primary btn-block float-start" :disabled="loading">
               <span
                 v-show="loading"
                 class="spinner-border spinner-border-sm"
               ></span>
-              Обновить аудиторию
+              Обновить работу
             </button>
-        
+            <router-link to="/courseworks" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
           </div>
         </div>
       </Form>
     </div>
-  
     <div v-else>
       <div class="form-group">
         <label class="form-control skeleton-text skeleton-animate"></label>
@@ -191,6 +179,9 @@
         <input type="text" class="form-control skeleton skeleton-animate">
       </div>
     </div>
+      
+      
+   
       <div
         v-if="message"
         class="alert"
@@ -198,7 +189,7 @@
       >
         {{ message }}
       </div>
-  </div>
+    </div>
 
 </template>
 
@@ -208,19 +199,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
   import * as yup from "yup";
   import UserService from "../services/user.service";
   import { useToast } from "vue-toastification";
-
-  document.addEventListener("DOMContentLoaded", function() {
-    const select = document.getElementById('numberSelect');
-    
-    for (let i = 1; i <= 8; i++) {
-        const option = document.createElement('option');
-        option.value = i;
-        option.textContent = i;
-        select.appendChild(option);
-    }
-});
   export default {
-    
 
     setup() {
       const toast = useToast();
@@ -241,96 +220,46 @@ import { Form, Field, ErrorMessage } from "vee-validate";
       
        
       });
-      
 
       return {
         schema,
         loading:false,
-        successful: false,
-        schedules: null,
-        groups: null, // заглушка для данных студента
-        editedSchedule: null, // заглушка для новых данных студента
+        Cw: null, // заглушка для данных студента
+        editedCw: null, // заглушка для новых данных студента
         profiles: null,
         directions: null,
-        options: [],
-        auditorium: null,
-        teachers: null
+
       };
-    },
-    mounted() {
-    // Генерация вариантов с 1 по 10 и добавление их в массив options
-      for (let i = 1; i <= 8; i++) {
-        this.options.push({ value: i, label: i });
-      }
     },
     methods: {
       // грузим студента из psql по id 
 
-      async updateSchedule() {
+      async updateCw() {
         try {
           // запрос в psql
           this.loading=true;
 
-          const response = await UserService.updateScheduleById(this.schedule.schedule_id,this.editedSchedule.day_id,
-          this.editedSchedule.subject_id,this.editedSchedule.teacher_id,this.editedSchedule.aud_id);
+          const response = await UserService.updateCwById(this.Cw.course_work_id,this.editedCw.course_work_theme, this.editedCw.course_work_teacher_id, this.editedCw.course_work_student_id,this.editedCw.course_work_kafedra,this.editedCw.course_work_vipysk,this.editedCw.course_work_year,this.editedCw.course_work_ocenka);
           response.data;
-          this.schedules = { ...this.editedSchedule };
+          this.Cw = { ...this.editedCw };
           this.loading=false;
-          this.toast.success("Успешно обновили аудиторию!");
+          this.toast.success("Успешно обновили работу!");
         } catch (error) {
-          console.error('Ошибка загрузки данных :', error);
+          console.error('Ошибка загрузки данных о работе:', error);
         }
       },
-      async deleteAudit() {
+      async loadCwDetail() {
+        const CwId = this.$route.params.CwId;
         try {
-          // запрос в psql
-          this.loading=true;
-
-          const response = await UserService.deleteScheduleById(this.schedule.schedule_id);
-          response.data;
-          this.schedules = { ...this.editedSchedule };
-          this.loading=false;
-          this.toast.success("Успешно удалили аудиторию!");
-        } catch (error) {
-          console.error('Ошибка загрузки данных:', error);
-        }
-      },
-        async loadGroupsData() {
-        try {
-          const response = await UserService.getGroupsAsIdText(); 
-          this.groups = Array.isArray(response.data) ? response.data : [response.data];
-        } catch (error) {
-          console.error('Ошибка загрузки данных :', error);
-        }
-      },
-      // Метод для обновления данных о студенте
-      async loadDaysData() {
-        try {
-          const response = await UserService.getDaysAsIdText(); 
-          this.days = Array.isArray(response.data) ? response.data : [response.data];
-        } catch (error) {
-          console.error('Error:', error);
-        }
-      },
-      async loadAuditData() {
-        try {
-          const response = await UserService.getAuditAsIdText(); 
-          this.auditorium = Array.isArray(response.data) ? response.data : [response.data];
-        } catch (error) {
-          console.error('Error:', error);
-        }
-      },
-      async loadAuditoriumData() {
-        const scheduleId = this.$route.params.scheduleId;
-        try {
-          const response = await UserService.getAuditById(scheduleId);
-          this.schedules = response.data;
+          const response = await UserService.getCwById(CwId);
+          this.Cw = response.data;
           // Клонирование объекта, для избежание редактирования данных сразу
-          this.editedSchedule = { ...response.data };
+          this.editedCw = { ...response.data };
         } catch (error) {
           console.error('Error', error);
         }
       },
+      // Метод для обновления данных о студенте
       async loadTeachersData() {
         try {
           const response = await UserService.getTeachersAsIdText(); 
@@ -339,23 +268,32 @@ import { Form, Field, ErrorMessage } from "vee-validate";
           console.error('Error:', error);
         }
       },
-      async loadSubjectsData() {
+
+      async loadStudentsData() {
         try {
-          const response = await UserService.getSubjectAsIdText(); 
-          this.subjects = Array.isArray(response.data) ? response.data : [response.data];
+          const response = await UserService.getStudentsAsIdText(); 
+          this.students = Array.isArray(response.data) ? response.data : [response.data];
         } catch (error) {
           console.error('Error:', error);
         }
-      }
-      
+      },
+    
+      async loadDepartamentsData() {
+        try {
+          const response = await UserService.getDepartamentsAsIdText(); 
+          this.departaments = Array.isArray(response.data) ? response.data : [response.data];
+          this.dataLoading=false;
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      },
     },
     created() {
-      this.loadDaysData();
-      this.loadSubjectsData();
-      this.loadGroupsData();
-      this.loadAuditData();
+     
       this.loadTeachersData();
-      this.loadAuditoriumData();
+    this.loadStudentsData();
+    this.loadDepartamentsData();
+    this.loadCwDetail();
     },
   };
   </script>
@@ -451,8 +389,7 @@ label{
     --bs-btn-disabled-bg: rgb(68,99,52);
     display: flex;
   justify-content: center;
-  align-items: center; 
-  margin-right: 10px;
+  align-items: center;
 }
 
 .btn-primary:active{

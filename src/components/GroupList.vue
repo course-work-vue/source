@@ -15,7 +15,7 @@
 
 
 
-<div style="height: 50vh">
+<div style="height: 95vh">
 <div class="h-100 pt-5">
   <ag-grid-vue
     class="ag-theme-alpine"
@@ -44,6 +44,7 @@ import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
 import { reactive, onMounted, ref } from "vue";
 import ButtonCell from "@/components/GroupButtonCell.vue";
 import GroupHref from "@/components/GroupHrefCellRenderer.vue";
+import GroupHref2 from "@/components/GroupHrefCellRenderer2.vue";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import UserService from "../services/user.service";
@@ -53,7 +54,8 @@ export default {
   components: {
     AgGridVue,
     ButtonCell,
-    GroupHref
+    GroupHref,
+    GroupHref2
   },
   setup() {
     const gridApi = ref(null); // Optional - for accessing Grid's API
@@ -91,8 +93,9 @@ export default {
       maxWidth: 120, resizable: false
 
     },
-           { field: "group_number", headerName: 'Номер группы', cellRenderer: "GroupHref" },
-           { field: "prof_name", headerName: 'Название профиля' },
+           { field: "group_number", headerName: 'Номер группы', cellRenderer: "GroupHref", maxWidth:179 },
+           { field: "course", headerName: 'Курс', maxWidth:129 },
+           { field: "prof_name", headerName: 'Название профиля',cellRenderer: "GroupHref2" },
            { field: "dir_code", headerName: 'Код направления', hide: true },
            {
             field: 'dir_name',

@@ -38,7 +38,9 @@ const AddContract = () => import("./components/AddContract.vue")
 
 const ScheduleLoads = () => import("./components/ScheduleLoads.vue")
 
+const AddCw = () => import("./components/AddCw.vue")
 const CWList = () => import("./components/CwList.vue")
+const CWdetail = () => import("./components/CwDetail.vue")
 
 const ProgramList = () => import("./components/ProgramList.vue")
 const AddProgram = () => import("./components/AddProgram.vue")
@@ -55,8 +57,10 @@ const CourseDetail = () => import("./components/CourseDetail.vue")
 
 const AuditList = () => import("./components/AuditList.vue")
 const AuditDetail = () => import("./components/AuditDetail.vue")
+const AddAudit = () => import("./components/AddAudit.vue")
 
-
+const addLgroup = () => import("./components/AddListenergroup.vue")
+const lGroupList = () => import("./components/ListenergroupList.vue")
 const routes = [
   { 
     path: "/",
@@ -114,7 +118,9 @@ const routes = [
 
   { path: '/ScheduleLoads', component: ScheduleLoads },
 
+  { path: '/addcw', component: AddCw },
   { path: '/courseworks', component: CWList },
+  { path: '/courseworks/:CwId', component: CWdetail },
 
   { path: '/programs', component: ProgramList },
   { path: '/programs/:programId', component: ProgramDetail },
@@ -124,14 +130,15 @@ const routes = [
 
 
   { path: '/audits', component: AuditList },
-  { path: '/audits/:groupId', component: AuditDetail, props: true },
+  { path: '/audits/:scheduleId', component: AuditDetail},
+  { path: '/AddAudit', component: AddAudit },
   
 
   { path: '/payments/:paymentID', component: PaymentDetail },
   { path: '/AddPayment', component: AddPayment },
 
-  
-
+  { path: '/lgroups', component: lGroupList },
+  { path: '/addlgroup', component: addLgroup },
 
   {
     path: "/user",

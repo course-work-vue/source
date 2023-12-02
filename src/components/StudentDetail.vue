@@ -94,11 +94,37 @@
           </div>
 
           <div class="form-group d-inline-flex align-items-center float-none mb-2 col-3">
-            <label for="subgroup">Подгруппа:</label>
-            <Field name="subgroup" type="text" class="form-control" :class="{'is-invalid': errors.subgroup}" v-model="editedStudent.subgroup"/>
-            <ErrorMessage name="subgroup" class="error-feedback" />
-            
-          </div>
+              <label for="subgroup">Подгруппа:</label>
+              <Field  name="subgroup" as="select" class="form-select" v-model="editedStudent.subgroup" :class="{'is-invalid': errors.subgroup}">
+                <option value="Нет">Нет</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+              </Field>
+              <ErrorMessage name="subgroup" class="error-feedback" />
+              
+            </div>
+
+
+          <div class="form-group d-inline-flex align-items-center float-none mb-2 col-5">
+              <label for="zachetka_number">Номер зачётки:</label>
+              <Field name="zachetka_number" type="text" class="form-control" v-model="editedStudent.zachetka_number" :class="{'is-invalid': errors.zachetka_number}"/>
+              <ErrorMessage name="zachetka_number" class="error-feedback" />
+              
+            </div>
+
+            <div class="form-group d-inline-flex align-items-center float-none mb-2 col-6">
+              <label for="phone_number">Номер телефона:</label>
+              <Field name="phone_number" type="text" class="form-control" v-model="editedStudent.phone_number" :class="{'is-invalid': errors.phone_number}"/>
+              <ErrorMessage name="phone_number" class="error-feedback" />
+              
+            </div>
+            <div class="form-group d-inline-flex align-items-center float-none mb-2 col-8">
+              <label for="phone_number_rod">Номер телефона родителей:</label>
+              <Field name="phone_number_rod" type="text" class="form-control" v-model="editedStudent.phone_number_rod" :class="{'is-invalid': errors.phone_number_rod}"/>
+              <ErrorMessage name="phone_number_rod" class="error-feedback" />
+              
+            </div>
+
         </div>
           <div class="form-group  mt-3">
             
@@ -281,7 +307,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
 
           const response = await UserService.updateStudentById(this.student.student_id, this.editedStudent.first_name, this.editedStudent.last_name, this.editedStudent.patronymic, 
           this.editedStudent.gender, this.editedStudent.date_of_birth, this.editedStudent.passport_series_and_number, this.editedStudent.INN, this.editedStudent.SNILS, this.editedStudent.place_of_birth, this.editedStudent.email,
-          this.editedStudent.student_login, this.editedStudent.enrollment_order, this.editedStudent.enrolled_date, this.editedStudent.group_id, this.editedStudent.subgroup);
+          this.editedStudent.student_login, this.editedStudent.enrollment_order, this.editedStudent.enrolled_date, this.editedStudent.group_id, this.editedStudent.subgroup, this.editedStudent.zachetka_number,this.editedStudent.phone_number,this.editedStudent.phone_number_rod);
           response.data;
           this.student = { ...this.editedStudent };
           this.loading=false;
