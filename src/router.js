@@ -61,6 +61,13 @@ const AddAudit = () => import("./components/AddAudit.vue")
 
 const addLgroup = () => import("./components/AddListenergroup.vue")
 const lGroupList = () => import("./components/ListenergroupList.vue")
+const lGroupDetail = () => import("./components/LgroupDetail.vue")
+
+
+const xlparse = () => import("./components/xlparse.vue")
+const ManageExcel = () => import("./components/ManageExcel.vue")
+
+
 const routes = [
   { 
     path: "/",
@@ -84,6 +91,18 @@ const routes = [
     name: "profile",
     // lazy-loaded
     component: Profile,
+  },
+   {
+    path: "/xlparse",
+    name: "xlparse",
+    // lazy-loaded
+    component: xlparse,
+  },
+  {
+    path: "/ManageExcel",
+    name: "ManageExcel",
+    // lazy-loaded
+    component: ManageExcel,
   },
   { path: '/students', component: StudentList },
 
@@ -127,19 +146,19 @@ const routes = [
   { path: '/AddProgram', component: AddProgram },
 
   { path: '/payments', component: PaymentList },
-
+  { path: '/payments/:paymentID', component: PaymentDetail },
+  { path: '/AddPayment', component: AddPayment },
 
   { path: '/audits', component: AuditList },
   { path: '/audits/:scheduleId', component: AuditDetail},
   { path: '/AddAudit', component: AddAudit },
   
 
-  { path: '/payments/:paymentID', component: PaymentDetail },
-  { path: '/AddPayment', component: AddPayment },
+
 
   { path: '/lgroups', component: lGroupList },
   { path: '/addlgroup', component: addLgroup },
-
+  { path: '/lgroups/:groupId', component: lGroupDetail },
   {
     path: "/user",
     name: "user",
@@ -147,6 +166,7 @@ const routes = [
     component: BoardUser,
   },
   { path: '/AddStudent', component: AddStudent },
+  { path: '/AddStudent/:groupName', component: AddStudent },
 ];
 
 const router = createRouter({
