@@ -39,35 +39,54 @@
 
   <div class="form-group d-inline-flex align-items-center col-5 mb-2">
     <label for="start_date">Дата начала:</label>
-    <Field name="start_date" type="date" class="form-control" :class="{'is-invalid': errors.start_date }" v-model="editedGroup.start_date"/>
+    <Field id="start_date" name="start_date" type="date" class="form-control" :class="{'is-invalid': errors.start_date }" v-model="editedGroup.start_date"/>
     <ErrorMessage name="start_date" class="error-feedback" />
     
   </div>
 
   <div class="form-group d-inline-flex align-items-center col-5 mb-2">
     <label for="end_date">Дата окончания:</label>
-    <Field name="end_date" type="date" class="form-control" :class="{'is-invalid': errors.end_date}" v-model="editedGroup.end_date"/>
+    <Field id="end_date" name="end_date" type="date" class="form-control" :class="{'is-invalid': errors.end_date}" v-model="editedGroup.end_date"/>
     <ErrorMessage name="end_date" class="error-feedback" />
     
   </div>
 
+  <div class="col-9">
+    <table class="table table-bordered col col-3">
+      <thead>
+      <tr>
+        <th>День</th>
+        <th>Время начала</th>
+        <th>Время окончания</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(entry, index) in tableData" :key="index" >
+        
+        <td>
+          <select class="form-select" v-model="entry.day_id">
+            <option v-for="day in days" :key="day.value" :value="day.id">
+              {{ day.text }}
+            </option>
+          </select>
+        </td>
+        <td>
+          <input class="form-control" type="time" v-model="entry.starttime">
+        </td>
+        <td>
+          <input class="form-control" type="time" v-model="entry.endtime">
+        </td>
+      
+      </tr>
+    </tbody>
+    </table>
+    <button type="button" class="btn btn-primary" @click="addRow">+</button>
+  </div>
 
-  <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-    <label for="starttime">Время начала:</label>
-    <Field name="starttime" type="time" class="form-control" :class="{'is-invalid': errors.starttime}" v-model="editedGroup.starttime"/>
-    <ErrorMessage name="starttime" class="error-feedback" />
-    
-  </div>
-  <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-    <label for="endtime">Время окончания:</label>
-    <Field name="endtime" type="time" class="form-control" :class="{'is-invalid': errors.endtime}" v-model="editedGroup.endtime"/>
-    <ErrorMessage name="endtime" class="error-feedback" />
-    
-  </div>
 
   <div class="form-group d-inline-flex align-items-center col-5 mb-2">
     <label for="people_count">Общее количество человек:</label>
-    <Field name="people_count" type="number" class="form-control" :class="{'is-invalid': errors.pc}" v-model="editedGroup.people_count"/>
+    <Field id="people_count" name="people_count" type="number" class="form-control" :class="{'is-invalid': errors.pc}" v-model="editedGroup.people_count"/>
     <ErrorMessage name="people_count" class="error-feedback" />
     
   </div>
@@ -80,11 +99,36 @@
        v-show="loading"
        class="spinner-border spinner-border-sm"
      ></span>
-     Добавить группу
+     Обновить группу
    </button>
  </div>
-</div>
+</div>    
       </Form>
+     
+      <br>
+      <hr  size="2"  />
+            <h2>Слушатели подходящие под критерий</h2>
+             
+             <div class="aggrid">
+              <ag-grid-vue
+    class="ag-theme-alpine"
+    style="width: 100%; height: 100%;"
+    :columnDefs="columnDefs.value"
+    :rowData="rowData.value"
+    :defaultColDef="defaultColDef"
+    :isExternalFilterPresent="isExternalFilterPresent"
+    :doesExternalFilterPass="doesExternalFilterPass"
+    rowSelection="multiple"
+    animateRows="true"
+    @cell-clicked="cellWasClicked"
+    @grid-ready="onGridReady"
+    @firstDataRendered="onFirstDataRendered"
+      
+  >
+  </ag-grid-vue>
+            
+            </div>
+        
     </div>
     <div v-else>
       <div class="form-group">
@@ -175,24 +219,164 @@
 </template>
 
   <script>
+  /* eslint-disable */
+import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
+import { reactive, onMounted, ref } from "vue";
+import ButtonCell from "@/components/ListenerButtonCell.vue";
+import ListenerHref from "@/components/ListenerHrefCellRenderer.vue";
+import ListenerHref2 from "@/components/ListenerHrefCellRenderer2.vue";
+import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
+import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 
 import { Form, Field, ErrorMessage } from "vee-validate";
   import * as yup from "yup";
   import UserService from "../services/user.service";
   import { useToast } from "vue-toastification";
   export default {
-
-    setup() {
-      const toast = useToast();
-      return { toast }
-    },
+    name: "App",
     components: {
+      AgGridVue,
+    ButtonCell,
+    ListenerHref,
+    ListenerHref2,
       Form,
       Field,
       ErrorMessage,
 
-      
+
+
     },
+    setup() {
+
+         const toast = useToast();
+      
+    const gridApi = ref(null); // Optional - for accessing Grid's API
+    const gridColumnApi = ref();
+    // Obtain API from grid's onGridReady event
+
+    const paginationPageSize = 60;
+
+
+    const onGridReady = (params) => {
+      gridApi.value = params.api;
+      gridColumnApi.value = params.columnApi;
+     
+    };
+    const navigateToStudent = () => {
+ 
+  };
+
+
+    const rowData = reactive({}); // Set rowData to Array of Objects, one Object per Row
+
+    // Each Column Definition results in one Column.
+    const columnDefs = reactive({
+      value: [
+      {
+      sortable: false,
+      filter: false,
+      headerName: 'Действия',
+      cellRenderer: 'ButtonCell',
+      cellRendererParams: {
+        onClick: navigateToStudent,
+        label: 'View Details', // Button label
+      },
+      maxWidth: 120, resizable: false
+
+    },
+   
+           
+           { field: "full_name", headerName: 'ФИО'}, 
+
+           {
+            field: 'people_count',
+            headerName: 'Желаемое количество человек'
+           },
+           {
+            field: 'start_date',
+            headerName: 'Дата начала'
+           },
+           {
+            field: 'end_date',
+            headerName: 'Дата окончания'
+           },
+           { field: "phone_number", headerName: 'Номер телефона', hide: true },
+           { field: "email", headerName: 'Email', hide: true },
+           { field: "full_name2", headerName: 'ФИО законного представителя' , hide: true
+           },
+
+           
+         
+      ],
+    });
+    const externalFilterChanged = () => {
+
+      gridApi.value.onFilterChanged();
+    };
+    const isExternalFilterPresent = () => {
+      // if ageType is not everyone, then we are filtering
+      return true;
+    };
+    const doesExternalFilterPass = (node) => {
+      console.log(node);
+     
+      console.log();
+      if (node.data) {
+          console.log();
+          return node.data.people_count==document.getElementById('people_count').value;
+
+      }
+      return true;
+    };
+    // DefaultColDef sets props common to all Columns
+    const defaultColDef = {
+      sortable: true,
+      filter: true,
+      flex: 1,
+      resizable: true,
+      minWidth: 300
+    };
+
+    // Example load data from server
+    onMounted(() => {
+
+    });
+
+    const onFilterTextBoxChanged = () => {
+      gridApi.value.setQuickFilter(
+        document.getElementById('filter-text-box').value
+      );
+    };
+
+
+    return {
+      onGridReady,
+      columnDefs, 
+      rowData,
+      defaultColDef,
+      cellWasClicked: (event) => { // Example of consuming Grid Event
+        console.log("cell was clicked", event);
+      },
+      deselectRows: () =>{
+        gridApi.value.deselectAll()
+      },
+      paginationPageSize,
+      onFilterTextBoxChanged,
+      navigateToStudent,
+      toast,
+      isExternalFilterPresent,
+      externalFilterChanged,
+      doesExternalFilterPass,
+
+
+
+
+      
+
+    };
+  },
+
+
 
 
     data() {
@@ -209,19 +393,48 @@ import { Form, Field, ErrorMessage } from "vee-validate";
         editedGroup: null, // заглушка для новых данных студента
         profiles: null,
         directions: null,
-        programs:null
+        show:false,
+        programs:null,
+        tableData:[],
+        table_new_rows:false
 
       };
     },
     methods: {
-      // грузим студента из psql по id 
+      addRow() {
+    
+    const newRow = { day_id: '', starttime: '', endtime: '' }; // ensure this is a new object
+    this.tableData.push(newRow);
+    this.table_new_rows=true;
+  },
+      showlst(){  
 
+
+      },
+
+      onFirstDataRendered(params){
+        
+        
+        this.gridApi = params.api;
+      this.columnApi = params.columnApi;
+
+      this.gridApi.onFilterChanged();
+      },
+      async loadListenersData() {
+        try {
+          const response = await UserService.getAllListenersWithoutGroup(); // Replace with your API endpoint
+          this.rowData.value = Array.isArray(response.data) ? response.data : [response.data];
+       
+        } catch (error) {
+          console.error('Error loading students data:', error);
+        }
+      },
       async updateGroup() {
         try {
           // запрос в psql
           this.loading=true;
-
-          const response = await UserService.updateLgroupById(this.group.group_id, this.editedGroup.group_number,this.editedGroup.group_program_id,this.editedGroup.hours,this.editedGroup.start_date,this.editedGroup.end_date,this.editedGroup.starttime,this.editedGroup.endtime, this.editedGroup.people_count);
+          const groupId = this.$route.params.groupId;
+          const response = await UserService.updateLgroupById(groupId, this.editedGroup.group_number,this.editedGroup.group_program_id,this.editedGroup.hours,this.editedGroup.start_date,this.editedGroup.end_date,this.editedGroup.people_count, this.tableData, this.table_new_rows);
           response.data;
           this.group = { ...this.editedgroup };
           this.toast.success("Успешно обновили группу!");
@@ -249,18 +462,44 @@ import { Form, Field, ErrorMessage } from "vee-validate";
           console.error('Error:', error);
         }
       },
+      async loadDaysData() {
+        try {
+          const response = await UserService.getDaysAsIdText(); 
+          this.days = Array.isArray(response.data) ? response.data : [response.data];
+          this.dataLoading=false;
+        } catch (error) {
+          console.error('Error loading data:', error);
+        }
+      },
+      async load_gdays() {
+        try {
+          const GroupId = this.$route.params.groupId;
+          const response = await UserService.getGDaysById(GroupId); 
+          this.tableData = Array.isArray(response.data) ? response.data : [response.data];
+          console.log(this.tableData);
+          this.dataLoading=false;
+        } catch (error) {
+          console.error('Error loading data:', error);
+        }
+      },
 
 
     },
     created() {
+      this.loadDaysData();
       this.loadGroupDetail();
+      this.load_gdays();
       this.loadProgramsData();
+      this.loadListenersData();
      
     },
   };
   </script>
 
 <style lang="scss" scoped>
+.aggrid{
+  height: 500px;
+}
 label{
   margin-right: 15px;
   white-space: nowrap;

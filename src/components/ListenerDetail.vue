@@ -27,7 +27,7 @@
               :settings=" { theme: 'bootstrap-5', width: '100%'}"
               
                />
-
+            
                <Field  name="group_id" as="select" v-model="editedListener.group_id" hidden>
                 <option v-for="group in groups" :key="group.id" :value="group.id">{{ group.text }}</option>
               </Field>
@@ -51,7 +51,7 @@
             <ErrorMessage name="department_code " class="error-feedback" />
           </div>
           <div class="form-group d-inline-flex align-items-center mb-2 col-5">
-            <label for="registration_address ">Адресс регистрации</label>
+            <label for="registration_address ">Адрес регистрации</label>
             <Field name="registration_address " type="text" class="form-control" value="" :class="{'is-invalid': errors.registration_address }" v-model="editedListener.registration_address "/>
             <ErrorMessage name="registration_address " class="error-feedback" />
           </div>
@@ -73,20 +73,37 @@
 
           <hr  size="2"  />
 <h2>Пожелания слушателя</h2>
-          <div class="form-group d-inline-flex align-items-center mb-2 col-12">
-              <label for="suitable_days">Пожелания слушателя по дням:</label>
-              
-              <Select2 type="number" class="col-5 d-inline-flex" :class="{'form-control is-invalid': errors.group_id}"    v-model="editedListener.suitable_days"
-              :options="days" 
-              :settings=" { theme: 'bootstrap-5', width: '100%', multiple:'true'}"
-              
-               />
-
-               <Field type="number" name="suitable_days" as="select" v-model="editedListener.suitable_days" hidden>
-                <option v-for="day in days" :key="day.id" :value="day.id">{{ day.text }}</option>
-              </Field>
-              <ErrorMessage name="suitable_days" class="error-feedback" />
-            </div>
+<div class="col-5">
+    <table class="table table-bordered col col-3">
+      <thead>
+      <tr>
+        <th>День</th>
+        <th>Время начала</th>
+        <th>Время окончания</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(entry, index) in tableData" :key="index" >
+        
+        <td>
+          <select class="form-select" v-model="entry.day_id">
+            <option v-for="day in days" :key="day.value" :value="day.id">
+              {{ day.text }}
+            </option>
+          </select>
+        </td>
+        <td>
+          <input class="form-control" type="time" v-model="entry.starttime">
+        </td>
+        <td>
+          <input class="form-control" type="time" v-model="entry.endtime">
+        </td>
+      
+      </tr>
+    </tbody>
+    </table>
+    <button type="button" class="btn btn-primary" @click="addRow">+</button>
+  </div>
     
             <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="people_count">Количество человек:</label>
@@ -209,6 +226,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
   import * as yup from "yup";
   import UserService from "../services/user.service";
   import { useToast } from "vue-toastification";
+
   export default {
 
     setup() {
@@ -238,16 +256,33 @@ import { Form, Field, ErrorMessage } from "vee-validate";
         editedListener: null, // заглушка для новых данных студента
         days_of_week: null,
         groups: null,
-
+        tableData: [],
+        table_new_rows:false,
       };
     },
     methods: {
-      // грузим студента из psql по id 
+
+      addRow() {
+    
+    const newRow = { day_id: '', starttime: '', endtime: '' }; // ensure this is a new object
+    this.tableData.push(newRow);
+    this.table_new_rows=true;
+  },
       async loadListenerDetail() {
         const listenerId = this.$route.params.listenerId;
         try {
           const response = await UserService.getListenerById(listenerId);
           this.listener = response.data;
+          console.log(this.listener);
+          console.log(this.listener.group_id);
+          if (this.listener.group_id>0){
+           console.log();
+          }
+          else{
+  
+            this.listener.group_id='NULL';
+          }
+          console.log(this.listener.group_id);
           // Клонирование объекта, для избежание редактирования данных сразу
           this.editedListener = { ...response.data };
         } catch (error) {
@@ -262,7 +297,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
 
           const response = await UserService.updateListenerById(this.listener.id, this.editedListener.name , this.editedListener.surname  , this.editedListener.lastname  , this.editedListener.group_id,
           this.editedListener.snils , this.editedListener.passport , this.editedListener.issued_by , this.editedListener.issue_date , this.editedListener.department_code , this.editedListener.registration_address , this.editedListener.phone_number ,
-          this.editedListener.email,this.editedListener.people_count, this.editedListener.hours, this.editedListener.start_date, this.editedListener.end_date,this.editedListener.wish_description, Object.values(this.editedListener.suitable_days).map(value => parseInt(value, 10)));
+          this.editedListener.email,this.editedListener.people_count, this.editedListener.hours, this.editedListener.start_date, this.editedListener.end_date,this.editedListener.wish_description, this.tableData,this.table_new_rows);
           response.data;
           this.listener = { ...this.editedListener };
           this.loading=false;
@@ -275,6 +310,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
         try {
           const response = await UserService.getLgroupsAsIdText(); 
           this.groups = Array.isArray(response.data) ? response.data : [response.data];
+          this.groups.unshift({ id: 'NULL', text: 'Нет' });
           this.dataLoading=false;
         } catch (error) {
           console.error('Error loading students data:', error);
@@ -289,8 +325,20 @@ import { Form, Field, ErrorMessage } from "vee-validate";
           console.error('Error loading data:', error);
         }
       },
+      async load_wishes() {
+        try {
+          const listenerId = this.$route.params.listenerId;
+          const response = await UserService.getWishDaysById(listenerId); 
+          this.tableData = Array.isArray(response.data) ? response.data : [response.data];
+          console.log(this.tableData);
+          this.dataLoading=false;
+        } catch (error) {
+          console.error('Error loading data:', error);
+        }
+      },
     },
     created() {
+      this.load_wishes();
       this.loadGroupsData();
       this.loadDaysData();
       this.loadListenerDetail();

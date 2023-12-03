@@ -166,6 +166,7 @@ const routes = [
     component: BoardUser,
   },
   { path: '/AddStudent', component: AddStudent },
+  { path: '/AddStudent/:groupName', component: AddStudent },
 ];
 
 const router = createRouter({

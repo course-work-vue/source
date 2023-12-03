@@ -316,8 +316,11 @@ else{
         }
       },
       navigateToAddStudent() {
-    
-    this.$router.push(`/addStudent`); // Navigate to the AddStudent route
+    if(this.groupn){
+      this.$router.push(`/addStudent/`+this.groupn)
+    }
+    else{
+    this.$router.push(`/addStudent`); }
 },
 
 

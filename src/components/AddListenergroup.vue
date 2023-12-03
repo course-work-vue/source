@@ -51,7 +51,37 @@
               <ErrorMessage name="hours" class="error-feedback" />
               
             </div>
-
+            <div class="col-5">
+    <table class="table table-bordered col col-3">
+      <thead>
+      <tr>
+        <th>День</th>
+        <th>Время начала</th>
+        <th>Время окончания</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(entry, index) in tableData" :key="index" >
+        
+        <td>
+          <select class="form-select" v-model="entry.day_id">
+            <option v-for="day in days" :key="day.value" :value="day.id">
+              {{ day.text }}
+            </option>
+          </select>
+        </td>
+        <td>
+          <input class="form-control" type="time" v-model="entry.starttime">
+        </td>
+        <td>
+          <input class="form-control" type="time" v-model="entry.endtime">
+        </td>
+      
+      </tr>
+    </tbody>
+    </table>
+    <button type="button" class="btn btn-primary" @click="addRow">+</button>
+  </div>
             <div class="form-group d-inline-flex align-items-center col-5 mb-2">
               <label for="start_date">Дата начала:</label>
               <Field name="start_date" type="date" class="form-control" :class="{'is-invalid': errors.start_date }"/>
@@ -67,18 +97,7 @@
             </div>
 
 
-            <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-              <label for="StartTime">Время начала:</label>
-              <Field name="StartTime" type="time" class="form-control" :class="{'is-invalid': errors.StartTime}"/>
-              <ErrorMessage name="StartTime" class="error-feedback" />
-              
-            </div>
-            <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-              <label for="EndTime">Время окончания:</label>
-              <Field name="EndTime" type="time" class="form-control" :class="{'is-invalid': errors.EndTime}"/>
-              <ErrorMessage name="EndTime" class="error-feedback" />
-              
-            </div>
+
             <div class="form-group d-inline-flex align-items-center col-5 mb-2">
               <label for="pc">Общее количество человек:</label>
               <Field name="pc" type="number" class="form-control" :class="{'is-invalid': errors.pc}"/>
@@ -151,6 +170,8 @@
         directions: null,
         programs:null,
         myValue: '',
+        tableData: [],
+        days:null,
       };
     },
     computed: {
@@ -160,13 +181,17 @@
     
     },
     methods: {
-
+      addRow() {
+    
+    const newRow = { day_id: '', starttime: '', endtime: '' }; // ensure this is a new object
+    this.tableData.push(newRow);
+  },
       async addGroup(lgroup) {
         try {
           // запрос в psql
           this.loading=true;
 
-          const response = await UserService.addLgroup(lgroup.group_number,lgroup.group_program_id,lgroup.hours,lgroup.start_date,lgroup.end_date,lgroup.StartTime,lgroup.EndTime, lgroup.pc); 
+          const response = await UserService.addLgroup(lgroup.group_number,lgroup.group_program_id,lgroup.hours,lgroup.start_date,lgroup.end_date,lgroup.pc,this.tableData); 
           response.data;
           this.loading=false;
           this.successful=true;
@@ -191,13 +216,21 @@
         }
       },
 
-
+      async loadDaysData() {
+        try {
+          const response = await UserService.getDaysAsIdText(); 
+          this.days = Array.isArray(response.data) ? response.data : [response.data];
+          this.dataLoading=false;
+        } catch (error) {
+          console.error('Error loading data:', error);
+        }
+      },
 
 
     },
 
     created() {
-
+    this.loadDaysData();
     this.loadProgramsData();
 
     },

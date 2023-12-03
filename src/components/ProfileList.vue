@@ -4,7 +4,12 @@
   <div class="col col-xs-9 col-lg-12 mt-4 list">
     <div class="col col-12">
       <div class="col col-12">
-    
+        <div v-if="!dirc">
+        <h1> Список всех профилей </h1>
+      </div>
+      <div v-if="dirc">
+        <h1> Список всех профилей с направлением {{ dir_c_n }} </h1>
+      </div>
     <button @click="navigateToAddProfile" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить профиль</button>
     <div class="col col-6 float-end d-inline-flex align-items-center mb-2 ">
     <button @click="clearFilters" :disabled="!filters" class="btn btn-sm btn-primary text-nowrap mx-2" type="button"><i class="material-icons-outlined">close</i>Очистить фильтры</button>
@@ -151,7 +156,9 @@ export default {
   data() {
   return {
     quickFilterValue: '',
-    filters:false
+    filters:false,
+    dirc:false,
+    dir_c_n:null
   };
 },
   methods: {
@@ -206,13 +213,23 @@ onFirstDataRendered(params) {
   if (savedQuickFilter) {
     queryParams.quickFilter = JSON.stringify(savedQuickFilter);
     this.filters=true;
+
+    
   }
 
   // Check if savedFilterModel is not empty, then add it to queryParams
   if (savedFilterModel && Object.keys(savedFilterModel).length > 0) {
     queryParams.filterModel = JSON.stringify(savedFilterModel);
     this.filters=true;
+    if(savedFilterModel.dir_code){
+      this.dirc=true;
+      this.dir_c_n=savedFilterModel.dir_code.filter;
+    }
+    else{
+      this.dirc=false;
+    }
   }
+  else{    this.dirc=false;}
 
   // Push the query parameters to the router
   this.$router.push({ query: queryParams });
@@ -226,6 +243,8 @@ onFirstDataRendered(params) {
     this.gridApi.setQuickFilter();
     this.quickFilterValue='';
     this.filters=false;
+    this.dirc=false;
+    
   },
 
   

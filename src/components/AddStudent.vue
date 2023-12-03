@@ -312,6 +312,7 @@
         { id: '2', text: '2' },
       ],
         myValue: '',
+        sel_gr:null
       };
     },
     computed: {
@@ -348,6 +349,10 @@
           const response = await UserService.getGroupsAsIdText(); 
           this.groups = Array.isArray(response.data) ? response.data : [response.data];
           this.dataLoading=false;
+          const groupName = this.$route.params.groupName;
+          console.log(this.groups);
+          this.myValue=this.groups.find(item => item.text === groupName).id;
+          console.log(this.myValue);
         } catch (error) {
           console.error('Error loading students data:', error);
         }

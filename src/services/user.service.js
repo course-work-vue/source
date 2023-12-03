@@ -45,7 +45,8 @@ class UserService {
       TO_CHAR(s.enrolled_date, 'DD/MM/YYYY') AS formatted_enrolled_date,
       s.enrollment_order,
       TO_CHAR(s.date_of_birth, 'DD/MM/YYYY') AS formatted_date_of_birth,
-      s.course
+      s.course,
+      s.group_id
   FROM 
       students s
   JOIN 
@@ -625,7 +626,7 @@ addWorkload(group_id, subject_id, teacher_id){
   getAllLgroups(){
     const query = {
       query: `SELECT
-      *
+      *, g.id as lg_id
   FROM
       "l_groups" AS g
       join programs p ON g.group_program_id=p.id;
@@ -633,45 +634,96 @@ addWorkload(group_id, subject_id, teacher_id){
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
-  addLgroup(group_number,group_program_id,hours,start_date,end_date,StartTime,EndTime, people_count){
+  addLgroup(group_number,group_program_id,hours,start_date,end_date, people_count,table_data){
+
+    let query0 = `
+    INSERT INTO "l_groups" (
+      "group_number",
+      "group_program_id",
+      "hours",
+      "start_date",
+      "end_date",
+      "people_count"
+  ) VALUES (
+      '${group_number}',
+      '${group_program_id}',
+      '${hours}',
+      '${start_date}',
+      '${end_date}',
+      '${people_count}'
+  );
+  `;
+
+
+    table_data.forEach(entry => {
+      query0 += `
+      INSERT INTO "l_groups_day" (
+          "day_id",
+          "starttime",
+          "endtime",
+          "l_groups"
+      ) VALUES (
+          '${entry.day_id}',
+          '${entry.starttime}',
+          '${entry.endtime}',
+          currval('l_groups_id_seq')
+      );
+      `;
+  });
+
+
     const query = {
-      query: `INSERT INTO "l_groups" (
-        "group_number",
-        "group_program_id",
-        "hours",
-        "start_date",
-        "end_date",
-        "starttime",
-        "endtime",
-        "people_count"
-    ) VALUES (
-        '${group_number}',
-        '${group_program_id}',
-        '${hours}',
-        '${start_date}',
-        '${end_date}',
-        '${StartTime}',
-        '${EndTime}',
-        '${people_count}'
-    );`,
+      query: query0,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
-  updateLgroupById(group_id,group_number,group_program_id,hours,start_date,end_date,StartTime,EndTime, people_count){
-    const query = {
-      query: `"group_number" = '${group_number}',
+  updateLgroupById(group_id,group_number,group_program_id,hours,start_date,end_date, people_count,table_data,table_new_rows){
+    let query0 = `UPDATE l_groups SET
+    "group_number" = '${group_number}',
       "group_program_id" = '${group_program_id}',
       "hours" = '${hours}',
       "start_date" = '${start_date}',
       "end_date" = '${end_date}',
-      "StartTime" = '${StartTime}',
-      "EndTime" = '${EndTime}',
       "people_count" = '${people_count}'
   WHERE
-      "id" = '${group_id}';`,
+      "id" = '${group_id}';
+    `;
+
+    if(table_new_rows){
+      query0+=`DELETE FROM l_groups_day WHERE l_groups='${group_id}';`
+      table_data.forEach(entry => {
+        query0 += `
+        INSERT INTO "l_groups_day" (
+            "day_id",
+            "starttime",
+            "endtime",
+            "l_groups"
+        ) VALUES (
+            '${entry.day_id}',
+            '${entry.starttime}',
+            '${entry.endtime}',
+            '${group_id}'
+        );
+        `;
+    });
+    }
+    else{
+    table_data.forEach(entry => {
+      query0 += `
+      UPDATE "l_groups_day" SET
+          "day_id" ='${entry.day_id}',
+          "starttime"='${entry.starttime}',
+          "endtime"='${entry.endtime}'
+    WHERE
+          "l_groups_days_id"='${entry.l_groups_days_id}';
+      `;
+    });
+  }
+    const query = {
+      query: query0,
     };
-    return axios.put(API_URL +"l_groups", query, { headers: authHeader() });
+    return axios.post(API_URL, query, { headers: authHeader() });
   }
 
   getLgroupById(id){
@@ -681,7 +733,13 @@ addWorkload(group_id, subject_id, teacher_id){
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
-
+  getGDaysById(id){
+    const query = {
+      query: `SELECT * from 
+      l_groups_day where l_groups='${id}'; `,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
 
 
   
@@ -705,66 +763,109 @@ addWorkload(group_id, subject_id, teacher_id){
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
+  getAllListenersWithoutGroup(){
+    const query = {
+      query: `SELECT
+      *,
+      CONCAT(l.lastname, ' ', l.name, ' ', l.surname) AS full_name, TO_CHAR(start_date , 'DD/MM/YYYY') AS start_date, TO_CHAR(end_date , 'DD/MM/YYYY') AS end_date,
+      l.phone_number,
+      l.email,
+      l.id as list_id
+     
+  FROM
+      "listeners" as l
+      JOIN listener_wishes as lw ON l.id=lw.listener_id
+      WHERE l.group_id IS NULL;
+
+      ;
+  `,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
   getListenerById(id){
     const query = {
-      query: `SELECT *, TO_CHAR(issue_date , 'YYYY-MM-DD') AS issue_date,TO_CHAR(start_date , 'YYYY-MM-DD') AS start_date,TO_CHAR(end_date, 'YYYY-MM-DD') AS end_date from listeners join listener_wishes on listeners.id=listener_wishes.listener_id where 
+      query: `SELECT *, TO_CHAR(issue_date , 'YYYY-MM-DD') AS issue_date,TO_CHAR(start_date , 'YYYY-MM-DD') AS start_date,TO_CHAR(end_date, 'YYYY-MM-DD') AS end_date from 
+      listeners join listener_wishes on listeners.id=listener_wishes.listener_id where 
       id='${id}'; `,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
-
-  addListener(name, surname,lastname, group_id,snils, passport, issued_by, issue_date, department_code, registration_address, phone_number, email, pc, hours,start_date, end_date,listener_id, wish_description, suitable_days){
-
-
+  getWishDaysById(id){
     const query = {
-      query: `INSERT INTO "listeners" (
-        "name",
-        "surname",
-        "lastname",
-        group_id,
-        "snils",
-        "passport",
-        "issued_by",
-        "issue_date",
-        "department_code",
-        "registration_address",
-        "phone_number",
-        "email"
+      query: `SELECT * from 
+      l_wish_days where listener_id='${id}'; `,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  addListener(name, surname,lastname, group_id,snils, passport, issued_by, issue_date, department_code, registration_address, phone_number, email, pc, hours,start_date, end_date,listener_id, wish_description, table_data){
+
+
+    let query0 = `
+    INSERT INTO "listeners" (
+      "name",
+      "surname",
+      "lastname",
+      group_id,
+      "snils",
+      "passport",
+      "issued_by",
+      "issue_date",
+      "department_code",
+      "registration_address",
+      "phone_number",
+      "email"
     ) VALUES (
-        '${name}',
-        '${surname}',
-        '${lastname}',
-        '${group_id}',
-        '${snils}',
-        '${passport}',
-        '${issued_by}',
-        '${issue_date}',
-        '${department_code}',
-        '${registration_address}',
-        '${phone_number}',
-        '${email}'
+      '${name}',
+      '${surname}',
+      '${lastname}',
+      ${group_id},
+      '${snils}',
+      '${passport}',
+      '${issued_by}',
+      '${issue_date}',
+      '${department_code}',
+      '${registration_address}',
+      '${phone_number}',
+      '${email}'
     ) RETURNING id;
-    
+
     INSERT INTO "listener_wishes" (
       "people_count",
       "hours",
       start_date,
       "end_date",
       "listener_id",
-      "wish_description",
-      "suitable_days"
-  ) VALUES (
+      "wish_description"
+    ) VALUES (
       '${pc}',
       '${hours}',
       '${start_date}',
       '${end_date}',
       currval('listeners_id_seq'),
-      '${wish_description}',
-      ARRAY[${suitable_days}]
+      '${wish_description}'
     );
-    
-    `,
-    };
+  `;
+
+  console.log(table_data);
+  table_data.forEach(entry => {
+    query0 += `
+    INSERT INTO "l_wish_days" (
+        "day_id",
+        "starttime",
+        "endtime",
+        "listener_id"
+    ) VALUES (
+        '${entry.day_id}',
+        '${entry.starttime}',
+        '${entry.endtime}',
+        currval('listeners_id_seq')
+    );
+    `;
+});
+
+const query = {
+  query:query0
+};
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
@@ -795,38 +896,72 @@ addWorkload(group_id, subject_id, teacher_id){
   }
 
   updateListenerById(id, name, surname,lastname, group_id, snils, passport, issued_by, issue_date, department_code, registration_address, phone_number, email,
-    pc, hours,start_date, end_date, wish_description, suitable_days){
-    const query = {
-      query: `UPDATE listeners SET
-       "name" ='${name}',
-      "surname" ='${surname}',
-      "lastname"=  '${lastname}',
-      "group_id"=  '${group_id}',
-      "snils"= '${snils}',
-      "passport"= '${passport}',
-      "issued_by"= '${issued_by}',
-      "issue_date"='${issue_date}',
-      "department_code"='${department_code}',
-      "registration_address"='${registration_address}',
-      "phone_number"='${phone_number}',
-      "email"='${email}'
-  WHERE
-      "id" = '${id}';
-      
-      UPDATE listener_wishes SET
-       "people_count" ='${pc}',
-      "hours" ='${hours}',
-      "start_date"=  '${start_date}',
-      "end_date"=  '${end_date}',
-      "wish_description"= '${wish_description}',
-      "suitable_days"= ARRAY[${suitable_days}]
-  WHERE
-      "listener_id" = '${id}'
-      
-      
-      
-      ;`,
-    };
+    pc, hours,start_date, end_date, wish_description, table_data, table_new_rows){
+
+
+
+ let query0 = `UPDATE listeners SET
+ "name" ='${name}',
+"surname" ='${surname}',
+"lastname"=  '${lastname}',
+"group_id"=  ${group_id},
+"snils"= '${snils}',
+"passport"= '${passport}',
+"issued_by"= '${issued_by}',
+"issue_date"='${issue_date}',
+"department_code"='${department_code}',
+"registration_address"='${registration_address}',
+"phone_number"='${phone_number}',
+"email"='${email}'
+WHERE
+"id" = '${id}';
+
+UPDATE listener_wishes SET
+ "people_count" ='${pc}',
+"hours" ='${hours}',
+"start_date"=  '${start_date}',
+"end_date"=  '${end_date}',
+"wish_description"= '${wish_description}'
+WHERE
+"listener_id" = '${id}';
+
+
+`;
+if(table_new_rows){
+  query0+=`DELETE FROM l_wish_days WHERE listener_id='${id}';`;
+  table_data.forEach(entry => {
+    query0 += `
+    INSERT INTO "l_wish_days" (
+        "day_id",
+        "starttime",
+        "endtime",
+        "listener_id"
+    ) VALUES (
+        '${entry.day_id}',
+        '${entry.starttime}',
+        '${entry.endtime}',
+        '${id}'
+    );
+    `
+});
+}
+else{
+
+table_data.forEach(entry => {
+  query0 += `
+  UPDATE "l_wish_days" SET
+      "day_id" ='${entry.day_id}',
+      "starttime"='${entry.starttime}',
+      "endtime"='${entry.endtime}'
+WHERE
+      "l_wish_day_id"='${entry.l_wish_day_id}';
+  `;
+});
+}
+const query = {
+  query:query0
+};
+
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
@@ -835,6 +970,7 @@ addWorkload(group_id, subject_id, teacher_id){
   getAllContracts(){
     const query = {
       query: `SELECT 
+      *,
       contracts.id AS contract_id,
       listeners.id AS listener_id,
       CONCAT(listeners.lastname, ' ', listeners.name, ' ', listeners.surname) AS listener_full_name,
@@ -858,7 +994,11 @@ addWorkload(group_id, subject_id, teacher_id){
       payers.email AS payer_email,
       programs.program_name,
       contracts.contr_number,
-      contracts.id
+      contracts.id,TO_CHAR(listeners.issue_date, 'DD/MM/YYYY') AS listener_issue_date,
+      TO_CHAR(start_date, 'DD/MM/YYYY') AS start_date,
+      TO_CHAR(end_date, 'DD/MM/YYYY') AS end_date,
+      TO_CHAR(date_enroll, 'DD/MM/YYYY') AS date_enroll,
+      TO_CHAR(date_kick, 'DD/MM/YYYY') AS date_kick
   FROM 
       contracts
   JOIN
@@ -879,14 +1019,20 @@ addWorkload(group_id, subject_id, teacher_id){
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
-  addContract(listener_id, payer_id,contr_number, program_id){
+  addContract(listener_id, payer_id,contr_number, program_id,cert_date, listened_hours, date_enroll, date_kick,group_to_move){
+
     const query = {
-      query: `INSERT INTO contracts (listener_id, payer_id, contr_number, program_id)
+      query: `INSERT INTO contracts (listener_id, payer_id, contr_number, program_id,cert_date, listened_hours, date_enroll, date_kick,group_to_move)
       VALUES(
         '${listener_id}',
         '${payer_id}',
         '${contr_number}',
-        '${program_id}'
+        '${program_id}',
+        '${cert_date}',
+        '${listened_hours}',
+        '${date_enroll}',
+        ${date_kick !== undefined ? `'${date_kick}'` : null},
+        ${group_to_move}
     );`,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
