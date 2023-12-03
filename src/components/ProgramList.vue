@@ -45,7 +45,7 @@
 import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
 import { reactive, onMounted, ref } from "vue";
 import ButtonCell from "@/components/ProgramButtonCell.vue";
-import GroupHref from "@/components/GroupHrefCellRenderer.vue";
+import ProgramHref from "@/components/ProgramHrefCellRenderer.vue";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import UserService from "../services/user.service";
@@ -55,7 +55,7 @@ export default {
   components: {
     AgGridVue,
     ButtonCell,
-    GroupHref
+    ProgramHref
   },
   setup() {
     const gridApi = ref(null); // Optional - for accessing Grid's API
@@ -97,7 +97,7 @@ export default {
            { field: "required_amount", headerName: 'Цена за обучение', hide: true },
            {
             field: 'program_name',
-            headerName: 'Название программы'
+            headerName: 'Название программы', cellRenderer:'ProgramHref'
            },
            {
             field: 'hours',

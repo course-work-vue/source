@@ -15,6 +15,7 @@
             </table>
             <div  v-else>
                 <div class="d-flex">
+
                     <!-- Выбор направления -->
                     <table class="table" id="table_dirs">
                         <thead>
@@ -29,6 +30,7 @@
                                     v-bind:class="{ 'table-active': this.selected_dir == dir.dir_id }"
                                 >
                                     {{ dir.dir_code }}
+
                                 </th>
                             </tr>
                         </tbody>
@@ -46,7 +48,9 @@
                         </tbody>
                     </table>
 
+
                     <table class="table table-sm" v-else-if="this.selected_dir >= 0" id="table_subject">
+
                         <thead>
                             <tr><th>Предмет</th></tr>
                         </thead>
@@ -58,13 +62,16 @@
                                         this.loadTeachersData(subject.subject_id);
                                         this.t_loading = true;
                                     "
+
                                     v-bind:class="{ 'table-active': this.selected_subject == subject.subject_id }"
+
                                 >
                                 {{ subject.subject_name }}
                                 </th>
                             </tr>
                         </tbody>
                     </table>
+
 
                     <!-- Выбор группы -->
                     <table v-if="s_loading" class="table skelet">
@@ -93,7 +100,7 @@
                             </tr>
                         </tbody>
                     </table>
-                
+
                     
                     <!-- Выбор препода -->
                     <table v-if="t_loading" class="table skelet">
@@ -119,7 +126,9 @@
                                     v-bind:class="{ 'table-active': this.selected_teacher == teacher.teacher_id, 'table-success': this.findWl(this.selected_group, this.selected_subject) == teacher.teacher_id}"
                                 >
                                 {{ teacher.last_name }}
+
                                 {{ this.teacher_load[index].length }}/5 час
+
                                 <!-- при length жалуется на undefined -->
                                 </th>
                             </tr>
@@ -140,7 +149,9 @@ import UserService from "../services/user.service";
 export default {
     data() {
         return {
+
             dirs: [],
+
             groups: [], // массив всех групп
             subjects: [], // массив предметов
             teachers: [], // массив преподов
@@ -148,7 +159,9 @@ export default {
             wl: [], // конечная связь
             rels: [], // связи группа+предмет / препод
             teacher_load: [], // нагрузка на препода
+
             selected_dir: -1,
+
             selected_group: -1,
             selected_subject: -1,
             selected_teacher: -1,
@@ -166,6 +179,7 @@ export default {
     },
     methods: {
         // грузим данные
+
         async loadDirsData() {
             try {
                 const response = await UserService.getAllDirections(); // Replace with your API endpoint
@@ -185,6 +199,7 @@ export default {
             console.error('Error loading groups data:', error);
             }
         },
+
         async loadGroups(dir_id){
             try {
                 const response = await UserService.getGroupByDir(dir_id); // Replace with your API endpoint
@@ -194,6 +209,7 @@ export default {
                 console.error('Error loading employments data:', error);
             }
         },
+
         async loadTeachersData(id) {
             try {
                 const response = await UserService.getTeachersForSubject(id); // Replace with your API endpoint
@@ -261,7 +277,9 @@ export default {
                 UserService.editWorkload(this.findWlID(this.selected_group, this.selected_subject), this.selected_teacher);
             }
             else {
+
                 console.log("Такая запись уже есть");
+
                 return;
             }
             this.loadTeachersData(this.selected_subject);
@@ -327,7 +345,9 @@ export default {
         },
 
         loadData(){
+
             this.loadDirsData();
+
             this.loadGroupsData();
             this.loadSubjectsData();
             this.loadEmploymentData();
@@ -458,9 +478,11 @@ table{
     height: fit-content;
 }
 
+
 #table_dirs{
     width: 20%;
 }
+
 
 #table_group{
     width: 15%;

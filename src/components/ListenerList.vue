@@ -43,7 +43,10 @@
 import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
 import { reactive, onMounted, ref } from "vue";
 import ButtonCell from "@/components/ListenerButtonCell.vue";
-import GroupHref from "@/components/GroupHrefCellRenderer.vue";
+
+import ListenerHref from "@/components/ListenerHrefCellRenderer.vue";
+import ListenerHref2 from "@/components/ListenerHrefCellRenderer2.vue";
+
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import UserService from "../services/user.service";
@@ -53,7 +56,9 @@ export default {
   components: {
     AgGridVue,
     ButtonCell,
-    GroupHref
+    ListenerHref,
+    ListenerHref2
+
   },
   setup() {
     const gridApi = ref(null); // Optional - for accessing Grid's API
@@ -92,7 +97,8 @@ export default {
 
     },
    
-           { field: "full_name", headerName: 'ФИО' },
+           { field: "full_name", headerName: 'ФИО', cellRenderer:  'ListenerHref2' }, 
+           { field: "group_number", headerName: 'Группа', cellRenderer:  'ListenerHref'}, 
            {
             field: 'people_count',
             headerName: 'Желаемое количество человек', hide: true

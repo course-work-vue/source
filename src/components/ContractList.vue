@@ -1,6 +1,7 @@
 <template>
 
 
+
   <div class="col col-xs-9 col-lg-12 mt-4 list">
     <div class="col col-12">
     <div class="mb-3 col col-12">
@@ -24,7 +25,7 @@
     :defaultColDef="defaultColDef"
     rowSelection="multiple"
     animateRows="true"
-    @cell-clicked="cellWasClicked"
+    @cell-clicked="onCellClicked"
     @grid-ready="onGridReady"
     @firstDataRendered="onFirstDataRendered"
     @filter-changed="onFilterChanged"
@@ -32,8 +33,64 @@
     :paginationPageSize="paginationPageSize"  
   >
   </ag-grid-vue>
+  <div v-html="dynamicHtml"></div>
 </div>
-</div></div>
+
+</div>
+
+<div class="" v-if="test">
+
+  <label>СНИЛС слушателя:</label>
+  <div class="form-group d-inline-flex align-items-center mb-2 col-1 mx-1">
+  <input class="form-control" v-model=event.data.listener_snils disabled>
+</div>
+
+<label>Email слушателя:</label>
+  <div class="form-group d-inline-flex align-items-center mb-2 col-2">
+  <input class="form-control" v-model=event.data.listener_email disabled>
+</div>
+<label>Телефон слушателя:</label>
+  <div class="form-group d-inline-flex align-items-center mb-2 col-2">
+  <input class="form-control" v-model=event.data.listener_phone_number disabled>
+</div>
+<label>Дата зачисления:</label>
+<div class="form-group d-inline-flex align-items-center mb-2 col-2 mx-1">
+  <input class="form-control" v-model=event.data.date_enroll disabled>
+</div>
+<label>Дата отчисления:</label>
+<div class="form-group d-inline-flex align-items-center mb-2 col-2 mx-1">
+  <input class="form-control" v-model=event.data.date_kick disabled>
+</div>
+<label>Паспорт слушателя:</label>
+<div class="form-group d-inline-flex align-items-center mb-2 col-1 mx-1">
+  <input class="form-control" v-model=event.data.listener_passport disabled>
+</div>
+<label>Паспорт слушателя:</label>
+<div class="form-group d-inline-flex align-items-center mb-2 col-1 mx-1">
+  <input class="form-control" v-model=event.data.listener_passport disabled>
+</div>
+
+<label>Всего часов:</label>
+<div class="form-group d-inline-flex align-items-center mb-2 col-1 mx-1">
+  <input class="form-control" v-model=event.data.hours disabled>
+</div>
+<label>Программа:</label>
+<div class="form-group d-inline-flex align-items-center mb-2 col-3 mx-1">
+  <input class="form-control" v-model=event.data.program_name disabled>
+</div>
+<label>Дата начала:</label>
+<div class="form-group d-inline-flex align-items-center mb-2 col-2 mx-1">
+  <input class="form-control" v-model=event.data.start_date disabled>
+</div>
+<label>Дата окончания:</label>
+<div class="form-group d-inline-flex align-items-center mb-2 col-2 mx-1">
+  <input class="form-control" v-model=event.data.end_date disabled>
+</div>
+</div>
+
+</div>
+
+
 
 </template>
 
@@ -42,7 +99,10 @@
 import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
 import { reactive, onMounted, ref } from "vue";
 import ButtonCell from "@/components/ContractButtonCell.vue";
-import GroupHref from "@/components/GroupHrefCellRenderer.vue";
+import ContractHref from "@/components/ContractHrefCellRenderer.vue";
+import ContractHref2 from "@/components/ContractHrefCellRenderer2.vue";
+import ContractHref3 from "@/components/ContractHrefCellRenderer3.vue";
+import ContractHref4 from "@/components/ContractHrefCellRenderer4.vue";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import UserService from "../services/user.service";
@@ -52,7 +112,10 @@ export default {
   components: {
     AgGridVue,
     ButtonCell,
-    GroupHref
+    ContractHref,
+    ContractHref2,
+    ContractHref3,
+    ContractHref4
   },
   setup() {
     const gridApi = ref(null); // Optional - for accessing Grid's API
@@ -91,16 +154,16 @@ export default {
       maxWidth: 120, resizable: false
 
     },
-           { field: "listener_full_name", headerName: 'ФИО слушателя' },
+           { field: "listener_full_name", headerName: 'ФИО слушателя', cellRenderer:'ContractHref' },
            {
             field: 'payer_full_name',
-            headerName: 'ФИО законного представителя'
+            headerName: 'ФИО законного представителя', cellRenderer:'ContractHref2'
            },
            {
             field: 'contr_number',
-            headerName: 'Номер договора'
+            headerName: 'Номер договора', cellRenderer:'ContractHref3'
            },
-           { field: "program_name", headerName: 'Название курса' }
+           { field: "program_name", headerName: 'Название курса', cellRenderer:'ContractHref4' }
 
 
            
@@ -134,25 +197,37 @@ export default {
       columnDefs,
       rowData,
       defaultColDef,
-      cellWasClicked: (event) => { // Example of consuming Grid Event
-        console.log("cell was clicked", event);
-      },
-      deselectRows: () =>{
-        gridApi.value.deselectAll()
-      },
+     
+
+
 
       onFilterTextBoxChanged,
       paginationPageSize,
       navigateToStudent,
 
-
-      
+      dynamicHtml: '',
+  
 
     };
   },
-  
-  methods: {
+  data() {
 
+  
+      return {
+        test:false,
+        test2:null,
+        event:null
+      };
+    },
+  methods: {
+    onCellClicked(event) {
+      // Add HTML content based on the clicked cell
+      this.test=true;
+      console.log(this.test);
+      console.log(event);
+      this.test2=event.data.listener_snils;
+      this.event=event;
+    },
     async loadListenersData() {
         try {
           const response = await UserService.getAllContracts(); // Replace with your API endpoint

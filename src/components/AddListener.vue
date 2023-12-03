@@ -66,7 +66,7 @@
   </div>
     <div v-else class="col-md-12">
         <Form @submit="addListener" :validation-schema="schema" v-slot="{ errors }">
-                  
+          <h2>Данные слушателя</h2>
         <div >
           <div class="form-group d-inline-flex align-items-center col-12 mb-2">
             <label for="lastname">Фамилия</label>
@@ -83,7 +83,20 @@
             <Field name="surname" type="text" class="form-control" value="" :class="{'is-invalid': errors.patronymic}" />
             <ErrorMessage name="surname" class="error-feedback" />
           </div>
-         
+          <div class="form-group d-inline-flex align-items-center mb-2 col-6">
+              <label for="group_id">Группа:</label>
+              
+              <Select2 class="col-5" :class="{'form-control is-invalid': errors.group_id}" v-model="myValue" 
+              :options="groups" 
+              :settings=" { theme: 'bootstrap-5', width: '100%'}"
+              
+               />
+
+               <Field  name="group_id" as="select" v-model="myValue" hidden>
+                <option v-for="group in groups" :key="group.id" :value="group.id">{{ group.text }}</option>
+              </Field>
+              <ErrorMessage name="group_id" class="error-feedback" />
+            </div>
      
           <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="passport">Серия и номер паспорта</label>
@@ -102,7 +115,7 @@
             <ErrorMessage name="department_code" class="error-feedback" />
           </div>
           <div class="form-group d-inline-flex align-items-center mb-2">
-            <label for="registration_address ">Адресс регистрации</label>
+            <label for="registration_address ">Адрес регистрации</label>
             <Field name="registration_address" type="text" class="form-control" value="" :class="{'is-invalid': errors.registration_address }"/>
             <ErrorMessage name="registration_address" class="error-feedback" />
           </div>
@@ -126,11 +139,80 @@
             <Field name="email" type="text" class="form-control"  value="" :class="{'is-invalid': errors.email}" />
             <ErrorMessage name="email" class="error-feedback" />
           </div>
+          <hr  size="2"  />
+<h2>Пожелания слушателя</h2>
 
 
-      
-          
+            <div class="col-5">
+    <table class="table table-bordered col col-3">
+      <thead>
+      <tr>
+        <th>День</th>
+        <th>Время начала</th>
+        <th>Время окончания</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(entry, index) in tableData" :key="index" >
         
+        <td>
+          <select class="form-select" v-model="entry.day_id">
+            <option v-for="day in days" :key="day.value" :value="day.id">
+              {{ day.text }}
+            </option>
+          </select>
+        </td>
+        <td>
+          <input class="form-control" type="time" v-model="entry.starttime">
+        </td>
+        <td>
+          <input class="form-control" type="time" v-model="entry.endtime">
+        </td>
+      
+
+      </tr>
+    </tbody>
+    </table>
+    <button type="button" class="btn btn-primary" @click="addRow">+</button>
+  </div>
+
+    
+            <div class="form-group d-inline-flex align-items-center mb-2 col-5">
+            <label for="people_count">Количество человек:</label>
+            <Field name="people_count" type="number" class="form-control" value="" :class="{'is-invalid': errors.people_count }" />
+            <ErrorMessage name="people_count" class="error-feedback" />
+          </div>
+
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
+            <label for="hours">Количество часов:</label>
+            <Field name="hours" type="number" class="form-control" value="" :class="{'is-invalid': errors.hours }" />
+            <ErrorMessage name="hours" class="error-feedback" />
+          </div>
+
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
+            <label for="start_date">Начало:</label>
+            <Field name="start_date" type="date" class="form-control" value="" :class="{'is-invalid': errors.start_date }" />
+            <ErrorMessage name="start_date" class="error-feedback" />
+          </div>
+
+
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
+            <label for="end_date">Конец:</label>
+            <Field name="end_date" type="date" class="form-control" value="" :class="{'is-invalid': errors.end_date }" />
+            <ErrorMessage name="end_date" class="error-feedback" />
+          </div>
+          
+          <div class="form-group d-inline-flex align-items-center mb-2 col-12">
+            <label for="wish_description">Дополнительный комментарий:</label>
+            <Field name="wish_description" type="text" class="form-control" value="" :class="{'is-invalid': errors.wish_description}" />
+            <ErrorMessage name="wish_description" class="error-feedback" />
+          </div>
+        
+          <div>
+    
+  </div>
+
+
           <!--
           <div class="form-group">
               <label for="group_id">Желаемые дни недели</label>
@@ -147,7 +229,7 @@
               <ErrorMessage name="group_id" class="error-feedback" />
             </div>
             -->
-
+           
            
 
             <div class="form-group mt-3">
@@ -162,7 +244,7 @@
             </div>
           </div>
         </Form>
-  
+
         <div
           v-if="message"
           class="alert"
@@ -212,8 +294,12 @@
         message: "",
         schema,
         days_of_week: null,
-
+        groups:null,
+        days:null,
         myValue: '',
+        myValue2: '',
+        tableData: [],
+        
       };
     },
     computed: {
@@ -224,15 +310,29 @@
     },
     methods: {
 
+        addRow() {
+    
+    const newRow = { day_id: '', starttime: '', endtime: '' }; // ensure this is a new object
+    this.tableData.push(newRow);
+  },
+
       async addListener(listener) {
         try {
           // запрос в psql
           this.loading=true;
+          console.log(this.tableData);
 
-          const response = await UserService.addListener(listener.name , listener.surname  , listener.lastname  , 
+          console.log(this.tableData);
+          const response = await UserService.addListener(listener.name , listener.surname  , listener.lastname  , listener.group_id,
           listener.snils , listener.passport , listener.issued_by , listener.issue_date , listener.department_code , listener.registration_address , listener.phone_number ,
-          listener.email);
+
+          listener.email, listener.people_count , listener.hours  , listener.start_date  , listener.end_date,
+          listener.listener_id , listener.wish_description , this.tableData);
+          console.log(this.tableData);
+
           response.data;
+
+     
           this.loading=false;
           this.successful=true;
 
@@ -243,7 +343,27 @@
           console.error('Error updating student details:', error);
         }
       },
+      async loadGroupsData() {
+        try {
+          const response = await UserService.getLgroupsAsIdText(); 
+          this.groups = Array.isArray(response.data) ? response.data : [response.data];
+          this.groups.unshift({ id: 'NULL', text: 'Нет' });
+          console.log(this.groups)
+          this.dataLoading=false;
+        } catch (error) {
+          console.error('Error loading data:', error);
+        }
+      },
 
+      async loadDaysData() {
+        try {
+          const response = await UserService.getDaysAsIdText(); 
+          this.days = Array.isArray(response.data) ? response.data : [response.data];
+          this.dataLoading=false;
+        } catch (error) {
+          console.error('Error loading data:', error);
+        }
+      },
 
 
 
@@ -251,12 +371,15 @@
     },
 
     created() {
-
+      this.loadDaysData();
+      this.loadGroupsData();
     },
   };
   </script>
 
 <style lang="scss" scoped>
+
+
 .error-feedback{
   white-space: nowrap;
   margin-left:5px;

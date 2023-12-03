@@ -82,6 +82,7 @@ import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
 import { reactive, onMounted, ref } from "vue";
 import ButtonCell from "@/components/StudentButtonCell.vue";
 import StudentHref from "@/components/StudentHrefCellRenderer.vue";
+import StudentHref2 from "@/components/StudentHrefCellRenderer2.vue";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import UserService from "../services/user.service";
@@ -93,6 +94,9 @@ export default {
     AgGridVue,
     ButtonCell,
     StudentHref,
+
+    StudentHref2,
+
     Form,
     Field,
     ErrorMessage
@@ -135,7 +139,9 @@ export default {
      
     },
         
-           { field: "full_name", headerName: 'ФИО', minWidth:250 },
+
+           { field: "full_name", headerName: 'ФИО', minWidth:250, cellRenderer: "StudentHref2" },
+
            { field: "group_number", headerName: 'Группа', maxWidth:129 },
            { field: "subgroup", headerName: 'Подгруппа', maxWidth:129 },
            { field: "enrollment_order", headerName: 'Приказ о зачислении', minWidth: 200, hide: true },
@@ -218,8 +224,10 @@ else{
 }
 
 
+
       
     };
+
 
     const handleSelectChange = (myValue2) => {
       restoreFromHardCoded(myValue2);
@@ -314,8 +322,11 @@ else{
         }
       },
       navigateToAddStudent() {
-    
-    this.$router.push(`/addStudent`); // Navigate to the AddStudent route
+    if(this.groupn){
+      this.$router.push(`/addStudent/`+this.groupn)
+    }
+    else{
+    this.$router.push(`/addStudent`); }
 },
 
 
