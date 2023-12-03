@@ -1,9 +1,8 @@
 # vue-3-authentication-jwt
 
-## НАСТРОЙКА
+## Project setup
 ```
 npm install
-npm install read-excel-file --save
 ```
 
 ### Compiles and hot-reloads for development
