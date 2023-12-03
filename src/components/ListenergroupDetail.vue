@@ -78,7 +78,7 @@
             </div>
              
              
-    
+
           <div class="form-group mt-3">
             <button class="btn btn-primary btn-block float-start" :disabled="loading">
               <span
@@ -91,9 +91,11 @@
           </div>
         </div>
       </Form>
+
       
 
           
+
     </div>
     <div v-else>
       <div class="form-group">
@@ -184,6 +186,7 @@
 </template>
 
   <script>
+
 import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
 import { reactive, onMounted, ref } from "vue";
 import ButtonCell from "@/components/ListenerButtonCell.vue";
@@ -193,11 +196,13 @@ import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 
 
+
 import { Form, Field, ErrorMessage } from "vee-validate";
   import * as yup from "yup";
   import UserService from "../services/user.service";
   import { useToast } from "vue-toastification";
   export default {
+
     components: {
     AgGridVue,
     ButtonCell,
@@ -205,6 +210,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
     ListenerHref2
 
   },
+
     setup() {
       const toast = useToast();
       return { toast }
@@ -232,7 +238,9 @@ import { Form, Field, ErrorMessage } from "vee-validate";
         editedGroup: null, // заглушка для новых данных студента
         profiles: null,
         directions: null,
+
         show:false,
+
         courses: [
         { id: '1', text: '1' },
         { id: '2', text: '2' },
@@ -263,7 +271,9 @@ import { Form, Field, ErrorMessage } from "vee-validate";
         try {
           const response = await UserService.getGroupById(groupId);
           this.group = response.data;
+
           console.log( this.group);
+
           // Клонирование объекта, для избежание редактирования данных сразу
           this.editedGroup = { ...response.data };
         } catch (error) {

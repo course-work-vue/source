@@ -51,6 +51,7 @@
               <ErrorMessage name="hours" class="error-feedback" />
               
             </div>
+
             <div class="col-5">
     <table class="table table-bordered col col-3">
       <thead>
@@ -82,6 +83,7 @@
     </table>
     <button type="button" class="btn btn-primary" @click="addRow">+</button>
   </div>
+
             <div class="form-group d-inline-flex align-items-center col-5 mb-2">
               <label for="start_date">Дата начала:</label>
               <Field name="start_date" type="date" class="form-control" :class="{'is-invalid': errors.start_date }"/>
@@ -170,8 +172,10 @@
         directions: null,
         programs:null,
         myValue: '',
+
         tableData: [],
         days:null,
+
       };
     },
     computed: {
@@ -181,17 +185,21 @@
     
     },
     methods: {
+
       addRow() {
     
     const newRow = { day_id: '', starttime: '', endtime: '' }; // ensure this is a new object
     this.tableData.push(newRow);
   },
+
       async addGroup(lgroup) {
         try {
           // запрос в psql
           this.loading=true;
 
+
           const response = await UserService.addLgroup(lgroup.group_number,lgroup.group_program_id,lgroup.hours,lgroup.start_date,lgroup.end_date,lgroup.pc,this.tableData); 
+
           response.data;
           this.loading=false;
           this.successful=true;
@@ -216,6 +224,7 @@
         }
       },
 
+
       async loadDaysData() {
         try {
           const response = await UserService.getDaysAsIdText(); 
@@ -227,10 +236,13 @@
       },
 
 
+
     },
 
     created() {
+
     this.loadDaysData();
+
     this.loadProgramsData();
 
     },

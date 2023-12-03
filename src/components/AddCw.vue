@@ -78,10 +78,12 @@
             </div>
 
             <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+
               <Field name="course_work_vipysk" type="radio" id="course_work_vipysk1" value="false" class="form-check-input mt-0 ml-5" :class="{'is-invalid': errors.course_work_vipysk}"/>
               <label for="course_work_vipysk1">Курсовая работа</label>
               <Field name="course_work_vipysk" type="radio" id="course_work_vipysk2" value="true" class="form-check-input mt-0" :class="{'is-invalid': errors.course_work_vipysk}"/>
               <label for="course_work_vipysk2">Выпускная работа</label>
+
              
               <ErrorMessage name="magister" class="error-feedback" />
               

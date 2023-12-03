@@ -11,7 +11,9 @@
         },
         methods: {
           onClick() {
+
             this.$router.push(`/audits/${this.params.data.group_id}`);
+
           },
         },
       };
@@ -71,4 +73,6 @@
         --bs-btn-hover-border-color: rgb(6 215 29);
       }
     }
+
     </style>
+

@@ -94,7 +94,9 @@ export default {
     AgGridVue,
     ButtonCell,
     StudentHref,
+
     StudentHref2,
+
     Form,
     Field,
     ErrorMessage
@@ -137,7 +139,9 @@ export default {
      
     },
         
+
            { field: "full_name", headerName: 'ФИО', minWidth:250, cellRenderer: "StudentHref2" },
+
            { field: "group_number", headerName: 'Группа', maxWidth:129 },
            { field: "subgroup", headerName: 'Подгруппа', maxWidth:129 },
            { field: "enrollment_order", headerName: 'Приказ о зачислении', minWidth: 200, hide: true },
@@ -220,8 +224,10 @@ else{
 }
 
 
+
       
     };
+
 
     const handleSelectChange = (myValue2) => {
       restoreFromHardCoded(myValue2);

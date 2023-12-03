@@ -1,5 +1,6 @@
 <template>
 
+
     <a :href="'#/audits?filterModel=' + JSON.stringify({ group_name: { filterType: 'text', type: 'contains', filter: this.params.data.group_number } })">{{ this.params.data.group_number }}</a>
     
     
@@ -85,3 +86,4 @@
       }
     }
     </style>
+

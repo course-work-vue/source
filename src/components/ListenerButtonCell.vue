@@ -12,7 +12,9 @@
     },
     methods: {
       onClick() {
+
         this.$router.push(`/listeners/${this.params.data.list_id}`);
+
       },
     },
   };

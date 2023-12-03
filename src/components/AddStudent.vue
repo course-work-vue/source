@@ -173,8 +173,10 @@
               <label for="enrolled_date">Дата зачисления:</label>
               <Field name="enrolled_date" type="date" class="form-control" value="" :class="{'is-invalid': errors.enrolled_date}"/>
 
+
             </div>
             <div class="d-flex position-relative flex-wrap">
+
             <div class="form-group d-inline-flex align-items-center mb-2">
               <label for="group_id">Группа:</label>
               
@@ -199,6 +201,7 @@
                 <option value="1">1</option>
                 <option value="2">2</option>
               </Field>
+
               <div v-if="errors.subgroup" class="invalid-tooltip">
                 <ErrorMessage name="subgroup" class="error-feedback" />
 </div>
@@ -228,6 +231,7 @@
               <div v-if="errors.phonenumber_rod" class="invalid-tooltip">
                 <ErrorMessage name="phonenumber_rod" class="error-feedback" />
 </div>
+
               
             </div>
            
@@ -292,8 +296,10 @@
   SNILS: yup.string().required('Требуется СНИЛС').matches(/^\d{11}$/, 'Некорректный СНИЛС'),
   email: yup.string().required('Требуется электронная почта').email('Некорректный адрес электронной почты'),
   student_login: yup.string().required('Требуется указать логин студента'),
+
   enrollment_order: yup.string().required('Требуется приказ о зачислении'),
   enrolled_date: yup.string().required('Требуется дату зачисления'),
+
   group_id: yup.string().required('Требуется указать группу'),
 
 

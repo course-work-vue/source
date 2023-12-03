@@ -72,7 +72,9 @@
             },
             {
               label: "Группы",
+
               link: "/lgroups",
+
             },
             {
               label: "Договора",
@@ -106,11 +108,13 @@
             }
           ]
         },
+
           {
           label: "Excel",
           link: "/xlparse",
           icon: "description"
         },
+
         {
           label: "Настройки",
           link: "/profile",

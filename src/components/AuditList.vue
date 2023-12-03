@@ -168,11 +168,13 @@
         try {
           const response = await UserService.getAllAudit(); // Replace with your API endpoint
           this.schedule = Array.isArray(response.data) ? response.data : [response.data];
+
           this.loading=false;
         } catch (error) {
           console.error('Error:', error);
         }
       },
+
 
       updateSearchQuery() {
   const query = { page: 1 }; // когда меняется фильтр летим на первую страницу
@@ -233,6 +235,7 @@
   </script>
 
 <style lang="scss" scoped>
+
 .skeleton {
   width: 100%;
   height: 1.2em;
@@ -242,6 +245,8 @@
   border-radius: 4px;
   margin: 0.2em 0;
 }
+
+
 
 
 
