@@ -106,6 +106,12 @@
             }
           ]
         },
+          {
+          label: "Журнал",
+          link: "/teachers",
+          icon: "book",
+          
+        },
         {
           label: "Настройки",
           link: "/profile",
