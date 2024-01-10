@@ -1313,6 +1313,134 @@ addWorkload(group_id, subject_id, teacher_id){
       return axios.post(API_URL, query, { headers: authHeader() });
     }
 
+  
+  //Журнал
+  
+  deleteTegrsuById(tegrsu_id){
+    const query = {
+      query: `DELETE FROM tegrsus where "tegrsu_id" = '${tegrsu_id}'`,
+    };
+  
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  
+  
+  getTegrsusAsIdText(){
+    const query = {
+      query: `SELECT tegrsu_id AS id, tegrsu_group_id AS text
+      FROM "tegrsus";`,
+    };
+    
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  
+  getAllTegrsus(){
+    const query = {
+      query: `SELECT
+      te.tegrsu_id,
+      t.teacher_id,
+      gr.group_id,
+      gr.group_number,
+      s.subject_id,
+      s.subject_name
+  FROM
+      "tegrsus" AS te
+  JOIN
+      "teachers" AS t
+  ON
+      te.tegrsu_teacher_id = t.teacher_id
+  JOIN
+      "groups" AS gr
+  ON
+      te.tegrsu_group_id = gr.group_id
+  
+  JOIN
+      "subjects" AS s
+  ON
+      te.tegrsu_subject_id = s.subject_id;
+  `,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  
+  
+  
+  updateTegrsuById(tegrsuId,tegrsu_teacher_id,tegrsu_group_id,tegrsu_subject_id){
+    const query = {
+      query: `"tegrsu_teacher_id" = '${tegrsu_teacher_id}',
+      "tegrsu_group_id" = '${tegrsu_group_id}',
+      "tegrsu_subject_id" = '${tegrsu_subject_id}'
+      
+  WHERE
+      "tegrsu_id" = '${tegrsuId}';`,
+    };
+    
+    return axios.put(API_URL+"tegrsus", query, { headers: authHeader() });
+  }
+  
+  addTegrsu(tegrsu_teacher_id,tegrsu_group_id,tegrsu_subject_id){
+    const query = {
+      query: `INSERT INTO "tegrsus" (
+        "tegrsu_teacher_id",
+        "tegrsu_group_id",
+        "tegrsu_subject_id"
+    ) VALUES (
+        '${tegrsu_teacher_id}',
+        '${tegrsu_group_id}',
+        '${tegrsu_subject_id}'
+    );`,
+    };
+  
+    return axios.post(API_URL, query, { headers: authHeader() });
+  
+  
+  }
+  getTegrsuById(id){
+    const query = {
+      query: `SELECT * from tegrsus where 
+      tegrsu_id='${id}';`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  getAllJournals(){
+    const query = {
+      query: `select 
+  j.date,
+  j.grade,
+  j.status,
+  j.teacher_id,
+  j.subject_id,
+  s.student_id,
+  g.group_id,
+  CONCAT_WS(' ', j.date) AS date,
+  CONCAT_WS(' ', s.last_name, s.first_name, s.patronymic) AS full_name,
+  CONCAT_WS('/', g.group_number, NULLIF(s.subgroup, '')) AS group_name,
+  g.group_number
+  from 
+    journal as j 
+  join 
+    students as s
+  on 
+    j.student_id=s.student_id
+  join
+      groups as g
+  on
+    j.group_id=g.group_id
+  join
+    teachers as t
+  on
+  j.teacher_id=t.teacher_id
+  join
+      subjects as su
+  on
+    j.subject_id=su.subject_id
+  `,
+  
+    };
+  
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
 
 }
 
