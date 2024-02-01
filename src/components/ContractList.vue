@@ -1,7 +1,6 @@
 <template>
 
 
-
   <div class="col col-xs-9 col-lg-12 mt-4 list">
     <div class="col col-12">
     <div class="mb-3 col col-12">

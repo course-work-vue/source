@@ -203,7 +203,6 @@
     },
 
     created() {
-
       this.loadContractsData();
     },
   };

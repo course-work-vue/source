@@ -242,7 +242,6 @@
             </div>
           </div>
         </Form>
-
         <div
           v-if="message"
           class="alert"

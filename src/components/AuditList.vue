@@ -1,238 +1,256 @@
-
 <template>
+
+
   <div class="col col-xs-9 col-lg-12 mt-4 list">
+    <div class="col col-12 ">
     <div class="col col-12">
-    <div class="mb-3 col col-12">
-      <button @click="navigate" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить аудиторию</button>
-      <div class="col col-3 float-end">
-      <input class="form-control" v-model="searchQuery" @input="updateSearchQuery" placeholder="Поиск..."> 
+    
+      <button @click="navigateToAddAudit" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить аудиторию</button>
+      <div class="col col-6 float-end d-inline-flex align-items-center mb-2 ">
+      <button @click="clearFilters" :disabled="!filters" class="btn btn-sm btn-primary text-nowrap mx-2" type="button"><i class="material-icons-outlined">close</i>Очистить фильтры</button>
+      <input class="form-control" type="text" v-model="quickFilterValue" id="filter-text-box" v-on:input="onFilterTextBoxChanged()" placeholder="Поиск..."> 
     </div>
   </div>
-      <!-- список студентов -->
-      <table v-if="loading" class="table">
-        <tbody>
-        <tr v-for="n in studentsPerPage" :key="n">
-          <td><div class="skeleton skeleton-animate"></div></td>
-          <td><div class="skeleton skeleton-animate"></div></td>
-          <td><div class="skeleton skeleton-animate"></div></td>
-          <td><div class="skeleton skeleton-animate"></div></td>
-          <td><div class="skeleton skeleton-animate"></div></td>
-          <td><div class="skeleton skeleton-animate"></div></td>
-        </tr>
-      </tbody>
-    </table>
-    <table v-else class="table">
-        <!-- таблица -->
-        <thead>
-          <!-- колонки -->
-          <tr>
-            <th>Аудитория</th>
-            <th>Тип</th>
-            <th>Вместимость</th>
-            <th>Дисциплина</th>
-            <th>День недели</th>
-            <th>Преподаватель</th>
-          </tr>
-        </thead>
-        <!-- тело таблицы -->
-        <tbody>
-          <!-- цикл по строкам студентов -->
-          <tr v-for="audit in paginatedStudents" :key="audit.schedule_id">
-            <td>{{ audit.number }}</td>
-            <td>{{ audit.type }}</td>
-            <td>{{ audit.count }}</td>
-            <td>{{ audit.subject_name }}</td>
-            <td>{{ audit.dayofweek }}</td>
-            <td>{{ audit.full_name }}</td>
-            <td>
-              <!-- кнопошка -->
-              <button @click="viewStudentDetail(audit.schedule_id)" class="btn btn-primary btn-sm"><i class="material-icons-outlined">visibility</i>Детали</button>
-             
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- странички -->
-      <nav class="float-start">
-        <ul class=" pagination">
-          <li class="page-item" :class="{ 'disabled': currentPage === 1 }">
-            <button @click="prevPage" class="btn page-link btn-sm"><i class="material-icons-outlined">chevron_left</i></button>
-          </li>
-          <li class="page-item" v-for="pageNumber in pageRange" :key="pageNumber" :class="{ 'active': pageNumber == currentPage }">
-            <button @click="changePage(pageNumber)" class="btn page-link nmbr btn-sm">{{ pageNumber }}</button>
-          </li>
-          <li class="page-item" :class="{ 'disabled': currentPage === totalPages }">
-            <button @click="nextPage" class="btn page-link btn-sm"><i class="material-icons-outlined">chevron_right</i></button>
-          </li>
-        </ul>
-      </nav>
-      <div class="float-end"> <button @click="viewRightsDetail()" class="btn btn-primary btn-sm">Права ролей</button>
-      </div>
-    </div>
-  </div>
-  </template>
-  
-  <script>
-
-  import UserService from "../services/user.service";
+</div>
 
 
 
+<div style="height: 95vh">
+<div class="h-100 pt-5">
+  <ag-grid-vue
+    class="ag-theme-alpine"
+    style="width: 100%; height: 100%;"
+    :columnDefs="columnDefs.value"
+    :rowData="rowData.value"
+    :defaultColDef="defaultColDef"
+    rowSelection="multiple"
+    animateRows="true"
+    includeHiddenColumnsInQuickFilter = true
+    @cell-clicked="cellWasClicked"
+    @grid-ready="onGridReady"
+    @firstDataRendered="onFirstDataRendered"
+    @filter-changed="onFilterChanged"
+    :pagination="true"            
+    :paginationPageSize="paginationPageSize"  
+  >
+  </ag-grid-vue>
+</div>
+</div></div>
 
-  export default {
-  
+</template>
 
-    data() {
+<script>
+
+import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
+import { reactive, onMounted, ref } from "vue";
+import ButtonCell from "@/components/AuditButtonCell.vue";
+import AuditHref from "@/components/AuditHrefCellRenderer.vue";
+import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
+import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
+import UserService from "../services/user.service";
+
+/* eslint-disable vue/no-unused-components */
+export default {
+  name: "App",
+  components: {
+    AgGridVue,
+    ButtonCell,
+    AuditHref
+  },
+  setup() {
+    const gridApi = ref(null); // Optional - for accessing Grid's API
+    const gridColumnApi = ref();
+    // Obtain API from grid's onGridReady event
+
+    const paginationPageSize = 60;
+
+
+    const onGridReady = (params) => {
+      gridApi.value = params.api;
+      gridColumnApi.value = params.columnApi;
+     
+    };
+    const navigate = () => {
+ 
+  };
 
 
 
+    const rowData = reactive({}); // Set rowData to Array of Objects, one Object per Row
 
-      return {
-
+    // Each Column Definition results in one Column.
+    const columnDefs = reactive({
+      value: [
+      {
+      sortable: false,
+      filter: false,
+      headerName: 'Действия',
+      headerClass: 'text-center',
+      cellRenderer: 'ButtonCell',
+      cellRendererParams: {
+        onClick: navigate,
+        label: 'View Details', // Button label
+      },
+      maxWidth: 120, resizable: false
+     
+    },
         
-        schedule: [], // массив всех студентов
-        currentPage: 1, // теущий номер страницы
-        studentsPerPage: 10, // кол-во студентов на странице
-        maxPageButtons: 3,
-        loading: true,
-        searchQuery: ''
-      };
-    },
-    computed: {
-      // подсчет страниц
-
-  totalPages() {
-    const filteredStudents = this.filterStudents();
-    return Math.ceil(filteredStudents.length / this.studentsPerPage);
-  },
-  paginatedStudents() {
-    const startIndex = (this.currentPage - 1) * this.studentsPerPage;
-    const endIndex = startIndex + this.studentsPerPage;
-
-    const filteredStudents = this.filterStudents();
-    return filteredStudents.slice(startIndex, endIndex);
-  },
-  pageRange() {
-    const totalPages = this.totalPages;
-    const currentPage = this.currentPage;
-    const maxButtons = this.maxPageButtons;
-    const ellipsis = '...';
-
-    if (totalPages <= maxButtons) {
-      // If total pages are less than or equal to the max buttons, show all pages
-      return Array.from({ length: totalPages }, (_, i) => i + 1);
-    }
-
-    // Calculate the start and end page numbers for the limited display
-    const halfMaxButtons = Math.floor(maxButtons / 2);
-    let startPage = Math.max(1, currentPage - halfMaxButtons);
-    let endPage = Math.min(totalPages, startPage + maxButtons - 1);
-
-    // Ensure that we always show maxButtons, if possible
-    if (endPage - startPage + 1 < maxButtons) {
-      startPage = endPage - maxButtons + 1;
-    }
-
-    // Insert an ellipsis and the last page when appropriate
-    const pageRange = [];
-
-    if (startPage > 1) {
-      pageRange.push(1, ellipsis);
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pageRange.push(i);
-    }
-
-    if (endPage < totalPages) {
-      pageRange.push(ellipsis, totalPages);
-    }
-
-    return pageRange;
-  },
-    },
-    methods: {
-      filterStudents() {
-    const queryString = this.searchQuery.toLowerCase();
-    return this.schedule.filter(audit => {
-      return (
-        String(audit.number).toLowerCase().includes(queryString) ||
-        String(audit.type).toLowerCase().includes(queryString) ||
-        String(audit.count).includes(queryString)
-      );
+           { field: "number", headerName: 'Аудитория', minWidth: 50 },
+           { field: "full_name", headerName: 'Преподаватель', minWidth: 250 },
+           { field: "type", headerName: 'Тип', maxWidth:129 },
+           { field: "count", headerName: 'Вместимость', minWidth:129 },
+           { field: "subject_name", headerName: 'Дисциплина', minWidth: 200 },
+           { field: "dayofweek", headerName: 'День недели', minWidth: 50}
+      ],
     });
+
+    // DefaultColDef sets props common to all Columns
+    const defaultColDef = {
+      sortable: true,
+      filter: true,
+      flex: 1,
+      resizable: true,
+      minWidth: 50
+    };
+
+    // Example load data from server
+    onMounted(() => {
+    
+    });
+
+    const onFilterTextBoxChanged = () => {
+      gridApi.value.setQuickFilter(
+        document.getElementById('filter-text-box').value
+      );
+    };
+
+
+    return {
+      onGridReady,
+      columnDefs,
+      rowData,
+      defaultColDef,
+      cellWasClicked: (event) => { // Example of consuming Grid Event
+        console.log("cell was clicked", event);
+      },
+      deselectRows: () =>{
+        gridApi.value.deselectAll()
+      },
+
+      onFilterTextBoxChanged,
+      paginationPageSize,
+      navigate,
+     
+
+      
+
+    };
   },
-      // грузим данные
-      async loadAuditoriumData() {
+  data() {
+  return {
+    quickFilterValue: '',
+    filters:false
+  };
+},
+
+  methods: {
+
+    async loadAuditoriumData() {
         try {
           const response = await UserService.getAllAudit(); // Replace with your API endpoint
-          this.schedule = Array.isArray(response.data) ? response.data : [response.data];
+          this.rowData.value = Array.isArray(response.data) ? response.data : [response.data];
           this.loading=false;
         } catch (error) {
           console.error('Error:', error);
         }
       },
 
-      updateSearchQuery() {
-  const query = { page: 1 }; // когда меняется фильтр летим на первую страницу
-  if (this.searchQuery.trim() !== '') {
-    query.search = this.searchQuery;
-  }
-  this.currentPage = 1; 
-  this.$router.replace({ query });
-},
-      // смена страницы
-      changePage(pageNumber) {
-  const query = { ...this.$route.query, page: pageNumber };
-  if (this.searchQuery.trim() !== '') {
-    query.search = this.searchQuery;
-  }
-  this.$router.replace({ query });
-},
-      prevPage() {
-        if (this.currentPage > 1) {
-        this.changePage(this.currentPage - 1);
-        }
-      },
-      nextPage() {
-        if (this.currentPage < this.totalPages) {
-          this.changePage(this.currentPage + 1);
-        }
-      },
-      // смотрим детали о студенте
-      viewStudentDetail(scheduleId) {
-        this.$router.push(`/audits/${scheduleId}`);
-      },
-      viewRightsDetail(){
-        this.$router.push(`/Rights/audits`);
-      },
-
-
-      navigate() {
+      navigateToAddAudit() {
     
-        this.$router.push(`/addAudit`); // Navigate to the AddStudent route
-    },
-    },
-
-    beforeRouteUpdate(to, from, next) {
-  // берём филтр из роутера
-  this.searchQuery = to.query.search || '';
-  // берём страницу из роутера
-  this.currentPage = parseInt(to.query.page) || 1;
-  next();
+    this.$router.push(`/addAudit`); // Navigate to the AddStudent route
 },
+
+onFirstDataRendered(params) {
+      this.gridApi = params.api;
+      this.columnApi = params.columnApi;
+
+      // Check if filterModel exists in the route query
+      const filterModelQuery = this.$route.query.filterModel;
+      if (filterModelQuery) {
+        const filterModel = JSON.parse(filterModelQuery);
+        this.gridApi.setFilterModel(filterModel);
+        this.filters=true;
+        
+      }
+
+      const quickFilterQuery = this.$route.query.quickFilter;
+      if (quickFilterQuery) {
+        const quickFilter = JSON.parse(quickFilterQuery);
+        this.gridApi.setQuickFilter(quickFilter);
+        this.quickFilterValue = quickFilter;
+        this.filters=true;
+      }
+    },
+    onFilterChanged() {
+  // This function will be called whenever filters change.
+  // You can perform your desired action here.
+  // For example, you can get the current filter model:
+  this.filters=false;
+  const savedQuickFilter = this.gridApi.getQuickFilter();
+  const savedFilterModel = this.gridApi.getFilterModel();
+
+  // Initialize an empty object for queryParams
+  const queryParams = {};
+
+  // Check if savedQuickFilter is not empty, then add it to queryParams
+  if (savedQuickFilter) {
+    queryParams.quickFilter = JSON.stringify(savedQuickFilter);
+    this.filters=true;
+  }
+
+  // Check if savedFilterModel is not empty, then add it to queryParams
+  if (savedFilterModel && Object.keys(savedFilterModel).length > 0) {
+    queryParams.filterModel = JSON.stringify(savedFilterModel);
+    this.filters=true;
+  }
+
+  // Push the query parameters to the router
+  this.$router.push({ query: queryParams });
+
+  // Do something with the filterModel or trigger other actions as needed.
+},
+  clearFilters(){
+
+  
+    this.gridApi.setFilterModel();
+    this.gridApi.setQuickFilter();
+    this.quickFilterValue='';
+    this.filters=false;
+  },
+
+  
+    },
 
     created() {
-    const query = this.$route.query;
-    this.currentPage = parseInt(query.page) || 1;
-    this.searchQuery = query.search || '';
+    
     this.loadAuditoriumData();
+
     },
-  };
-  </script>
+
+    
+};
+
+
+</script>
 
 <style lang="scss" scoped>
+
+.ag-row .ag-cell {
+  display: flex;
+  justify-content: center; /* align horizontal */
+  align-items: center;
+}
+
 .skeleton {
   width: 100%;
   height: 1.2em;
@@ -242,8 +260,16 @@
   border-radius: 4px;
   margin: 0.2em 0;
 }
+  .list{
+    padding-left: 100px;
+    font-size: 5px;
 
+  }
 
+    .text-center * {
+      justify-content: center;
+      display:flex 
+  }
 
 @keyframes skeletonShimmer {
   0% {

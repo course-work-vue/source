@@ -583,6 +583,32 @@ addWorkload(group_id, subject_id, teacher_id){
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
+  getGroupByDir(dir_id){
+    const query = {
+      query: `SELECT
+      g.group_id,
+      g.group_number,
+      p.prof_name,
+      d.dir_name,
+      d.dir_code
+  FROM
+      "groups" AS g
+  JOIN
+      "profiles" AS p
+  ON
+      g.group_prof_id = p.prof_id
+  JOIN
+      "directions" AS d
+  ON
+      g.group_dir_id = d.dir_id 
+  WHERE
+      g.group_dir_id = '${dir_id}'    
+      ;
+  `,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
   getGroupById(id){
     const query = {
       query: `SELECT * from groups where 
