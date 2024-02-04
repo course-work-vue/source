@@ -12,7 +12,7 @@
     },
     methods: {
       onClick() {
-        this.$router.push(`/listeners/${this.params.data.list_id}`);
+        this.$router.push(`/lgroups/${this.params.data.lg_id}`);
       },
     },
   };

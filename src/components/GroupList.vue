@@ -4,7 +4,12 @@
   <div class="col col-xs-9 col-lg-12 mt-4 list">
     <div class="col col-12">
     <div class="mb-3 col col-12">
-    
+      <div v-if="!pr">
+        <h1> Список всех групп </h1>
+      </div>
+      <div v-if="pr">
+        <h1> Список всех групп с профилем {{ pr_n }} </h1>
+      </div>
       <button @click="navigateToAddGroup" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить группу</button>
       <div class="col col-6 float-end d-inline-flex align-items-center mb-2 ">
       <button @click="clearFilters" :disabled="!filters" class="btn btn-sm btn-primary text-nowrap mx-2" type="button"><i class="material-icons-outlined">close</i>Очистить фильтры</button>
@@ -152,7 +157,9 @@ export default {
   data() {
   return {
     quickFilterValue: '',
-    filters:false
+    filters:false,
+    pr:false,
+    pr_n:null
   };
 },
   methods: {
@@ -213,7 +220,15 @@ onFirstDataRendered(params) {
   if (savedFilterModel && Object.keys(savedFilterModel).length > 0) {
     queryParams.filterModel = JSON.stringify(savedFilterModel);
     this.filters=true;
+    if(savedFilterModel.prof_name){
+      this.pr=true;
+      this.pr_n=savedFilterModel.prof_name.filter;
+    }
+    else{
+      this.pr=false;
+    }
   }
+  else{    this.pr=false;}
 
   // Push the query parameters to the router
   this.$router.push({ query: queryParams });

@@ -82,120 +82,152 @@
     <div v-else class="col-md-12">
         <Form @submit="addStudent" :validation-schema="schema" v-slot="{ errors }">
           <div>
-            <div class="form-group d-inline-flex align-items-center col-12 mb-2">
+            <div class="form-group position-relative d-inline-flex align-items-center col-12 mb-2">
               <label for="last_name">Фамилия:</label>
               <Field name="last_name" type="text" value="" class="form-control" :class="{'is-invalid': errors.last_name}" />
-              <ErrorMessage name="last_name" class="error-feedback" />
+              <div v-if="errors.last_name" class="invalid-tooltip">
+                <ErrorMessage name="last_name" class="error-feedback" />
+</div>
+              
             </div>
-            <div class="form-group d-inline-flex align-items-center col-12 mb-2">
+            <div class="form-group position-relative d-inline-flex align-items-center col-12 mb-2">
               <label for="first_name">Имя:</label>
               <Field name="first_name" type="text" class="form-control" value="" :class="{'is-invalid': errors.first_name}" />
-              <ErrorMessage name="first_name" class="error-feedback" />
+              <div v-if="errors.first_name" class="invalid-tooltip">
+                <ErrorMessage name="first_name" class="error-feedback" />
+</div>
             </div>
-            <div class="form-group d-inline-flex align-items-center col-12 mb-2">
+            <div class="form-group position-relative d-inline-flex align-items-center col-12 mb-2">
               <label for="patronymic">Отчество:</label>
               <Field name="patronymic" type="text" class="form-control" value="" :class="{'is-invalid': errors.patronymic}"/>
-              <ErrorMessage name="patronymic" class="error-feedback" />
+              <div v-if="errors.patronymic" class="invalid-tooltip">
+                <ErrorMessage name="patronymic" class="error-feedback" />
+</div>
             </div>
-            <div class="form-group d-inline-flex align-items-center mb-2">
+            <div class="form-group position-relative d-inline-flex align-items-center mb-2">
               <label for="gender">Пол:</label>
               <br>
               <Field name="gender" type="radio" value="m" class="form-check-input" :class="{'is-invalid': errors.gender}"/>М 
               <Field name="gender" type="radio" value="f" class="form-check-input" :class="{'is-invalid': errors.gender}"/>Ж 
               <br>
-              <ErrorMessage name="gender" class="error-feedback" />
+
             </div>
-            <div class="form-group d-inline-flex align-items-center mb-2">
+            <div class="form-group position-relative d-inline-flex align-items-center mb-2">
               <label for="date_of_birth">Дата рождения:</label>
-              <Field name="date_of_birth" type="date"  class="form-control" value="" :class="{'is-invalid': errors.date}"/>
-              <ErrorMessage name="date_of_birth" class="error-feedback" />
+              <Field name="date_of_birth" type="date"  class="form-control" value="" :class="{'is-invalid': errors.date_of_birth}"/>
+
             </div>
-            <div class="form-group d-inline-flex align-items-center mb-2 col-6">
+            <div class="form-group position-relative d-inline-flex align-items-center mb-2 col-6">
               <label for="passport_series_and_number">Серия и номер паспорта:</label>
               <Field name="passport_series_and_number" type="text" class="form-control" value="" :class="{'is-invalid': errors.passport_series_and_number}"/>
-              <ErrorMessage name="passport_series_and_number" class="error-feedback" />
+              <div v-if="errors.passport_series_and_number" class="invalid-tooltip">
+                <ErrorMessage name="passport_series_and_number" class="error-feedback" />
+</div>
             </div>
-            <div class="form-group d-inline-flex align-items-center mb-2 col-5">
+            <div class="form-group position-relative d-inline-flex align-items-center mb-2 col-5">
               <label for="place_of_birth">Страна рождения:</label>
               <Field name="place_of_birth" type="text" class="form-control" value="" :class="{'is-invalid': errors.place_of_birth}"/>
-              <ErrorMessage name="place_of_birth" class="error-feedback" />
+              <div v-if="errors.place_of_birth" class="invalid-tooltip">
+                <ErrorMessage name="place_of_birth" class="error-feedback" />
+</div>
+              
             </div>
-            <div class="form-group d-inline-flex align-items-center mb-2">
+            <div class="form-group position-relative d-inline-flex align-items-center mb-2">
               <label for="INN">ИНН:</label>
               <Field name="INN" type="text" class="form-control" value="" :class="{'is-invalid': errors.INN}"/>
-              <ErrorMessage name="INN" class="error-feedback" />
+              <div v-if="errors.INN" class="invalid-tooltip">
+                <ErrorMessage name="INN" class="error-feedback" />
+</div>
             </div>
-            <div class="form-group d-inline-flex align-items-center mb-2">
+            <div class="form-group position-relative d-inline-flex align-items-center mb-2">
               <label for="SNILS">СНИЛС:</label>
               <Field name="SNILS" type="text" class="form-control" value="" :class="{'is-invalid': errors.SNILS}"/>
-              <ErrorMessage name="SNILS" class="error-feedback" />
+              <div v-if="errors.SNILS" class="invalid-tooltip">
+                <ErrorMessage name="SNILS" class="error-feedback" />
+</div>
             </div>
   
-            <div class="form-group d-inline-flex align-items-center mb-2 col-5">
+            <div class="form-group position-relative d-inline-flex align-items-center mb-2 col-5">
               <label for="email">Email:</label>
               <Field name="email" type="text" class="form-control"  value="" :class="{'is-invalid': errors.email}"  />
-              <ErrorMessage name="email" class="error-feedback" />
+              <div v-if="errors.email" class="invalid-tooltip">
+                <ErrorMessage name="email" class="error-feedback" />
+</div>
             </div>
  
-            <div class="form-group d-inline-flex align-items-center mb-2 col-5">
+            <div class="form-group position-relative d-inline-flex align-items-center mb-2 col-5">
               <label for="student_login">Логин студента:</label>
               <Field name="student_login" type="text" class="form-control" value="" :class="{'is-invalid': errors.student_login}"/>
-              <ErrorMessage name="student_login" class="error-feedback" />
+              <div v-if="errors.student_login" class="invalid-tooltip">
+                <ErrorMessage name="student_login" class="error-feedback" />
+</div>
             </div>
-            <div class="form-group d-inline-flex align-items-center mb-2 col-5">
+            <div class="form-group position-relative d-inline-flex align-items-center mb-2 col-5">
               <label for="enrollment_order">Приказ о зачислении:</label>
               <Field name="enrollment_order" type="text" class="form-control" value="" :class="{'is-invalid': errors.enrollment_order}"/>
-              <ErrorMessage name="enrollment_order" class="error-feedback" />
+              <div v-if="errors.enrollment_order" class="invalid-tooltip">
+                <ErrorMessage name="enrollment_order" class="error-feedback" />
+</div>
             </div>
-            <div class="form-group d-inline-flex align-items-center mb-2">
+            <div class="form-group position-relative d-inline-flex align-items-center mb-2">
               <label for="enrolled_date">Дата зачисления:</label>
               <Field name="enrolled_date" type="date" class="form-control" value="" :class="{'is-invalid': errors.enrolled_date}"/>
-              <ErrorMessage name="enrolled_date" class="error-feedback" />
+
             </div>
-            <div class="d-flex flex-wrap">
+            <div class="d-flex position-relative flex-wrap">
             <div class="form-group d-inline-flex align-items-center mb-2">
               <label for="group_id">Группа:</label>
               
               <Select2 :class="{'form-control is-invalid': errors.group_id}" v-model="myValue" 
               :options="groups" 
-              :settings=" { theme: 'bootstrap-5', width: '100%'}"
+              :settings=" {  theme: 'bootstrap-5', width: '100%'}"
               
                />
 
                <Field  name="group_id" as="select" v-model="myValue" hidden>
                 <option v-for="group in groups" :key="group.id" :value="group.id">{{ group.text }}</option>
               </Field>
-              <ErrorMessage name="group_id" class="error-feedback" />
+              <div v-if="errors.group_id" class="invalid-tooltip">
+                <ErrorMessage name="group_id" class="error-feedback" />
+</div>
             </div>
 
-            <div class="form-group d-inline-flex align-items-center float-none mb-2 col-3">
+            <div class="form-group position-relative d-inline-flex align-items-center float-none mb-2 col-3">
               <label for="subgroup">Подгруппа:</label>
               <Field  name="subgroup" as="select" class="form-select">
                 <option value="Нет">Нет</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
               </Field>
-              <ErrorMessage name="subgroup" class="error-feedback" />
+              <div v-if="errors.subgroup" class="invalid-tooltip">
+                <ErrorMessage name="subgroup" class="error-feedback" />
+</div>
               
             </div>
 
-            <div class="form-group d-inline-flex align-items-center float-none mb-2 col-5">
+            <div class="form-group position-relative d-inline-flex align-items-center float-none mb-2 col-5">
               <label for="zachetka_number">Номер зачётки:</label>
               <Field name="zachetka_number" type="text" class="form-control" :class="{'is-invalid': errors.zachetka_number}"/>
-              <ErrorMessage name="zachetka_number" class="error-feedback" />
+              <div v-if="errors.zachetka_number" class="invalid-tooltip">
+                <ErrorMessage name="zachetka_number" class="error-feedback" />
+</div>
               
             </div>
 
-            <div class="form-group d-inline-flex align-items-center float-none mb-2 col-6">
+            <div class="form-group position-relative d-inline-flex align-items-center float-none mb-2 col-6">
               <label for="phonenumber">Номер телефона:</label>
               <Field name="phonenumber" type="text" class="form-control" :class="{'is-invalid': errors.phonenumber}"/>
-              <ErrorMessage name="phonenumber" class="error-feedback" />
+              <div v-if="errors.phonenumber" class="invalid-tooltip">
+                <ErrorMessage name="phonenumber" class="error-feedback" />
+</div>
               
             </div>
-            <div class="form-group d-inline-flex align-items-center float-none mb-2 col-8">
+            <div class="form-group position-relative d-inline-flex align-items-center float-none mb-2 col-8">
               <label for="phonenumber_rod">Номер телефона родителей:</label>
               <Field name="phonenumber_rod" type="text" class="form-control" :class="{'is-invalid': errors.phonenumber_rod}"/>
-              <ErrorMessage name="phonenumber_rod" class="error-feedback" />
+              <div v-if="errors.phonenumber_rod" class="invalid-tooltip">
+                <ErrorMessage name="phonenumber_rod" class="error-feedback" />
+</div>
               
             </div>
            
@@ -252,16 +284,16 @@
   last_name: yup.string().required('Требуется фамилия'),
   first_name: yup.string().required('Требуется имя'),
   patronymic: yup.string().required('Требуется отчество'),
-  gender: yup.string().required('Требуется указать пол'),
-  date_of_birth: yup.date().required('Требуется указать дату рождения'),
+  gender: yup.string().required('Требуется пол'),
+  date_of_birth: yup.string().required('Требуется дату рождения'),
   passport_series_and_number: yup.string().required('Требуется серия и номер паспорта'),
-  place_of_birth: yup.string().required('Требуется указать место рождения'),
-  INN: yup.string().required('Требуется указать ИНН').matches(/^\d{12}$/, 'Некорректный ИНН'),
-  SNILS: yup.string().required('Требуется указать СНИЛС').matches(/^\d{11}$/, 'Некорректный СНИЛС'),
+  place_of_birth: yup.string().required('Требуется место рождения'),
+  INN: yup.string().required('Требуется ИНН').matches(/^\d{12}$/, 'Некорректный ИНН'),
+  SNILS: yup.string().required('Требуется СНИЛС').matches(/^\d{11}$/, 'Некорректный СНИЛС'),
   email: yup.string().required('Требуется электронная почта').email('Некорректный адрес электронной почты'),
   student_login: yup.string().required('Требуется указать логин студента'),
-  enrollment_order: yup.string().required('Требуется указать приказ о зачислении'),
-  enrolled_date: yup.date().required('Требуется указать дату зачисления'),
+  enrollment_order: yup.string().required('Требуется приказ о зачислении'),
+  enrolled_date: yup.string().required('Требуется дату зачисления'),
   group_id: yup.string().required('Требуется указать группу'),
 
 
@@ -280,6 +312,7 @@
         { id: '2', text: '2' },
       ],
         myValue: '',
+        sel_gr:null
       };
     },
     computed: {
@@ -316,6 +349,10 @@
           const response = await UserService.getGroupsAsIdText(); 
           this.groups = Array.isArray(response.data) ? response.data : [response.data];
           this.dataLoading=false;
+          const groupName = this.$route.params.groupName;
+          console.log(this.groups);
+          this.myValue=this.groups.find(item => item.text === groupName).id;
+          console.log(this.myValue);
         } catch (error) {
           console.error('Error loading students data:', error);
         }
@@ -332,6 +369,12 @@
   </script>
 
 <style lang="scss" scoped>
+.invalid-tooltip {
+    position: absolute;
+    top: 2px;
+    right:  30px;
+    user-select: none;
+    pointer-events: none;}
 
 .error-feedback{
   white-space: nowrap;

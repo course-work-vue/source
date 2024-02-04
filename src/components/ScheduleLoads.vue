@@ -18,15 +18,13 @@
                     <!-- Выбор направления -->
                     <table class="table" id="table_dirs">
                         <thead>
-                            <tr><th>Направление</th></tr>
+                            <tr><th>Группа</th></tr>
                         </thead>
                         <tbody>
-                            <tr v-for="dir in this.dirs" :key="dir.dir_id">
+                            <tr v-for="group in this.groups" :key="group.group_id">
                                 <th
-                                    @click="this.selected_dir = dir.dir_id;
-                                            console.log(this.selected_dir); 
-                                            loadGroups(dir.dir_id)"
-                                    v-bind:class="{ 'table-active': this.selected_dir == dir.dir_id }"
+                                    @click="this.selected_group = group.group_id; findWl(group.group_id)"
+                                    v-bind:class="{ 'table-active': this.selected_group == group.group_id }"
                                 >
                                     {{ dir.dir_code }}
                                 </th>

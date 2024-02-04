@@ -59,19 +59,18 @@
             </div>
 
             <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-              <label for="course_work_vipysk">Магистратура:</label>
 
               <Field v-slot="{ field2 }" name="course_work_vipysk" type="radio" :value="true">
                 <label>
                   <input type="radio" name="course_work_vipysk" v-bind="field2" value="false" class="form-check-input mt-0 ml-5" v-model="editedCw.course_work_vipysk" :checked="editedCw.course_work_vipysk == false" />
-                  Нет
+                  Курсовая работа
                 </label>
               </Field>
               <ErrorMessage name="course_work_vipysk" class="error-feedback" />
               <Field v-slot="{ field }" name="editedCw.course_work_vipysk" type="radio" :value="true">
                 <label>
                   <input type="radio" name="editedCw.course_work_vipysk" v-bind="field" value="true" class="form-check-input mt-0 ml-5" v-model="editedCw.course_work_vipysk" :checked="editedCw.course_work_vipysk == true" />
-                  Да
+                  Выпускная работа
                 </label>
               </Field>
             </div>
