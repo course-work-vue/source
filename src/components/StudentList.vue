@@ -298,7 +298,8 @@ else{
     async loadGroupsData() {
         try {
           const response = await UserService.getGroupsAsKOSTIL(); 
-
+          console.log("aaaa");
+          console.log(response);
           this.groups = Array.isArray(response.data) ? response.data : [response.data];
        
         } catch (error) {

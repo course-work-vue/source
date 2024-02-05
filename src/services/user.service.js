@@ -1,7 +1,8 @@
 import axios from 'axios';
 import authHeader from './auth-header';
-
 const API_URL = 'http://195.93.252.168:5050/api/Query/';
+
+const API = 'http://195.93.252.168:5050/api';
 
 class UserService {
   getPublicContent() {
@@ -27,123 +28,142 @@ class UserService {
     return axios.get(API_URL+"students", { headers: authHeader() });
   }
   deleteStudentById(student_id){
-    const query = {
-      query: `DELETE FROM students where "student_id" = '${student_id}'`,
-    };
+    const apiUrl = `${API}/Students/${student_id}`;
 
-    return axios.post(API_URL, query, { headers: authHeader() });
+    return axios.delete(apiUrl, { headers: authHeader() });
   }
 
-  getAllFormattedStudents(){
-    const query = {
-      query: `SELECT 
-      s.student_id,
-      CONCAT_WS(' ', s.last_name, s.first_name, s.patronymic) AS full_name,
-      CONCAT_WS('/', g.group_number, NULLIF(s.subgroup, '')) AS group_name,
-      g.group_number,
-      s.subgroup,
-      TO_CHAR(s.enrolled_date, 'DD/MM/YYYY') AS formatted_enrolled_date,
-      s.enrollment_order,
-      TO_CHAR(s.date_of_birth, 'DD/MM/YYYY') AS formatted_date_of_birth,
-      s.course,
-      s.group_id
-  FROM 
-      students s
-  JOIN 
-      groups g ON s.group_id = g.group_id
-  ORDER BY 
-      full_name ASC;`,
-    };
-
-    return axios.post(API_URL, query, { headers: authHeader() });
+  getAllFormattedStudents() {
+    const apiUrl = `${API}/Students`; // Assuming the API endpoint for GET is /getStudent
+    const headers = authHeader();
+  
+    return axios.get(apiUrl, { headers })
+      .then(response => {
+        if (response.data.length === 0) {
+          // Handle empty response if needed
+          return [];
+        }
+  
+        // Perform formatting on the client side
+        console.log(response.data);
+        const formattedStudents = response.data.map(student => ({
+          student_id: student.studentId,
+          full_name: `${student.lastName} ${student.firstName} ${student.patronymic}`,
+          group_name: `${student.group_number}/${student.subgroup || ''}`,
+          group_number: student.group.groupNumber,
+          subgroup: student.subgroup,
+          formatted_enrolled_date: new Date(student.enrolled_date).toLocaleDateString('en-CA'),
+          enrollment_order: student.enrollment_order,
+          formatted_date_of_birth: new Date(student.date_of_birth).toLocaleDateString('en-CA'),
+          course: student.course,
+          group_id: student.group_id
+        }));
+        console.log(formattedStudents);
+        return { data: formattedStudents };
+      })
+      .catch(error => {
+        // Handle error if needed
+        console.error("Error fetching formatted students:", error);
+        throw error;
+      });
   }
 
-  getStudentById(studentId){
-    const query = {
-      query: `SELECT
-      *,
-      TO_CHAR(date_of_birth, 'YYYY-MM-DD') AS date_of_birth,
-      TO_CHAR(enrolled_date, 'YYYY-MM-DD') AS enrolled_date
-  FROM
-      students
-  WHERE
-      student_id = ${studentId};`,
-    };
-    
-    return axios.post(API_URL, query, { headers: authHeader() });
+  getStudentById(studentId) {
+    const apiUrl = `${API}/Students/${studentId}`; // Assuming the API endpoint for GET is /getStudentById/:studentId
+    const headers = authHeader();
+  
+    return axios.get(apiUrl, { headers })
+      .then(response => {
+        if (!response.data) {
+          // Handle empty response if needed
+          return null;
+        }
+  
+        // Perform formatting on the client side
+        const formattedStudent = {
+          student_id: response.data.studentId,
+        first_name: response.data.firstName,
+        last_name: response.data.lastName,
+        patronymic: response.data.patronymic,
+        gender: response.data.gender,
+        passport_series_and_number: response.data.passportSeriesAndNumber,
+        INN: response.data.inn,
+        SNILS: response.data.snils,
+        place_of_birth: response.data.placeOfBirth,
+        email: response.data.email,
+        student_login: response.data.studentLogin,
+        enrollment_order: response.data.enrollmentOrder,
+        group_id: response.data.groupId,
+        subgroup: response.data.subgroup,
+        zachetka_number: response.data.zachetkaNumber,
+        phone_number: response.data.phoneNumber,
+        phone_number_rod: response.data.phoneNumberRod,
+          date_of_birth: new Date(response.data.dateOfBirth).toLocaleDateString('en-CA'),
+          enrolled_date: new Date(response.data.enrolledDate).toLocaleDateString('en-CA'),
+        };
+        console.log(formattedStudent);
+        return { data: formattedStudent };
+
+      })
+      .catch(error => {
+        // Handle error if needed
+        console.error("Error fetching student by ID:", error);
+        throw error;
+      });
   }
+  
 
   updateStudentById(studentId,first_name,last_name,patronymic,gender,date_of_birth,passport_series_and_number,INN,SNILS,place_of_birth,email,student_login,enrollment_order,enrolled_date, group_id,subgroup, zachetka_number, phone_number,phone_number_rod){
-    const query = {
-      query: `"first_name" = '${first_name}',
-      "last_name" = '${last_name}',
-      "patronymic" = '${patronymic}',
-      "gender" = '${gender}',
-      "date_of_birth" = '${date_of_birth}',
-      "passport_series_and_number" = '${passport_series_and_number}',
-      "INN" = '${INN}',
-      "SNILS" = '${SNILS}',
-      "place_of_birth" = '${place_of_birth}',
-      "email" = '${email}',
-      "student_login" = '${student_login}',
-      "enrollment_order" = '${enrollment_order}',
-      "enrolled_date" = '${enrolled_date}',
-      "group_id" = '${group_id}',
-      "subgroup" = '${subgroup}',
-      "zachetka_number"= '${zachetka_number}',
-      "phone_number"= '${phone_number}',
-      "phone_number_rod"= '${phone_number_rod}'
-  WHERE
-      "student_id" = '${studentId}';`,
+    const apiUrl = `${API}/Students/${studentId}`;
+    const formattedStudent = {
+      studentId: studentId,
+      firstName: first_name,
+      lastName: last_name,
+      patronymic: patronymic,
+      gender: gender,
+      dateOfBirth: date_of_birth,
+      passportSeriesAndNumber: passport_series_and_number,
+      INN: INN,
+      SNILS: SNILS,
+      placeOfBirth: place_of_birth,
+      email: email,
+      studentLogin: student_login,
+      enrollmentOrder: enrollment_order,
+      enrolledDate: enrolled_date,
+      groupId: group_id,
+      subgroup: subgroup,
+      zachetkaNumber: zachetka_number,
+      phoneNumber: phone_number,
+      phoneNumberRod: phone_number_rod
     };
     
-    return axios.put(API_URL+"students", query, { headers: authHeader() });
+    return axios.put(apiUrl, formattedStudent, { headers: authHeader() });
   }
   
   addStudent(first_name,last_name,patronymic,gender,date_of_birth,passport_series_and_number,INN,SNILS,place_of_birth,email,student_login,enrollment_order,enrolled_date, group_id,subgroup,phone_number,phone_number_rod,zachetka_number){
-    const query = {
-      query: `INSERT INTO "students" (
-        "first_name",
-        "last_name",
-        "patronymic",
-        "gender",
-        "date_of_birth",
-        "passport_series_and_number",
-        "INN",
-        "SNILS",
-        "place_of_birth",
-        "email",
-        "student_login",
-        "enrollment_order",
-        "enrolled_date",
-        "group_id",
-        "subgroup",
-        "phone_number",
-        "phone_number_rod",
-        "zachetka_number"
-    ) VALUES (
-        '${first_name}',
-        '${last_name}',
-        '${patronymic}',
-        '${gender}',
-        '${date_of_birth}',
-        '${passport_series_and_number}',
-        '${INN}',
-        '${SNILS}',
-        '${place_of_birth}',
-        '${email}',
-        '${student_login}',
-        '${enrollment_order}',
-        '${enrolled_date}',
-        '${group_id}',
-        '${subgroup}',
-        '${phone_number}',
-        '${phone_number_rod}',
-        '${zachetka_number}'
-    );`,
+    const apiUrl = `${API}/Students`;
+    const formattedStudent = {
+      firstName: first_name,
+      lastName: last_name,
+      patronymic: patronymic,
+      gender: gender,
+      dateOfBirth: date_of_birth,
+      passportSeriesAndNumber: passport_series_and_number,
+      INN: INN,
+      SNILS: SNILS,
+      placeOfBirth: place_of_birth,
+      email: email,
+      studentLogin: student_login,
+      enrollmentOrder: enrollment_order,
+      enrolledDate: enrolled_date,
+      groupId: group_id,
+      subgroup: subgroup,
+      zachetkaNumber: zachetka_number,
+      phoneNumber: phone_number,
+      phoneNumberRod: phone_number_rod
     };
 
-    return axios.post(API_URL, query, { headers: authHeader() });
+    return axios.post(apiUrl, formattedStudent, { headers: authHeader() });
 
 
   }
@@ -177,13 +197,30 @@ class UserService {
     return axios.post(API_URL, query, { headers: authHeader() });
   }
   getGroupsAsKOSTIL(){
-    const query = {
-      query: `SELECT group_number AS id, group_number AS text
-      FROM "groups" ORDER BY 
-      text ASC;`,
-    };
-    
-    return axios.post(API_URL, query, { headers: authHeader() });
+    const apiUrl = `${API}/Group`; // Assuming the API endpoint for GET is /getGroups
+  const headers = authHeader();
+
+  return axios.get(apiUrl, { headers })
+    .then(response => {
+      if (response.data.length === 0) {
+        // Handle empty response if needed
+        return [];
+      }
+
+      // Perform formatting on the client side
+      console.log(response.data);
+      const formattedGroups = response.data.map(group => ({
+        id: group.groupNumber,
+        text: group.groupNumber
+      }));
+      console.log(formattedGroups);
+      return { data: formattedGroups };
+    })
+    .catch(error => {
+      // Handle error if needed
+      console.error("Error fetching formatted groups:", error);
+      throw error;
+    });
   }
   getProgramsAsIdText(){
     const query = {
