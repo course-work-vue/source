@@ -1,6 +1,6 @@
 <template>
     <div class="krasivsk">
-        <button @click="onClick" class="btn btn-primary btn-sm"><i class="material-icons-outlined">visibility</i>Выбрать</button></div>
+        <button @click="onClick()" class="btn btn-primary btn-sm"><i class="material-icons-outlined">visibility</i>Выбрать</button></div>
       </template>
       
       <script>
@@ -11,7 +11,7 @@
         },
         methods: {
           onClick() {
-            this.$router.push(`/audits/${this.params.data.schedule_id}`);
+            this.$router.push(`/audits/${this.params.data.t_id}`);
           },
         },
       };

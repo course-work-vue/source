@@ -91,22 +91,16 @@
 
           ]
         },
-          {
-          label: "Доп списки",
-          link: "",
-          icon: "book",
-          children: [
-            {
-              label: "Аудитории",
-              link: "/audits",
-            }
-          ],
-        },
+          
         {
           label: "Расписание",
           link: "",
           icon: "calendar_month",
           children: [
+            {
+              label: "Аудитории",
+              link: "/audits",
+            },
             {
               label: "Нагрузка",
               link: "/ScheduleLoads",
