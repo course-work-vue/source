@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 import authHeader from './auth-header';
 const API_URL = 'http://195.93.252.168:5050/api/Query/';
@@ -2134,6 +2135,142 @@ addPayment(contract_id, expiration_date, date_40, all_sum, deposited_amount, lef
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
+  
+  //аудитории
+  getDaysAsIdText(){
+    const query = {
+      query: `SELECT day_id AS id, dayofweek AS text
+      FROM "days";`,
+    };
+    
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  savesSchedule(aud_id, day_id, subject_id,  teacher_id){
+    
+      const query = {
+        query: `INSERT INTO "schedule" (
+          "aud_id",
+          "day_id",
+          "subject_id",
+          "teacher_id"
+      ) VALUES (
+          '${aud_id}',
+          '${day_id}',
+          '${subject_id}',
+          '${teacher_id}'
+      );`,
+      };
+      return axios.post(API_URL, query, { headers: authHeader() });
+    }
+
+  getAllAudit(){
+      const query = {
+        query: `SELECT
+       ts.t_id,
+       a.number,
+       a.type,
+       a.count,
+       s.subject_name,
+       d.dayofweek,
+       CONCAT_WS(' ', t.last_name, t.first_name, t.patronymic) AS full_name
+       
+    FROM
+      tsch ts
+      join
+      auditorium a on ts.aud_id=a.aud_id
+      join
+      subjects s on ts.subject_id=s.subject_id
+      join
+      days d on ts.day_id=d.day_id
+      join 
+      teachers t on ts.teacher_id=t.teacher_id;
+    `,
+      };
+      return axios.post(API_URL, query, { headers: authHeader() });
+    }
+
+   /* getAllAudit(){
+      const query = {
+        query: `SELECT
+       aud_id,
+       number,
+       type,
+       count
+       
+    FROM Auditorium
+    `,
+      };
+      return axios.post(API_URL, query, { headers: authHeader() });
+    }*/
+
+
+
+
+    getAuditById(scheduleId){
+      const query = {
+        query: `SELECT * from tsch where 
+        t_id='${scheduleId}';`,
+      };
+      return axios.post(API_URL, query, { headers: authHeader() });
+    }
+
+    updateScheduleById(t_id,aud_id,day_id,subject_id,teacher_id,group_id){
+      const query = {
+        query: `"aud_id" = '${aud_id}',
+        "day_id" = '${day_id}',
+        "subject_id" = '${subject_id}',
+        "teacher_id" = '${teacher_id}',
+        
+        "group_id" ='${group_id}'
+    WHERE
+        "t_id" = '${t_id}';`,
+      };
+      
+      return axios.put(API_URL+"tsch", query, { headers: authHeader() });
+    }
+
+    deleteScheduleById(schedule_id){
+      const query = {
+        query: `DELETE FROM tsch where "t_id" = '${schedule_id}';`,
+      };
+  
+      return axios.post(API_URL, query, { headers: authHeader() });
+    }
+    
+    getAllTeacherSchedule(teacherId){
+      const query = {
+        query: `SELECT d.dayofweek, ts.time, s.subject_name, g.group_number
+         FROM tsch ts
+         join
+         days d on ts.day_id=d.day_id
+         join
+         subjects s on ts.subject_id=s.subject_id
+         join 
+         groups g on ts.group_id=g.group_id
+         WHERE teacher_id = '${teacherId}';`,
+      };
+      return axios.post(API_URL, query, { headers: authHeader() });
+
+    }
+
+    getTeacherDisciplines(last_name){
+      const query = {
+        query: `SELECT dis_name
+        FROM teach_gruz
+        WHERE fam = '${last_name}';`,
+      };
+      return axios.post(API_URL, query, { headers: authHeader() });
+    }
+
+    getAuditoriumsByDiscipline(){
+      const query = {
+        query: `SELECT number
+        FROM auditorium;`,
+      };
+      return axios.post(API_URL, query, { headers: authHeader() });
+    }
 }
 
 export default new UserService();
+

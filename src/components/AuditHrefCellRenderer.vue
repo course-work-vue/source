@@ -1,6 +1,6 @@
 <template>
 
-  <a :href="'/schedule/' + this.params.data.schedule_id">{{this.params.data.schedule_id}}</a>
+  <a :href="'/tsch/' + this.params.data.t_id">{{this.params.data.t_id}}</a>
     </template>
     
     <script>
@@ -83,3 +83,4 @@
     }
   }
   </style>
+
