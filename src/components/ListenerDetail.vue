@@ -146,6 +146,9 @@
               ></span>
               Обновить слушателя
             </button>
+            <button type="button" class="btn btn-danger mx-2 float-end" @click="deleteListener">
+              Удалить слушателя
+            </button>
             <router-link to="/listeners" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
           </div>
         </div>
@@ -260,7 +263,22 @@ import { Form, Field, ErrorMessage } from "vee-validate";
       };
     },
     methods: {
+      async deleteListener() {
+        try {
+          // запрос в psql
+          this.loading=true;
 
+          const response = await UserService.deleteListenerById(this.listener.id);
+          response.data;
+        
+          this.loading=false;
+          
+          this.toast.success("Успешно удалили!");
+          this.$router.push('/listeners');
+        } catch (error) {
+          console.error('Ошибка загрузки данных', error);
+        }
+      },
       addRow() {
     
     const newRow = { day_id: '', starttime: '', endtime: '' }; // ensure this is a new object

@@ -94,6 +94,9 @@
   <div class="form-group mt-3">
    
    <router-link to="/lgroups" class="btn btn-secondary ml-2 float-start">Отмена</router-link>
+   <button type="button" class="btn btn-danger mx-2 float-end" @click="deleteGroup">
+              Удалить группу
+            </button>
    <button class="btn btn-primary btn-block float-end" :disabled="loading">
      <span
        v-show="loading"
@@ -110,6 +113,7 @@
             <h2>Слушатели подходящие под критерий</h2>
              
              <div class="aggrid">
+              <button @click=changeFilterStatus> Тест</button>
               <ag-grid-vue
     class="ag-theme-alpine"
     style="width: 100%; height: 100%;"
@@ -255,8 +259,13 @@ import { Form, Field, ErrorMessage } from "vee-validate";
     // Obtain API from grid's onGridReady event
 
     const paginationPageSize = 60;
-
-
+    
+    let filterActive=ref(false);
+    
+    const changeFilterStatus = ()=>{
+      filterActive=!filterActive;
+      externalFilterChanged();
+    }
     const onGridReady = (params) => {
       gridApi.value = params.api;
       gridColumnApi.value = params.columnApi;
@@ -321,11 +330,13 @@ import { Form, Field, ErrorMessage } from "vee-validate";
       console.log(node);
      
       console.log();
+      if(filterActive){
       if (node.data) {
           console.log();
           return node.data.people_count==document.getElementById('people_count').value;
 
       }
+    }
       return true;
     };
     // DefaultColDef sets props common to all Columns
@@ -367,6 +378,8 @@ import { Form, Field, ErrorMessage } from "vee-validate";
       isExternalFilterPresent,
       externalFilterChanged,
       doesExternalFilterPass,
+      filterActive,
+      changeFilterStatus
 
 
 
@@ -401,6 +414,22 @@ import { Form, Field, ErrorMessage } from "vee-validate";
       };
     },
     methods: {
+      async deleteGroup() {
+        try {
+          // запрос в psql
+          this.loading=true;
+
+          const response = await UserService.deleteLgroupById(this.profile.prof_id);
+          response.data;
+        
+          this.loading=false;
+          
+          this.toast.success("Успешно удалили!");
+          this.$router.push('/profiles');
+        } catch (error) {
+          console.error('Ошибка загрузки данных', error);
+        }
+      },
       addRow() {
     
     const newRow = { day_id: '', starttime: '', endtime: '' }; // ensure this is a new object

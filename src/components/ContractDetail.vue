@@ -62,7 +62,10 @@
                 v-show="loading"
                 class="spinner-border spinner-border-sm"
               ></span>
-              Обновить контракт
+              Обновить договор
+            </button>
+            <button type="button" class="btn btn-danger mx-2 float-end" @click="deleteContract">
+              Удалить договор
             </button>
             <router-link to="/contracts" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
           </div>
@@ -171,6 +174,23 @@ import { Form, Field, ErrorMessage } from "vee-validate";
       };
     },
     methods: {
+
+      async deleteContract() {
+        try {
+          // запрос в psql
+          this.loading=true;
+
+          const response = await UserService.deleteContractById(this.contract.id);
+          response.data;
+        
+          this.loading=false;
+          
+          this.toast.success("Успешно удалили!");
+          this.$router.push('/contracts');
+        } catch (error) {
+          console.error('Ошибка загрузки данных', error);
+        }
+      },
       // грузим студента из psql по id 
       async loadContractDetail() {
         const contractId = this.$route.params.contractId;

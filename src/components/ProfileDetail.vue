@@ -28,12 +28,16 @@
           </div>
 
           <div class="form-group mt-3">
+   
             <button class="btn btn-primary btn-block float-end" :disabled="loading">
               <span
                 v-show="loading"
                 class="spinner-border spinner-border-sm"
               ></span>
               Обновить профиль
+            </button>
+            <button type="button" class="btn btn-danger mx-2 float-end" @click="deleteProfile">
+              Удалить профиль
             </button>
             <router-link to="/profiles" class="btn btn-secondary ml-2 float-start">Отмена</router-link>
           </div>
@@ -103,6 +107,23 @@ import { Form, Field, ErrorMessage } from "vee-validate";
       };
     },
     methods: {
+
+      async deleteProfile() {
+        try {
+          // запрос в psql
+          this.loading=true;
+
+          const response = await UserService.deleteProfileById(this.profile.prof_id);
+          response.data;
+        
+          this.loading=false;
+          
+          this.toast.success("Успешно удалили!");
+          this.$router.push('/profiles');
+        } catch (error) {
+          console.error('Ошибка загрузки данных', error);
+        }
+      },
       // грузим студента из psql по id 
       async loadProfilesData() {
         const profileId = this.$route.params.profileId;

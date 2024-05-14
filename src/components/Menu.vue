@@ -13,7 +13,7 @@
         :class="{ 'bottom-fixed': index === menuTree.length - 1 }"
       />
 
-     
+
     </div>
   </template>
   
@@ -54,7 +54,9 @@
             {
               label: "Курсовые",
               link: "/courseworks",
-            }
+            },
+      
+            
           ]
         },
         {

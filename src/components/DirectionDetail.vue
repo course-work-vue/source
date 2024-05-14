@@ -26,6 +26,11 @@
               ></span>
               Обновить направление
             </button>
+            <div class="form-group float-end">
+            <button type="button" class="btn btn-danger float-end" @click="deleteDirection">
+              Удалить направление
+            </button>
+          </div>
             <router-link to="/directions" class="btn btn-secondary ml-2 float-start">Отмена</router-link>
           </div>
         </div>
@@ -94,6 +99,22 @@ import { Form, Field, ErrorMessage } from "vee-validate";
       };
     },
     methods: {
+      async deleteDirection() {
+        try {
+          // запрос в psql
+          this.loading=true;
+
+          const response = await UserService.deleteDirectionById(this.direction.dir_id);
+          response.data;
+          this.direction = { ...this.editedStudent };
+          this.loading=false;
+          
+          this.toast.success("Успешно удалили!");
+          this.$router.push('/directions');
+        } catch (error) {
+          console.error('Ошибка загрузки данных', error);
+        }
+      },
       // грузим студента из psql по id 
       async loadDirectionDetail() {
         const directionId = this.$route.params.directionId;

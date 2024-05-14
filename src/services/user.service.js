@@ -100,6 +100,7 @@ class UserService {
         phone_number_rod: response.data.phoneNumberRod,
           date_of_birth: new Date(response.data.dateOfBirth).toLocaleDateString('en-CA'),
           enrolled_date: new Date(response.data.enrolledDate).toLocaleDateString('en-CA'),
+          isBudget:response.data.isBudget
         };
         console.log(formattedStudent);
         return { data: formattedStudent };
@@ -113,7 +114,7 @@ class UserService {
   }
   
 
-  updateStudentById(studentId,first_name,last_name,patronymic,gender,date_of_birth,passport_series_and_number,INN,SNILS,place_of_birth,email,student_login,enrollment_order,enrolled_date, group_id,subgroup, zachetka_number, phone_number,phone_number_rod){
+  updateStudentById(studentId,first_name,last_name,patronymic,gender,date_of_birth,passport_series_and_number,INN,SNILS,place_of_birth,email,student_login,enrollment_order,enrolled_date, group_id,subgroup, zachetka_number, phone_number,phone_number_rod, isBudget){
     const apiUrl = `${API}/Students/${studentId}`;
     const formattedStudent = {
       studentId: studentId,
@@ -134,17 +135,19 @@ class UserService {
       subgroup: subgroup,
       zachetkaNumber: zachetka_number,
       phoneNumber: phone_number,
-      phoneNumberRod: phone_number_rod
+      phoneNumberRod: phone_number_rod,
+      isBudget: Boolean(isBudget)
     };
     
     return axios.put(apiUrl, formattedStudent, { headers: authHeader() });
   }
   
-  addStudent(first_name,last_name,patronymic,gender,date_of_birth,passport_series_and_number,INN,SNILS,place_of_birth,email,student_login,enrollment_order,enrolled_date, group_id,subgroup,phone_number,phone_number_rod,zachetka_number){
+  addStudent(last_name,first_name,patronymic,gender,date_of_birth,passport_series_and_number,INN,SNILS,place_of_birth,email,student_login,enrollment_order,enrolled_date, group_id,subgroup,phone_number,phone_number_rod,zachetka_number){
     const apiUrl = `${API}/Students`;
     const formattedStudent = {
-      firstName: first_name,
+
       lastName: last_name,
+      firstName: first_name,
       patronymic: patronymic,
       gender: gender,
       dateOfBirth: date_of_birth,
@@ -244,6 +247,11 @@ class UserService {
 
 
 // ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ DIRECTIONS 
+deleteDirectionById(direction_id){
+  const apiUrl = `${API}/Direction/${direction_id}`;
+
+  return axios.delete(apiUrl, { headers: authHeader() });
+}
   getAllDirections(){
     const query = {
       query: `SELECT * from directions ORDER BY 
@@ -522,6 +530,12 @@ addWorkload(group_id, subject_id, teacher_id){
 
 
 // ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ PROFILES
+
+deleteProfileById(profile_id){
+  const apiUrl = `${API}/Profile/${profile_id}`;
+
+  return axios.delete(apiUrl, { headers: authHeader() });
+}
   getAllProfiles(){
     const query = {
       query: `SELECT
@@ -593,7 +607,11 @@ addWorkload(group_id, subject_id, teacher_id){
 
 
 // ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ GROUPS
+deleteGroupById(group_id){
+  const apiUrl = `${API}/Group/${group_id}`;
 
+  return axios.delete(apiUrl, { headers: authHeader() });
+}
   getAllGroups(){
     const query = {
       query: `SELECT
@@ -685,7 +703,11 @@ addWorkload(group_id, subject_id, teacher_id){
     };
     return axios.put(API_URL +"groups", query, { headers: authHeader() });
   }
- 
+  deleteLgroupById(lg_id){
+    const apiUrl = `${API}/LGroup/${lg_id}`;
+  
+    return axios.delete(apiUrl, { headers: authHeader() });
+  }
   getAllLgroups(){
     const query = {
       query: `SELECT
@@ -807,6 +829,11 @@ addWorkload(group_id, subject_id, teacher_id){
 
   
 // ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ LISTENERS
+deleteListenerById(l_id){
+  const apiUrl = `${API}/Listener/${l_id}`;
+
+  return axios.delete(apiUrl, { headers: authHeader() });
+}
   getAllListeners(){
     const query = {
       query: `SELECT
@@ -1030,6 +1057,12 @@ const query = {
 
   
 // ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ CONTRACTS
+
+deleteContractById(c_id){
+  const apiUrl = `${API}/Contract/${c_id}`;
+
+  return axios.delete(apiUrl, { headers: authHeader() });
+}
   getAllContracts(){
     const query = {
       query: `SELECT 
@@ -1143,6 +1176,11 @@ const query = {
 
   
 // ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ COURSE_WORK
+deleteCwById(cw_id){
+  const apiUrl = `${API}/CourseWork/${cw_id}`;
+
+  return axios.delete(apiUrl, { headers: authHeader() });
+}
   getAllCws(){
     const query = {
       query: `SELECT
@@ -1271,7 +1309,11 @@ const query = {
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
-
+  deletePayerById(p_id){
+    const apiUrl = `${API}/Payer/${p_id}`;
+  
+    return axios.delete(apiUrl, { headers: authHeader() });
+  }
   updatePayerById(id, name, surname,lastname, snils, passport, issued_by, issue_date, department_code, registration_address, phone_number, email){
     const query = {
       query: ` "name" ='${name}',
@@ -1343,6 +1385,12 @@ const query = {
 
 
 // ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ PROGRAMS
+
+deleteProgramById(p_id){
+  const apiUrl = `${API}/Program_u/${p_id}`;
+
+  return axios.delete(apiUrl, { headers: authHeader() });
+}
   getAllPrograms(){
     const query = {
       query: `SELECT
@@ -1385,6 +1433,12 @@ const query = {
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
+
+  deletePaymentById(p_id){
+    const apiUrl = `${API}/PayGraph/${p_id}`;
+
+    return axios.delete(apiUrl, { headers: authHeader() });
+  }
   getPaymentById(id){
     const query = {
       query: `SELECT *, TO_CHAR(date_40 , 'YYYY-MM-DD') AS date_40, TO_CHAR(expiration_date , 'YYYY-MM-DD') AS expiration_date from pay_graph where 
@@ -1410,7 +1464,7 @@ const query = {
   getAllPayments(){
     const query = {
       query: `SELECT
-      *, TO_CHAR(expiration_date, 'DD/MM/YYYY') AS expiration_date, TO_CHAR(date_40, 'DD/MM/YYYY') AS date_40 from pay_graph p
+      p.id, c.contr_number, TO_CHAR(expiration_date, 'DD/MM/YYYY') AS expiration_date, TO_CHAR(date_40, 'DD/MM/YYYY') AS date_40 from pay_graph p
       JOIN contracts c ON p.contract_id=c.id;
   `,
     };
