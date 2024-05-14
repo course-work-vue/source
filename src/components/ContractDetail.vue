@@ -35,13 +35,12 @@
             </Field>
             <ErrorMessage name="payer_id" class="error-feedback" />
           </div>
-
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center float-none mb-2 col-5">
             <label for="contr_number">Номер договра</label>
             <Field name="contr_number" type="text" value="" class="form-control" :class="{'is-invalid': errors.contr_number}" v-model="editedContract.contr_number"/>
             <ErrorMessage name="contr_number" class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center float-none mb-2 col-5">
             <label for="program_id">Программа</label>
             
             <Select2 :class="{'form-control is-invalid': errors.program_id}" v-model="editedContract.program_id" 
@@ -56,7 +55,7 @@
             <ErrorMessage name="program_id" class="error-feedback" />
           </div>
 
-          <div class="form-group mt-3">
+          <div class="form-group d-inline-flex align-items-center float-none mb-2 col-5">
             <button class="btn btn-primary btn-block float-start" :disabled="loading">
               <span
                 v-show="loading"
@@ -383,5 +382,9 @@ import { Form, Field, ErrorMessage } from "vee-validate";
 .form-check-input:checked{
   background-color: rgb(68,99,52);
     border: none;
+}
+label{
+  margin-right: 15px;
+  white-space: nowrap;
 }
 </style>

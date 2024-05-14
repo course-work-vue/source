@@ -267,29 +267,41 @@ deleteDirectionById(direction_id){
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
-
-  addDirection(dir_name,dir_code){
-    const query = {
-      query: `INSERT INTO "directions" (
-        "dir_name",
-        "dir_code"
-    ) VALUES (
-        '${dir_name}',
-        '${dir_code}'
-    );`,
+  addDirection(dir_name, dir_code) {
+    const newDirection = {
+        dirName: dir_name,
+        dirCode: dir_code
     };
-    return axios.post(API_URL, query, { headers: authHeader() });
-  }
 
-  updateDirectionById(dir_id,dir_name,dir_code){
-    const query = {
-      query: `"dir_name" = '${dir_name}',
-      "dir_code" = '${dir_code}'
-  WHERE
-      "dir_id" = '${dir_id}';`,
-    };
-    return axios.put(API_URL +"directions", query, { headers: authHeader() });
-  }
+    return axios.post(`${API}/Direction`, newDirection, { headers: authHeader() })
+        .then(response => {
+            // Optionally handle the response from the server (e.g., get the created direction's ID)
+            return response.data;
+        })
+        .catch(error => {
+            console.error("Error adding direction:", error);
+            throw error; 
+        });
+}
+
+
+updateDirectionById(dir_id, dir_name, dir_code) {
+  const updatedDirection = {
+      dirId:dir_id,
+      dirName: dir_name,
+      dirCode: dir_code
+  };
+
+  return axios.put(`${API}/Direction/${dir_id}`, updatedDirection, { headers: authHeader() })
+      .then(response => {
+          // Optionally handle the response 
+          return response.data;
+      })
+      .catch(error => {
+          console.error("Error updating direction:", error);
+          throw error; 
+      });
+}
 
 
   
@@ -563,28 +575,39 @@ deleteProfileById(profile_id){
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
-  addProfile(prof_dir_id, prof_name){
-    const query = {
-      query: `INSERT INTO "profiles" (
-        "prof_dir_id",
-        "prof_name"
-    ) VALUES (
-        '${prof_dir_id}',
-        '${prof_name}'
-    );`,
+  addProfile(prof_dir_id, prof_name) {
+    const newProfile = {
+        profDirId: prof_dir_id, 
+        profName: prof_name
     };
-    return axios.post(API_URL, query, { headers: authHeader() });
-  }
 
-  updateProfileById(prof_id,prof_dir_id,prof_name){
-    const query = {
-      query: `"prof_dir_id" = '${prof_dir_id}',
-      "prof_name" = '${prof_name}'
-  WHERE
-      "prof_id" = '${prof_id}';`,
+    return axios.post(`${API}/Profile`, newProfile, { headers: authHeader() })
+        .then(response => {
+            return response.data;
+        })
+        .catch(error => {
+            console.error("Error adding profile:", error);
+            throw error; 
+        });
+}
+
+// updateProfileById
+updateProfileById(prof_id, prof_dir_id, prof_name) {
+    const updatedProfile = {
+        profId: prof_id, // Include the ID in the update payload
+        profDirId: prof_dir_id,
+        profName: prof_name
     };
-    return axios.put(API_URL +"profiles", query, { headers: authHeader() });
-  }
+
+    return axios.put(`${API}/Profile/${prof_id}`, updatedProfile, { headers: authHeader() })
+        .then(response => {
+            return response.data;
+        })
+        .catch(error => {
+            console.error("Error updating profile:", error);
+            throw error; 
+        });
+}
   getDirectionsAsIdText(){
     const query = {
       query: `SELECT dir_id AS id, dir_code AS text
@@ -671,37 +694,44 @@ deleteGroupById(group_id){
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
-
-  addGroup(group_dir_id, group_prof_id,group_number,course,magister){
-    const query = {
-      query: `INSERT INTO "groups" (
-        "group_dir_id",
-        "group_prof_id",
-        "group_number",
-        "course",
-        "magister"
-    ) VALUES (
-        '${group_dir_id}',
-        '${group_prof_id}',
-        '${group_number}',
-        '${course}',
-        '${magister}'
-    );`,
+  addGroup(group_dir_id, group_prof_id, group_number, course, magister) {
+    const newGroup = {
+      groupDirId: group_dir_id,
+      groupProfId: group_prof_id,
+      groupNumber: group_number,
+      course: course,
+      magister: Boolean(magister)
     };
-    return axios.post(API_URL, query, { headers: authHeader() });
+  
+    return axios.post(`${API}/Group`, newGroup, { headers: authHeader() })
+      .then(response => {
+        return response.data;
+      })
+      .catch(error => {
+        console.error("Error adding group:", error);
+        throw error;
+      });
   }
-
-  updateGroupById(group_id, group_dir_id, group_prof_id,group_number,course,magister){
-    const query = {
-      query: `"group_dir_id" = '${group_dir_id}',
-      "group_prof_id" = '${group_prof_id}',
-      "group_number" = '${group_number}',
-      "course" = '${course}',
-      "magister" = '${magister}'
-  WHERE
-      "group_id" = '${group_id}';`,
+  
+  // updateGroupById
+  updateGroupById(group_id, group_dir_id, group_prof_id, group_number, course, magister) {
+    const updatedGroup = {
+      groupId: group_id,
+      groupDirId: group_dir_id,
+      groupProfId: group_prof_id,
+      groupNumber: group_number,
+      course: course,
+      magister: Boolean(magister)
     };
-    return axios.put(API_URL +"groups", query, { headers: authHeader() });
+  
+    return axios.put(`${API}/Group/${group_id}`, updatedGroup, { headers: authHeader() })
+      .then(response => {
+        return response.data;
+      })
+      .catch(error => {
+        console.error("Error updating group:", error);
+        throw error;
+      });
   }
   deleteLgroupById(lg_id){
     const apiUrl = `${API}/LGroup/${lg_id}`;
@@ -1115,36 +1145,49 @@ deleteContractById(c_id){
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
-  addContract(listener_id, payer_id,contr_number, program_id,cert_date, listened_hours, date_enroll, date_kick,group_to_move){
+// addContract
+addContract(listener_id, payer_id, contr_number, program_id, cert_date, listened_hours, date_enroll, date_kick, group_to_move) {
+  const newContract = {
+    listenerId: listener_id,
+    payerId: payer_id,
+    contrNumber: contr_number, 
+    programId: program_id,
+    certDate: cert_date,
+    listenedHours: listened_hours,
+    dateEnroll: date_enroll,
+    dateKick: date_kick, // No need for the null check, JSON handles it
+    groupToMove: group_to_move
+  };
 
-    const query = {
-      query: `INSERT INTO contracts (listener_id, payer_id, contr_number, program_id,cert_date, listened_hours, date_enroll, date_kick,group_to_move)
-      VALUES(
-        '${listener_id}',
-        '${payer_id}',
-        '${contr_number}',
-        '${program_id}',
-        '${cert_date}',
-        '${listened_hours}',
-        '${date_enroll}',
-        ${date_kick !== undefined ? `'${date_kick}'` : null},
-        ${group_to_move}
-    );`,
-    };
-    return axios.post(API_URL, query, { headers: authHeader() });
-  }
+  return axios.post(`${API}/Contract`, newContract, { headers: authHeader() })
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      console.error("Error adding contract:", error);
+      throw error;
+    });
+}
 
-  updateContractById(id, listener_id, payer_id,contr_number, program_id){
-    const query = {
-      query: ` "listener_id" ='${listener_id}',
-      "payer_id" ='${payer_id}',
-      "contr_number"= '${contr_number}',
-      "program_id"= '${program_id}'
-  WHERE
-      "id" = '${id}';`,
-    };
-    return axios.put(API_URL +"contracts", query, { headers: authHeader() });
-  }
+// updateContractById
+updateContractById(id, listener_id, payer_id, contr_number, program_id) {
+  const updatedContract = {
+    id: id, // Include the ID for update
+    listenerId: listener_id,
+    payerId: payer_id,
+    contrNumber: contr_number,
+    programId: program_id
+  };
+
+  return axios.put(`${API}/Contract/${id}`, updatedContract, { headers: authHeader() })
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      console.error("Error updating contract:", error);
+      throw error;
+    });
+}
 
   getPayersAsIdText(){
     const query = {
@@ -1225,36 +1268,50 @@ deleteCwById(cw_id){
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
-  addCw(course_work_theme,course_work_teacher_id,course_work_student_id,course_work_kafedra,course_work_vipysk,course_work_year,course_work_ocenka){
-    const query = {
-      query: `INSERT INTO course_work (course_work_theme, course_work_teacher_id, course_work_student_id, course_work_kafedra,course_work_vipysk,course_work_year,course_work_ocenka)
-      VALUES(
-        '${course_work_theme}',
-        '${course_work_teacher_id}',
-        '${course_work_student_id}',
-        '${course_work_kafedra}',
-        '${course_work_vipysk}',
-        '${course_work_year}',
-        '${course_work_ocenka}'
-    );`,
-    };
-    return axios.post(API_URL, query, { headers: authHeader() });
-  }
+  // addCw
+addCw(course_work_theme, course_work_teacher_id, course_work_student_id, course_work_kafedra, course_work_vipysk, course_work_year, course_work_ocenka) {
+  const newCw = {
+    courseWorkTheme: course_work_theme,
+    courseWorkTeacherId: course_work_teacher_id,
+    courseWorkStudentId: course_work_student_id,
+    courseWorkKafedra: course_work_kafedra,
+    courseWorkVipysk: Boolean(course_work_vipysk),
+    courseWorkYear: course_work_year,
+    courseWorkOcenka: course_work_ocenka
+  };
 
-  updateCwById(id,course_work_theme,course_work_teacher_id,course_work_student_id,course_work_kafedra,course_work_vipysk,course_work_year,course_work_ocenka){
-    const query = {
-      query: ` "course_work_theme" ='${course_work_theme}',
-      "course_work_teacher_id" ='${course_work_teacher_id}',
-      "course_work_student_id"= '${course_work_student_id}',
-      "course_work_kafedra"= '${course_work_kafedra}',
-      "course_work_vipysk" ='${course_work_vipysk}',
-      "course_work_year" ='${course_work_year}',
-      "course_work_ocenka" ='${course_work_ocenka}'
-  WHERE
-      "course_work_id" = '${id}';`,
-    };
-    return axios.put(API_URL +"course_work", query, { headers: authHeader() });
-  }
+  return axios.post(`${API}/CourseWork`, newCw, { headers: authHeader() })
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      console.error("Error adding course work:", error);
+      throw error;
+    });
+}
+
+// updateCwById
+updateCwById(id, course_work_theme, course_work_teacher_id, course_work_student_id, course_work_kafedra, course_work_vipysk, course_work_year, course_work_ocenka) {
+  const updatedCw = {
+    courseWorkId: id, 
+    courseWorkTheme: course_work_theme,
+    courseWorkTeacherId: course_work_teacher_id,
+    courseWorkStudentId: course_work_student_id,
+    courseWorkKafedra: course_work_kafedra,
+    courseWorkVipysk: Boolean(course_work_vipysk),
+    courseWorkYear: course_work_year,
+    courseWorkOcenka: course_work_ocenka
+  };
+
+  return axios.put(`${API}/CourseWork/${id}`, updatedCw, { headers: authHeader() }) 
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      console.error("Error updating course work:", error);
+      throw error;
+    });
+}
   
 // ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ PAYERS
   getAllPayers(){
@@ -1278,60 +1335,62 @@ deleteCwById(cw_id){
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
-
-  addPayer(name, surname,lastname, snils, passport, issued_by, issue_date, department_code, registration_address, phone_number, email){
-    const query = {
-      query: `INSERT INTO "payers" (
-        "name",
-        "surname",
-        "lastname",
-        "snils",
-        "passport",
-        "issued_by",
-        "issue_date",
-        "department_code",
-        "registration_address",
-        "phone_number",
-        "email"
-    ) VALUES (
-        '${name}',
-        '${surname}',
-        '${lastname}',
-        '${snils}',
-        '${passport}',
-        '${issued_by}',
-        '${issue_date}',
-        '${department_code}',
-        '${registration_address}',
-        '${phone_number}',
-        '${email }'
-    );`,
-    };
-    return axios.post(API_URL, query, { headers: authHeader() });
-  }
   deletePayerById(p_id){
     const apiUrl = `${API}/Payer/${p_id}`;
   
     return axios.delete(apiUrl, { headers: authHeader() });
   }
-  updatePayerById(id, name, surname,lastname, snils, passport, issued_by, issue_date, department_code, registration_address, phone_number, email){
-    const query = {
-      query: ` "name" ='${name}',
-      "surname" ='${surname}',
-      "lastname"=  '${lastname}',
-      "snils"= '${snils}',
-      "passport"= '${passport}',
-      "issued_by"= '${issued_by}',
-      "issue_date"='${issue_date}',
-      "department_code"='${department_code}',
-      "registration_address"='${registration_address}',
-      "phone_number"='${phone_number}',
-      "email"='${email}'
-  WHERE
-      "id" = '${id}';`,
-    };
-    return axios.put(API_URL +"payers", query, { headers: authHeader() });
-  }
+ // addPayer
+addPayer(name, surname, lastname, snils, passport, issued_by, issue_date, department_code, registration_address, phone_number, email) {
+  const newPayer = {
+    name: name,
+    surname: surname,
+    lastname: lastname,
+    snils: snils,
+    passport: passport,
+    issuedBy: issued_by, // camelCase for consistency
+    issueDate: issue_date,
+    departmentCode: department_code,
+    registrationAddress: registration_address,
+    phoneNumber: phone_number,
+    email: email
+  };
+
+  return axios.post(`${API}/Payer`, newPayer, { headers: authHeader() })
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      console.error("Error adding payer:", error);
+      throw error;
+    });
+}
+
+// updatePayerById
+updatePayerById(id, name, surname, lastname, snils, passport, issued_by, issue_date, department_code, registration_address, phone_number, email) {
+  const updatedPayer = {
+    id: id,  // Include the ID in the update object
+    name: name,
+    surname: surname,
+    lastname: lastname,
+    snils: snils,
+    passport: passport,
+    issueDate: issue_date,
+    departmentCode: department_code,
+    registrationAddress: registration_address,
+    phoneNumber: phone_number,
+    email: email
+  };
+
+  return axios.put(`${API}/Payer/${id}`, updatedPayer, { headers: authHeader() })
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      console.error("Error updating payer:", error);
+      throw error;
+    });
+}
 
   getAllCourses(){
     const query = {
@@ -1415,25 +1474,47 @@ deleteProgramById(p_id){
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
-  addProgram(required_amount, program_name,hours, start_date, end_date){
-    const query = {
-      query: `INSERT INTO "programs" (
-        "required_amount",
-        "program_name",
-        "hours",
-        "start_date",
-        "end_date"
-    ) VALUES (
-        '${required_amount}',
-        '${program_name}',
-        '${hours}',
-        '${start_date}',
-        '${end_date}'
-    );`,
-    };
-    return axios.post(API_URL, query, { headers: authHeader() });
-  }
+// addProgram
+// addProgram
+addProgram(required_amount, program_name, hours, start_date, end_date) {
+  const newProgram = {
+    requiredAmount: required_amount, 
+    programName: program_name,
+    hours: hours,
+    startDate: start_date, 
+    endDate: end_date
+  };
 
+  return axios.post(`${API}/Program_u`, newProgram, { headers: authHeader() })
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      console.error("Error adding program:", error);
+      throw error;
+    });
+}
+
+// updateProgramById
+updateProgramById(id, required_amount, program_name, hours, start_date, end_date) {
+  const updatedProgram = {
+    id: id, // Include ID for updating
+    requiredAmount: required_amount,
+    programName: program_name,
+    hours: hours,
+    startDate: start_date,
+    endDate: end_date
+  };
+
+  return axios.put(`${API}/Program_u/${id}`, updatedProgram, { headers: authHeader() })
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      console.error("Error updating program:", error);
+      throw error;
+    });
+}
   deletePaymentById(p_id){
     const apiUrl = `${API}/PayGraph/${p_id}`;
 
@@ -1446,18 +1527,7 @@ deleteProgramById(p_id){
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
-  updateProgramById(id, required_amount, program_name,hours, start_date, end_date){
-    const query = {
-      query: `"required_amount" ='${required_amount}',
-      "program_name" ='${program_name}',
-      "hours"=  '${hours}',
-      "start_date"= '${start_date}',
-      "end_date"= '${end_date}'
-  WHERE
-      "id" = '${id}';`,
-    };
-    return axios.put(API_URL +"programs", query, { headers: authHeader() });
-  }
+  
 
 
 // ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ PAY_GRAPH   
@@ -1510,43 +1580,50 @@ deleteProgramById(p_id){
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
-  updatePaymentById(id, contract_id, expiration_date,date_40, all_sum, deposited_amount, left_to_pay, bank){
-    const query = {
-      query: `"contract_id" ='${contract_id}',
-      "expiration_date" ='${expiration_date}',
-      "date_40"=  '${date_40}',
-      "all_sum"= '${all_sum}',
-      "deposited_amount"= '${deposited_amount}',
-      "left_to_pay"= '${left_to_pay}',
-      "bank"= '${bank}'
-  WHERE
-      "id" = '${id}';`,
-    };
-    return axios.put(API_URL +"pay_graph", query, { headers: authHeader() });
-  }
-  addPayment(contract_id, 
-    expiration_date, date_40, all_sum,deposited_amount,left_to_pay,bank){
-    const query = {
-      query: `INSERT INTO "pay_graph" (
-        "contract_id",
-        "expiration_date",
-        "date_40",
-        "all_sum",
-        "deposited_amount",
-        "left_to_pay",
-        "bank"
-    ) VALUES (
-        '${contract_id}',
-        '${expiration_date}',
-        '${date_40}',
-        '${all_sum}',
-        '${deposited_amount}',
-        '${left_to_pay}',
-        '${bank}'
-    );`,
-    };
-    return axios.post(API_URL, query, { headers: authHeader() });
-  }
+  // updatePaymentById
+updatePaymentById(id, contract_id, expiration_date, date_40, all_sum, deposited_amount, left_to_pay, bank) {
+  const updatedPayment = {
+    id: id, // Include the ID for updating
+    contractId: contract_id, 
+    expirationDate: expiration_date,
+    date40: date_40, // Assuming this is a date field, use camelCase
+    allSum: all_sum, 
+    depositedAmount: deposited_amount,
+    leftToPay: left_to_pay, 
+    bank: bank
+  };
+
+  return axios.put(`${API}/PayGraph/${id}`, updatedPayment, { headers: authHeader() }) 
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      console.error("Error updating payment:", error);
+      throw error;
+    });
+}
+
+// addPayment
+addPayment(contract_id, expiration_date, date_40, all_sum, deposited_amount, left_to_pay, bank) {
+  const newPayment = {
+    contractId: contract_id,
+    expirationDate: expiration_date,
+    date40: date_40, 
+    allSum: all_sum,
+    depositedAmount: deposited_amount,
+    leftToPay: left_to_pay,
+    bank: bank
+  };
+
+  return axios.post(`${API}/PayGraph`, newPayment, { headers: authHeader() }) 
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      console.error("Error adding payment:", error);
+      throw error;
+    });
+}
 
   getPaymentsAsIdText(){
     const query = {

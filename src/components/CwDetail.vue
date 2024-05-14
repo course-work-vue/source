@@ -305,12 +305,12 @@ import { Form, Field, ErrorMessage } from "vee-validate";
         }
       },
     },
-    created() {
-     
-      this.loadTeachersData();
-    this.loadStudentsData();
-    this.loadDepartamentsData();
-    this.loadCwDetail();
+    async created() {
+     await this.loadDepartamentsData();
+     await  this.loadTeachersData();
+     await this.loadStudentsData();
+
+     await this.loadCwDetail();
     },
   };
   </script>

@@ -204,7 +204,7 @@
           this.loading=true;
 
           const response = await UserService.addPayer(payer.name, payer.surname, payer.lastname, 
-          payer.snils, payer.passport, payer.issued_by, payer.issue_date, payer.department_code, payer.registration_address, payer.SNILS, payer.phone_number,
+          payer.SNILS, payer.passport, payer.issued_by, payer.issue_date, payer.department_code, payer.registration_address, payer.SNILS, payer.phone_number,
           payer.email);
           response.data;
           this.loading=false;
