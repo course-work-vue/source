@@ -1,62 +1,59 @@
 <template>
   <div class="col-md-12 list">
-    <div v-if="payer" >
-      <Form @submit="updatePayer" :validation-schema="schema" v-slot="{ errors }">
+    <div v-if="payment" >
+      <Form @submit="updatePayment" :validation-schema="schema" v-slot="{ errors }">
         
         <div >
-          <div class="form-group">
-            <label for="lastname">Фамилия</label>
-            <Field name="lastname" type="text" value="" class="form-control" :class="{'is-invalid': errors.lastname}" v-model="editedPayer.lastname "/>
-            <ErrorMessage name="lastname" class="error-feedback" />
+          <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+            <label for="contract_id">Номер договора</label>
+            
+            <Select2 class="col-5" :class="{'form-control is-invalid': errors.contract_id}" v-model="editedPayment.contract_id" 
+            :options="contracts" 
+            :settings=" { theme: 'bootstrap-5', width: '100%'}"
+            
+             />
+
+             <Field  name="contract_id" as="select" v-model="contract_id" hidden>
+              <option v-for="contract in contracts" :key="contract.id" :value="contract.id">{{ contract.text }}</option>
+            </Field>
+            <ErrorMessage name="contract_id" class="error-feedback" />
           </div>
-          <div class="form-group">
-            <label for="name">Имя</label>
-            <Field name="name" type="text" class="form-control" value="" :class="{'is-invalid': errors.name}" v-model="editedPayer.name "/>
-            <ErrorMessage name="name" class="error-feedback" />
-          </div>
-          <div class="form-group">
-            <label for="surname">Отчество</label>
-            <Field name="surname" type="text" class="form-control" value="" :class="{'is-invalid': errors.patronymic}" v-model="editedPayer.surname "/>
-            <ErrorMessage name="surname" class="error-feedback" />
-          </div>
-         
-     
-          <div class="form-group">
-            <label for="passport ">Серия и номер паспорта</label>
-            <Field name="passport " type="text" class="form-control" value="" :class="{'is-invalid': errors.passport }" v-model="editedPayer.passport "/>
-            <ErrorMessage name="passport " class="error-feedback" />
-          </div>
-          <div class="form-group">
-            <label for="issue_date">Дата выдачи</label>
-            <Field name="issue_date" type="date" class="form-control" value="" :class="{'is-invalid': errors.date}" v-model="editedPayer.issue_date "/>
-         
-            <ErrorMessage name="issue_date " class="error-feedback" />
-          </div>
-          <div class="form-group">
-            <label for="department_code ">Код подразделения</label>
-            <Field name="department_code " type="text" class="form-control" value="" :class="{'is-invalid': errors.department_code }" v-model="editedPayer.department_code "/>
-            <ErrorMessage name="department_code " class="error-feedback" />
-          </div>
-          <div class="form-group">
-            <label for="registration_address ">Адресс регистрации</label>
-            <Field name="registration_address " type="text" class="form-control" value="" :class="{'is-invalid': errors.registration_address }" v-model="editedPayer.registration_address "/>
-            <ErrorMessage name="registration_address " class="error-feedback" />
-          </div>
-          <div class="form-group">
-            <label for="SNILS">СНИЛС</label>
-            <Field name="SNILS" type="text" class="form-control" value="" :class="{'is-invalid': errors.SNILS}" v-model="editedPayer.snils "/>
-            <ErrorMessage name="SNILS" class="error-feedback" />
-          </div>
-          <div class="form-group">
-            <label for="phone_number ">Телефон</label>
-            <Field name="phone_number " type="text" class="form-control" value="" :class="{'is-invalid': errors.phone_number }" v-model="editedPayer.phone_number "/>
-            <ErrorMessage name="phone_number " class="error-feedback" />
-          </div>
-          <div class="form-group">
-            <label for="email">Email</label>
-            <Field name="email" type="text" class="form-control"  value="" :class="{'is-invalid': errors.email}"  v-model="editedPayer.email"/>
-            <ErrorMessage name="email" class="error-feedback" />
-          </div>
+
+          <div class="form-group d-inline-flex align-items-center mb-2">
+              <label for="expiration_date">Дата просрочки:</label>
+              <Field name="expiration_date" type="date"  class="form-control" value="" :class="{'is-invalid': errors.expiration_date}" v-model="editedPayment.expiration_date"/>
+              <ErrorMessage name="expiration_date" class="error-feedback" />
+            </div>
+
+            <div class="form-group d-inline-flex align-items-center mb-2">
+              <label for="date_40">Дата оплаты 40%:</label>
+              <Field name="date_40" type="date"  class="form-control" value="" :class="{'is-invalid': errors.date_40}" v-model="editedPayment.date_40"/>
+              <ErrorMessage name="date_40" class="error-feedback" />
+            </div>
+
+
+            <div class="form-group d-inline-flex align-items-center mb-2 col-6">
+              <label for="all_sum">Вся сумма:</label>
+              <Field name="all_sum" type="text" class="form-control" value="" :class="{'is-invalid': errors.all_sum}" v-model="editedPayment.all_sum"/>
+              <ErrorMessage name="all_sum" class="error-feedback" />
+            </div>
+            <div class="form-group d-inline-flex align-items-center mb-2 col-5">
+              <label for="deposited_amount">Внесённая сумма:</label>
+              <Field name="deposited_amount" type="number" class="form-control" value="" :class="{'is-invalid': errors.deposited_amount}" v-model="editedPayment.deposited_amount"/>
+              <ErrorMessage name="deposited_amount" class="error-feedback" />
+            </div>
+
+            <div class="form-group d-inline-flex align-items-center mb-2 col-5">
+              <label for="left_to_pay">Остаточная сумма:</label>
+              <Field name="left_to_pay" type="number" class="form-control" value="" :class="{'is-invalid': errors.left_to_pay}" v-model="editedPayment.left_to_pay"/>
+              <ErrorMessage name="left_to_pay" class="error-feedback" />
+            </div>
+
+            <div class="form-group d-inline-flex align-items-center mb-2 col-6">
+              <label for="bank">Банк:</label>
+              <Field name="bank" type="text" class="form-control" value="" :class="{'is-invalid': errors.bank}" v-model="editedPayment.bank"/>
+              <ErrorMessage name="bank" class="error-feedback" />
+            </div>
 
          
 
@@ -68,9 +65,13 @@
                 v-show="loading"
                 class="spinner-border spinner-border-sm"
               ></span>
-              Обновить законного представителя
+              Обновить платёж
             </button>
-            <router-link to="/payers" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
+
+            <button type="button" class="btn btn-danger mx-2 float-end" @click="deletePayment">
+              Удалить платёж
+            </button>
+            <router-link to="/payments" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
           </div>
         </div>
       </Form>
@@ -175,34 +176,50 @@ import { Form, Field, ErrorMessage } from "vee-validate";
       return {
         schema,
         loading:false,
-        payer: null, // заглушка для данных студента
-        editedPayer: null, // заглушка для новых данных студента
+        payment: null, // заглушка для данных студента
+        editedPayment: null, // заглушка для новых данных студента
         groups: null,
+        contracts:null
 
       };
     },
     methods: {
-      // грузим студента из psql по id 
-      async loadPayerDetail() {
-        const payerId = this.$route.params.payerId;
+
+      async deletePayment() {
         try {
-          const response = await UserService.getPayerById(payerId);
-          this.payer = response.data;
+          // запрос в psql
+          this.loading=true;
+
+          const response = await UserService.deletePaymentById(this.payment.id);
+          response.data;
+        
+          this.loading=false;
+          
+          this.toast.success("Успешно удалили!");
+          this.$router.push('/payments');
+        } catch (error) {
+          console.error('Ошибка загрузки данных', error);
+        }
+      },
+      // грузим студента из psql по id 
+      async loadPaymentDetail() {
+        const paymentID = this.$route.params.paymentID;
+        try {
+          const response = await UserService.getPaymentById(paymentID);
+          this.payment = response.data;
           // Клонирование объекта, для избежание редактирования данных сразу
-          this.editedPayer = { ...response.data };
+          this.editedPayment = { ...response.data };
         } catch (error) {
           console.error('Error loading payer details:', error);
         }
       },
       // Метод для обновления данных о студенте
-      async updatePayer() {
+      async updatePayment() {
         try {
           // запрос в psql
           this.loading=true;
 
-          const response = await UserService.updatePayerById(this.payer.id, this.editedPayer.name , this.editedPayer.surname  , this.editedPayer.lastname  , 
-          this.editedPayer.snils , this.editedPayer.passport , this.editedPayer.issued_by , this.editedPayer.issue_date , this.editedPayer.department_code , this.editedPayer.registration_address , this.editedPayer.phone_number ,
-          this.editedPayer.email);
+          const response = await UserService.updatePaymentById(this.payment.id, this.editedPayment.contract_id, this.editedPayment.expiration_date,this.editedPayment.date_40, this.editedPayment.all_sum, this.editedPayment.deposited_amount, this.editedPayment.left_to_pay, this.editedPayment.bank);
           response.data;
           this.payer = { ...this.editedPayer };
           this.loading=false;
@@ -211,25 +228,30 @@ import { Form, Field, ErrorMessage } from "vee-validate";
           console.error('Ошибка :', error);
         }
       },
-      async loadGroupsData() {
+      async loadContractsData() {
         try {
-          const response = await UserService.getGroupsAsIdText(); 
-          this.groups = Array.isArray(response.data) ? response.data : [response.data];
+          const response = await UserService.getContractsAsIdText(); 
+          this.contracts = Array.isArray(response.data) ? response.data : [response.data];
+          this.dataLoading=false;
         } catch (error) {
-          console.error('Ошибка :', error);
+          console.error('Ошибка загрузки данных:', error);
         }
-      }
+      },
     },
     created() {
-      this.loadGroupsData();
-      this.loadPayerDetail();
-     
+      this.loadPaymentDetail();
+     this.loadContractsData();
     },
   };
   </script>
-
 <style lang="scss" scoped>
-
+label{
+  margin-right: 15px;
+  white-space: nowrap;
+}
+.form-group{
+  margin-right: 20px;
+}
 .skeleton-text {
   width: 15%;
   height: 1.0em;

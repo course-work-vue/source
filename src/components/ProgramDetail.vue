@@ -44,6 +44,9 @@
               ></span>
               Обновить направление
             </button>
+            <button type="button" class="btn btn-danger mx-2 float-end" @click="deleteProgram">
+              Удалить программу
+            </button>
             <router-link to="/programs" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
           </div>
         </div>
@@ -112,6 +115,23 @@ import { Form, Field, ErrorMessage } from "vee-validate";
       };
     },
     methods: {
+
+      async deleteProgram() {
+        try {
+          // запрос в psql
+          this.loading=true;
+
+          const response = await UserService.deleteProgramById(this.editedProgram.id);
+          response.data;
+        
+          this.loading=false;
+          
+          this.toast.success("Успешно удалили!");
+          this.$router.push('/programs');
+        } catch (error) {
+          console.error('Ошибка загрузки данных', error);
+        }
+      },
       // грузим студента из psql по id 
       async loadProgramDetail() {
         const programId = this.$route.params.programId;

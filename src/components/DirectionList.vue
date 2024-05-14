@@ -15,7 +15,7 @@
 
 
 
-<div style="height: 50vh">
+<div style="height: 95vh">
 <div class="h-100 pt-5">
   <ag-grid-vue
     class="ag-theme-alpine"
@@ -46,12 +46,14 @@ import ButtonCell from "@/components/DirectionButtonCell.vue";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import UserService from "../services/user.service";
+import DirectionHref from "@/components/DirectionHrefCellRenderer.vue";
 /* eslint-disable vue/no-unused-components */
 export default {
   name: "App",
   components: {
     AgGridVue,
     ButtonCell,
+    DirectionHref
 
   },
   setup() {
@@ -93,7 +95,7 @@ export default {
     },
          
            { field: "dir_name", headerName: 'Название направления' },
-           { field: "dir_code", headerName: 'Код направления' },
+           { field: "dir_code", headerName: 'Код направления',cellRenderer: "DirectionHref" },
 
          
       ],
@@ -237,6 +239,13 @@ onFirstDataRendered(params) {
 </script>
 
 <style lang="scss" scoped>
+
+.ag-row .ag-cell {
+  display: flex;
+  justify-content: center; /* align horizontal */
+  align-items: center;
+}
+
 .skeleton {
   width: 100%;
   height: 1.2em;
@@ -246,8 +255,16 @@ onFirstDataRendered(params) {
   border-radius: 4px;
   margin: 0.2em 0;
 }
+  .list{
+    padding-left: 100px;
+    font-size: 5px;
 
+  }
 
+    .text-center * {
+      justify-content: center;
+      display:flex 
+  }
 
 @keyframes skeletonShimmer {
   0% {

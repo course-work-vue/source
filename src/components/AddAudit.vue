@@ -347,4 +347,5 @@ table{
 .highlighted{
   background-color: lightblue;
 }
+
 </style>

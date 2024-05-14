@@ -235,9 +235,12 @@ CREATE TABLE "profiles"(
 CREATE TABLE "course_work" (
     "course_work_id" SERIAL PRIMARY KEY,
     "course_work_teacher_id" INTEGER,
-    "course_work_theme" VARCHAR(200),
+    "course_work_theme" VARCHAR(300),
     "course_work_student_id" INTEGER,
-    "course_work_kafedra" VARCHAR(100)
+    "course_work_kafedra" INTEGER,
+    "course_work_ocenka" INTEGER,
+    "course_work_year" INTEGER,
+    "course_work_vipysk" BOOLEAN
 );
 
 INSERT INTO "students" (
@@ -361,7 +364,6 @@ CREATE TABLE pay_graph(
 
 CREATE TABLE listeners(
     id serial PRIMARY KEY,
-    days_of_week varchar(3)[],
     people_count INT,
     payer_id INT,
     name VARCHAR(255),

@@ -4,7 +4,12 @@
   <div class="col col-xs-9 col-lg-12 mt-4 list">
     <div class="col col-12">
     <div class="mb-3 col col-12">
-    
+      <div v-if="!pr">
+        <h1> Список всех групп </h1>
+      </div>
+      <div v-if="pr">
+        <h1> Список всех групп с профилем {{ pr_n }} </h1>
+      </div>
       <button @click="navigateToAddGroup" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить группу</button>
       <div class="col col-6 float-end d-inline-flex align-items-center mb-2 ">
       <button @click="clearFilters" :disabled="!filters" class="btn btn-sm btn-primary text-nowrap mx-2" type="button"><i class="material-icons-outlined">close</i>Очистить фильтры</button>
@@ -15,7 +20,7 @@
 
 
 
-<div style="height: 50vh">
+<div style="height: 95vh">
 <div class="h-100 pt-5">
   <ag-grid-vue
     class="ag-theme-alpine"
@@ -44,6 +49,7 @@ import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
 import { reactive, onMounted, ref } from "vue";
 import ButtonCell from "@/components/GroupButtonCell.vue";
 import GroupHref from "@/components/GroupHrefCellRenderer.vue";
+import GroupHref2 from "@/components/GroupHrefCellRenderer2.vue";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import UserService from "../services/user.service";
@@ -53,7 +59,8 @@ export default {
   components: {
     AgGridVue,
     ButtonCell,
-    GroupHref
+    GroupHref,
+    GroupHref2
   },
   setup() {
     const gridApi = ref(null); // Optional - for accessing Grid's API
@@ -91,8 +98,9 @@ export default {
       maxWidth: 120, resizable: false
 
     },
-           { field: "group_number", headerName: 'Номер группы', cellRenderer: "GroupHref" },
-           { field: "prof_name", headerName: 'Название профиля' },
+           { field: "group_number", headerName: 'Номер группы', cellRenderer: "GroupHref", maxWidth:179 },
+           { field: "course", headerName: 'Курс', maxWidth:129 },
+           { field: "prof_name", headerName: 'Название профиля',cellRenderer: "GroupHref2" },
            { field: "dir_code", headerName: 'Код направления', hide: true },
            {
             field: 'dir_name',
@@ -149,7 +157,9 @@ export default {
   data() {
   return {
     quickFilterValue: '',
-    filters:false
+    filters:false,
+    pr:false,
+    pr_n:null
   };
 },
   methods: {
@@ -210,7 +220,15 @@ onFirstDataRendered(params) {
   if (savedFilterModel && Object.keys(savedFilterModel).length > 0) {
     queryParams.filterModel = JSON.stringify(savedFilterModel);
     this.filters=true;
+    if(savedFilterModel.prof_name){
+      this.pr=true;
+      this.pr_n=savedFilterModel.prof_name.filter;
+    }
+    else{
+      this.pr=false;
+    }
   }
+  else{    this.pr=false;}
 
   // Push the query parameters to the router
   this.$router.push({ query: queryParams });

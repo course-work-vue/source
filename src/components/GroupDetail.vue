@@ -42,7 +42,45 @@
           </div>
 
     
+          <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+              <label for="course">Курс:</label>
+              
+              <Select2 class="col-5" :class="{'form-control is-invalid': errors.course}" v-model="editedGroup.course"
+              :options="courses" 
+              :settings=" { theme: 'bootstrap-5', width: '100%'}"
+              
+               />
 
+               <Field  name="course" as="select" v-model="editedGroup.course" hidden>
+                <option v-for="course in courses" :key="course.id" :value="course.id">{{ course.text }}</option>
+              </Field>
+              <ErrorMessage name="course" class="error-feedback" />
+            </div>
+
+
+            
+            <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+              <label for="magister">Магистратура:</label>
+
+              <Field v-slot="{ field2 }" name="magister" type="radio" :value="true">
+                <label>
+                  <input type="radio" name="magister" v-bind="field2" value="false" class="form-check-input mt-0 ml-5" v-model="editedGroup.magister" :checked="editedGroup.magister == false" />
+                  Нет
+                </label>
+              </Field>
+              <ErrorMessage name="magister" class="error-feedback" />
+              <Field v-slot="{ field }" name="magister" type="radio" :value="true">
+                <label>
+                  <input type="radio" name="magister" v-bind="field" value="true" class="form-check-input mt-0 ml-5" v-model="editedGroup.magister" :checked="editedGroup.magister == true" />
+                  Да
+                </label>
+              </Field>
+            </div>
+             
+             
+
+             
+          
           <div class="form-group mt-3">
             <button class="btn btn-primary btn-block float-start" :disabled="loading">
               <span
@@ -51,6 +89,11 @@
               ></span>
               Обновить группу
             </button>
+            <div class="form-group float-end">
+            <button type="button" class="btn btn-danger float-end" @click="deleteGroup">
+              Удалить группу
+            </button>
+          </div>
             <router-link to="/groups" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
           </div>
         </div>
@@ -179,18 +222,38 @@ import { Form, Field, ErrorMessage } from "vee-validate";
         editedGroup: null, // заглушка для новых данных студента
         profiles: null,
         directions: null,
-
+        courses: [
+        { id: '1', text: '1' },
+        { id: '2', text: '2' },
+        { id: '3', text: '3' },
+        { id: '4', text: '4' }
+      ],
       };
     },
     methods: {
       // грузим студента из psql по id 
+      async deleteGroup() {
+        try {
+          // запрос в psql
+          this.loading=true;
 
+          const response = await UserService.deleteGroupById(this.group.group_id);
+          response.data;
+   
+          this.loading=false;
+          
+          this.toast.success("Успешно удалили!");
+          this.$router.push('/groups');
+        } catch (error) {
+          console.error('Ошибка загрузки данных', error);
+        }
+      },
       async updateGroup() {
         try {
           // запрос в psql
           this.loading=true;
 
-          const response = await UserService.updateGroupById(this.group.group_id, this.editedGroup.group_dir_id, this.editedGroup.group_prof_id, this.editedGroup.group_number);
+          const response = await UserService.updateGroupById(this.group.group_id, this.editedGroup.group_dir_id, this.editedGroup.group_prof_id, this.editedGroup.group_number, this.editedGroup.course, this.editedGroup.magister);
           response.data;
           this.group = { ...this.editedgroup };
           this.loading=false;

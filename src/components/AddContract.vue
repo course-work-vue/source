@@ -44,10 +44,10 @@
         <Form @submit="addContract" :validation-schema="schema" v-slot="{ errors }">
           <div>
                       
-          <div class="form-group">
-            <label for="listener_id">Слушатель</label>
+          <div class="form-group d-inline-flex align-items-center mb-2 col-8">
+            <label  for="listener_id">Слушатель</label>
             
-            <Select2 :class="{'form-control is-invalid': errors.listener_id}" v-model="myValue" 
+            <Select2 class="col-5" :class="{'form-control is-invalid': errors.listener_id}" v-model="myValue" 
             :options="listeners" 
             :settings=" { theme: 'bootstrap-5', width: '100%'}"
             
@@ -59,10 +59,10 @@
             <ErrorMessage name="listener_id" class="error-feedback" />
           </div>
 
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-6">
             <label for="payer_id">Законный представитель</label>
             
-            <Select2 :class="{'form-control is-invalid': errors.payer_id}" v-model="myValue2" 
+            <Select2 class="col-5" :class="{'form-control is-invalid': errors.payer_id}" v-model="myValue2" 
             :options="payers" 
             :settings=" { theme: 'bootstrap-5', width: '100%'}"
             
@@ -74,16 +74,16 @@
             <ErrorMessage name="payer_id" class="error-feedback" />
           </div>
 
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="contr_number">Номер договора</label>
             <Field name="contr_number" type="text" value="" class="form-control" :class="{'is-invalid': errors.contr_number}" />
             <ErrorMessage name="contr_number" class="error-feedback" />
           </div>
 
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="program_id">Программы</label>
             
-            <Select2 :class="{'form-control is-invalid': errors.program_id}" v-model="myValue3" 
+            <Select2 class="col-5" :class="{'form-control is-invalid': errors.program_id}" v-model="myValue3" 
             :options="programs" 
             :settings=" { theme: 'bootstrap-5', width: '100%'}"
             
@@ -95,6 +95,45 @@
             <ErrorMessage name="program_id" class="error-feedback" />
           </div>
   
+
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
+            <label for="cert_date">Дата выдачи сертификата</label>
+            <Field name="cert_date" type="date" value="NULL" class="form-control" :class="{'is-invalid': errors.cert_date}" />
+            <ErrorMessage name="cert_date" class="error-feedback" />
+          </div>
+          
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
+            <label for="listened_hours">Прослушанные часы</label>
+            <Field name="listened_hours" type="number" value="NULL" class="form-control" :class="{'is-invalid': errors.listened_hours}" />
+            <ErrorMessage name="listened_hours" class="error-feedback" />
+          </div>
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
+            <label for="date_enroll">Дата зачисления</label>
+            <Field name="date_enroll" type="date" value="" class="form-control" :class="{'is-invalid': errors.date_enroll}" />
+            <ErrorMessage name="date_enroll" class="error-feedback" />
+          </div>
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
+            <label for="date_kick">Дата отчисления</label>
+            <Field name="date_kick" type="date" class="form-control" :class="{'is-invalid': errors.dadate_kickte_enroll}" />
+            <ErrorMessage name="date_kick" class="error-feedback" />
+          </div>
+
+          <div class="form-group d-inline-flex align-items-center mb-2 col-6">
+              <label for="group_to_move">Группа для перевода:</label>
+              
+              <Select2 class="col-5" :class="{'form-control is-invalid': errors.group_to_move}" v-model="myValueq" 
+              :options="groups" 
+              :settings=" { theme: 'bootstrap-5', width: '100%'}"
+              
+               />
+
+               <Field  name="group_to_move" as="select" v-model="myValueq" hidden>
+                <option v-for="group in groups" :key="group.id" :value="group.id">{{ group.text }}</option>
+              </Field>
+              <ErrorMessage name="group_to_move" class="error-feedback" />
+            </div>
+
+    
           </div>
           <div class="form-group mt-3">
               <button class="btn btn-primary btn-block" :disabled="loading">
@@ -158,7 +197,7 @@
         listeners: null,
         payers: null,
         programs: null,
-        
+        groups:null,
       };
     },
     computed: {
@@ -175,7 +214,7 @@
           this.loading=true;
 
           const response = await UserService.addContract(contract.listener_id, contract.payer_id, contract.contr_number, 
-          contract.program_id);
+          contract.program_id, contract.cert_date, contract.listened_hours, contract.date_enroll, contract.date_kick,contract.group_to_move);
           response.data;
           this.loading=false;
           this.successful=true;
@@ -206,6 +245,17 @@
           console.error('Ошибка загрузки данных:', error);
         }
       },
+      async loadGroupsData() {
+        try {
+          const response = await UserService.getLgroupsAsIdText(); 
+          this.groups = Array.isArray(response.data) ? response.data : [response.data];
+          this.groups.unshift({ id: 'NULL', text: 'Нет' });
+          console.log(this.groups)
+          this.dataLoading=false;
+        } catch (error) {
+          console.error('Error loading data:', error);
+        }
+      },
 
       async loadProgramsData() {
         try {
@@ -223,12 +273,24 @@
       this.loadListenersData();
       this.loadPayersData();
       this.loadProgramsData();
+      this.loadGroupsData();
     },
   };
   </script>
 
 <style lang="scss" scoped>
+.error-feedback{
+  white-space: nowrap;
+  margin-left:5px;
+}
 
+label{
+  margin-right: 15px;
+  white-space: nowrap;
+}
+.form-group{
+  margin-right: 20px;
+}
 .skeleton-text {
   width: 15%;
   height: 1.0em;

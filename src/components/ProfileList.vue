@@ -4,7 +4,12 @@
   <div class="col col-xs-9 col-lg-12 mt-4 list">
     <div class="col col-12">
       <div class="col col-12">
-    
+        <div v-if="!dirc">
+        <h1> Список всех профилей </h1>
+      </div>
+      <div v-if="dirc">
+        <h1> Список всех профилей с направлением {{ dir_c_n }} </h1>
+      </div>
     <button @click="navigateToAddProfile" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить профиль</button>
     <div class="col col-6 float-end d-inline-flex align-items-center mb-2 ">
     <button @click="clearFilters" :disabled="!filters" class="btn btn-sm btn-primary text-nowrap mx-2" type="button"><i class="material-icons-outlined">close</i>Очистить фильтры</button>
@@ -15,7 +20,7 @@
 
 
 
-<div style="height: 50vh">
+<div style="height: 95vh">
 <div class="h-100 pt-5">
   <ag-grid-vue
     class="ag-theme-alpine"
@@ -44,6 +49,7 @@ import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
 import { reactive, onMounted, ref } from "vue";
 import ButtonCell from "@/components/ProfileButtonCell.vue";
 import ProfileHref from "@/components/ProfileHrefCellRenderer.vue";
+import ProfileHref2 from "@/components/ProfileHrefCellRenderer2.vue";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import UserService from "../services/user.service";
@@ -53,7 +59,8 @@ export default {
   components: {
     AgGridVue,
     ButtonCell,
-    ProfileHref
+    ProfileHref,
+    ProfileHref2
   },
   setup() {
     const gridApi = ref(null); // Optional - for accessing Grid's API
@@ -92,7 +99,7 @@ export default {
 
     },
           
-           { field: "prof_name", headerName: 'Название профиля' },
+           { field: "prof_name", headerName: 'Название профиля', cellRenderer: "ProfileHref2" },
            { field: "dir_code", headerName: 'Код направления', cellRenderer: "ProfileHref" },
            {
             field: 'dir_name',
@@ -149,7 +156,9 @@ export default {
   data() {
   return {
     quickFilterValue: '',
-    filters:false
+    filters:false,
+    dirc:false,
+    dir_c_n:null
   };
 },
   methods: {
@@ -204,13 +213,23 @@ onFirstDataRendered(params) {
   if (savedQuickFilter) {
     queryParams.quickFilter = JSON.stringify(savedQuickFilter);
     this.filters=true;
+
+    
   }
 
   // Check if savedFilterModel is not empty, then add it to queryParams
   if (savedFilterModel && Object.keys(savedFilterModel).length > 0) {
     queryParams.filterModel = JSON.stringify(savedFilterModel);
     this.filters=true;
+    if(savedFilterModel.dir_code){
+      this.dirc=true;
+      this.dir_c_n=savedFilterModel.dir_code.filter;
+    }
+    else{
+      this.dirc=false;
+    }
   }
+  else{    this.dirc=false;}
 
   // Push the query parameters to the router
   this.$router.push({ query: queryParams });
@@ -224,6 +243,8 @@ onFirstDataRendered(params) {
     this.gridApi.setQuickFilter();
     this.quickFilterValue='';
     this.filters=false;
+    this.dirc=false;
+    
   },
 
   

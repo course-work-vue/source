@@ -68,55 +68,55 @@
         <Form @submit="addPayer" :validation-schema="schema" v-slot="{ errors }">
                   
         <div >
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="lastname">Фамилия</label>
             <Field name="lastname" type="text" value="" class="form-control" :class="{'is-invalid': errors.lastname}" />
             <ErrorMessage name="lastname" class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="name">Имя</label>
             <Field name="name" type="text" class="form-control" value="" :class="{'is-invalid': errors.name}" />
             <ErrorMessage name="name" class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="surname">Отчество</label>
             <Field name="surname" type="text" class="form-control" value="" :class="{'is-invalid': errors.patronymic}" />
             <ErrorMessage name="surname" class="error-feedback" />
           </div>
          
      
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="passport">Серия и номер паспорта</label>
             <Field name="passport" type="text" class="form-control" value="" :class="{'is-invalid': errors.passport }" />
             <ErrorMessage name="passport" class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="issue_date">Дата выдачи</label>
             <Field name="issue_date" type="date" class="form-control" value="" :class="{'is-invalid': errors.date}" />
          
             <ErrorMessage name="issue_date " class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="department_code">Код подразделения</label>
             <Field name="department_code" type="text" class="form-control" value="" :class="{'is-invalid': errors.department_code }" />
             <ErrorMessage name="department_code " class="error-feedback" />
           </div>
-          <div class="form-group">
-            <label for="registration_address">Адресс регистрации</label>
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
+            <label for="registration_address">Адрес регистрации</label>
             <Field name="registration_address" type="text" class="form-control" value="" :class="{'is-invalid': errors.registration_address }"/>
             <ErrorMessage name="registration_address " class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="SNILS">СНИЛС</label>
             <Field name="SNILS" type="text" class="form-control" value="" :class="{'is-invalid': errors.SNILS}" />
             <ErrorMessage name="SNILS" class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="phone_number">Телефон</label>
             <Field name="phone_number" type="text" class="form-control" value="" :class="{'is-invalid': errors.phone_number }" />
             <ErrorMessage name="phone_number" class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="email">Email</label>
             <Field name="email" type="text" class="form-control"  value="" :class="{'is-invalid': errors.email}" />
             <ErrorMessage name="email" class="error-feedback" />
@@ -204,7 +204,7 @@
           this.loading=true;
 
           const response = await UserService.addPayer(payer.name, payer.surname, payer.lastname, 
-          payer.snils, payer.passport, payer.issued_by, payer.issue_date, payer.department_code, payer.registration_address, payer.phone_number,
+          payer.SNILS, payer.passport, payer.issued_by, payer.issue_date, payer.department_code, payer.registration_address, payer.SNILS, payer.phone_number,
           payer.email);
           response.data;
           this.loading=false;

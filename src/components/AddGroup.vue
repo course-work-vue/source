@@ -21,7 +21,7 @@
           <div>
 
           <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-              <label for="group_number">Номер группы</label>
+              <label for="group_number">Номер группы:</label>
               <Field name="group_number" type="text" class="form-control" :class="{'is-invalid': errors.group_number}"/>
               <ErrorMessage name="group_number" class="error-feedback" />
               
@@ -31,7 +31,7 @@
            
 
             <div class="form-group d-inline-flex align-items-center col-5 mb-2">
-              <label for="group_dir_id">Направление</label>
+              <label for="group_dir_id">Направление:</label>
               
               <Select2 class="col-5" :class="{'form-control is-invalid': errors.group_dir_id}" v-model="myValue" 
               :options="directions" 
@@ -47,7 +47,7 @@
 
 
             <div class="form-group d-inline-flex align-items-center col-10 mb-2">
-              <label for="group_prof_id">Профиль</label>
+              <label for="group_prof_id">Профиль:</label>
               
               <Select2 class="col-5" :class="{'form-control is-invalid': errors.group_prof_id}" v-model="myValue2" 
               :options="profiles" 
@@ -62,7 +62,31 @@
             </div>
 
 
-   
+            <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+              <label for="course">Курс:</label>
+              
+              <Select2 class="col-5" :class="{'form-control is-invalid': errors.course}" v-model="myValue3" 
+              :options="courses" 
+              :settings=" { theme: 'bootstrap-5', width: '100%'}"
+              
+               />
+
+               <Field  name="course" as="select" v-model="myValue3" hidden>
+                <option v-for="course in courses" :key="course.id" :value="course.id">{{ course.text }}</option>
+              </Field>
+              <ErrorMessage name="course" class="error-feedback" />
+            </div>
+
+            <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+              <label for="magister">Магистратура:</label>
+              <Field name="magister" type="radio" id="magister2" value="false" class="form-check-input mt-0 ml-5" :class="{'is-invalid': errors.magister}"/>
+              <label for="magister2">Нет</label>
+              <Field name="magister" type="radio" id="magister1" value="true" class="form-check-input mt-0" :class="{'is-invalid': errors.magister}"/>
+              <label for="magister1">Да</label>
+             
+              <ErrorMessage name="magister" class="error-feedback" />
+              
+            </div>
 
             <div class="form-group mt-3">
              
@@ -72,7 +96,7 @@
                  v-show="loading"
                  class="spinner-border spinner-border-sm"
                ></span>
-               Добавить профиль
+               Добавить группу
              </button>
            </div>
           </div>
@@ -127,7 +151,12 @@
         groups: null,
         profiles: null,
         directions: null,
-
+        courses: [
+        { id: '1', text: '1' },
+        { id: '2', text: '2' },
+        { id: '3', text: '3' },
+        { id: '4', text: '4' }
+      ],
         myValue: '',
       };
     },
@@ -144,7 +173,7 @@
           // запрос в psql
           this.loading=true;
 
-          const response = await UserService.addGroup(group.group_dir_id,group.group_prof_id,group.group_number);
+          const response = await UserService.addGroup(group.group_dir_id,group.group_prof_id,group.group_number,group.course,group.magister);
           response.data;
           this.loading=false;
           this.successful=true;
@@ -152,7 +181,7 @@
           this.toast.success("Успешно добавили группу!");
         } catch (error) {
           this.message="Ошибка";
-          this.toast.error("Ошибка добавления группу");
+          this.toast.error("Ошибка добавления группы");
           console.error('Error:', error);
         }
       },

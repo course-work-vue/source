@@ -4,55 +4,55 @@
       <Form @submit="updatePayer" :validation-schema="schema" v-slot="{ errors }">
         
         <div >
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="lastname">Фамилия</label>
             <Field name="lastname" type="text" value="" class="form-control" :class="{'is-invalid': errors.lastname}" v-model="editedPayer.lastname "/>
             <ErrorMessage name="lastname" class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="name">Имя</label>
             <Field name="name" type="text" class="form-control" value="" :class="{'is-invalid': errors.name}" v-model="editedPayer.name "/>
             <ErrorMessage name="name" class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="surname">Отчество</label>
             <Field name="surname" type="text" class="form-control" value="" :class="{'is-invalid': errors.patronymic}" v-model="editedPayer.surname "/>
             <ErrorMessage name="surname" class="error-feedback" />
           </div>
          
      
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="passport ">Серия и номер паспорта</label>
             <Field name="passport " type="text" class="form-control" value="" :class="{'is-invalid': errors.passport }" v-model="editedPayer.passport "/>
             <ErrorMessage name="passport " class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="issue_date">Дата выдачи</label>
             <Field name="issue_date" type="date" class="form-control" value="" :class="{'is-invalid': errors.date}" v-model="editedPayer.issue_date "/>
          
             <ErrorMessage name="issue_date " class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="department_code ">Код подразделения</label>
             <Field name="department_code " type="text" class="form-control" value="" :class="{'is-invalid': errors.department_code }" v-model="editedPayer.department_code "/>
             <ErrorMessage name="department_code " class="error-feedback" />
           </div>
-          <div class="form-group">
-            <label for="registration_address ">Адресс регистрации</label>
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
+            <label for="registration_address ">Адрес регистрации</label>
             <Field name="registration_address " type="text" class="form-control" value="" :class="{'is-invalid': errors.registration_address }" v-model="editedPayer.registration_address "/>
             <ErrorMessage name="registration_address " class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="SNILS">СНИЛС</label>
             <Field name="SNILS" type="text" class="form-control" value="" :class="{'is-invalid': errors.SNILS}" v-model="editedPayer.snils "/>
             <ErrorMessage name="SNILS" class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="phone_number ">Телефон</label>
             <Field name="phone_number " type="text" class="form-control" value="" :class="{'is-invalid': errors.phone_number }" v-model="editedPayer.phone_number "/>
             <ErrorMessage name="phone_number " class="error-feedback" />
           </div>
-          <div class="form-group">
+          <div class="form-group d-inline-flex align-items-center mb-2 col-5">
             <label for="email">Email</label>
             <Field name="email" type="text" class="form-control"  value="" :class="{'is-invalid': errors.email}"  v-model="editedPayer.email"/>
             <ErrorMessage name="email" class="error-feedback" />
@@ -69,6 +69,9 @@
                 class="spinner-border spinner-border-sm"
               ></span>
               Обновить законного представителя
+            </button>
+            <button type="button" class="btn btn-danger mx-2 float-end" @click="deletePayer">
+              Удалить плательщика
             </button>
             <router-link to="/payers" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
           </div>
@@ -182,6 +185,22 @@ import { Form, Field, ErrorMessage } from "vee-validate";
       };
     },
     methods: {
+      async deletePayer() {
+        try {
+          // запрос в psql
+          this.loading=true;
+
+          const response = await UserService.deletePayerById(this.payer.id);
+          response.data;
+        
+          this.loading=false;
+          
+          this.toast.success("Успешно удалили!");
+          this.$router.push('/payers');
+        } catch (error) {
+          console.error('Ошибка загрузки данных', error);
+        }
+      },
       // грузим студента из psql по id 
       async loadPayerDetail() {
         const payerId = this.$route.params.payerId;

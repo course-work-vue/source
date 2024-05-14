@@ -2,19 +2,35 @@
 
 
   <div class="col col-xs-9 col-lg-12 mt-4 list">
+    <div v-if="!pr">
+        <h1> Список всех квалификационных работ </h1>
+      </div>
+      <div v-if="pr">
+        <h1> Список квалификационных работ с ФИО {{ pr_n }} </h1>
+      </div>
     <div class="col col-12">
     <div class="mb-3 col col-12">
+
+      <div class="col col-12">
     
-      <button @click="navigateToAddCW" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить курсовую работу</button>
-      <div class="col col-3 float-end">
-      <input class="form-control"  id="filter-text-box" v-on:input="onFilterTextBoxChanged()" placeholder="Поиск..."> 
-    </div>
+    <button @click="navigateToAddCW" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить курсовую работу</button>
+    <button onclick="location.href='http://195.93.252.168:5050/api/CourseWork/ExportCourseWorks'" class="mx-2 btn btn-primary float-start" type="button">Отчёт о научных руководителях</button>
+    
+    <div class="col col-6 float-end d-inline-flex align-items-center">
+    <button @click="clearFilters" :disabled="!filters" class="btn btn-sm btn-primary text-nowrap mx-2" type="button"><i class="material-icons-outlined">close</i>Очистить фильтры</button>
+    <input class="form-control" type="text" v-model="quickFilterValue" id="filter-text-box" v-on:input="onFilterTextBoxChanged()" placeholder="Поиск..."> 
+
+    
   </div>
 </div>
+<br>
 
+  </div>
+</div>
+<br>
 
-
-<div style="height: 50vh">
+<br>
+<div style="height: 95vh">
 <div class="h-100 pt-5">
   <ag-grid-vue
     class="ag-theme-alpine"
@@ -41,7 +57,7 @@
 
 import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
 import { reactive, onMounted, ref } from "vue";
-import ButtonCell from "@/components/GroupButtonCell.vue";
+import ButtonCell from "@/components/CWButtonCell.vue";
 import GroupHref from "@/components/GroupHrefCellRenderer.vue";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
@@ -87,16 +103,14 @@ export default {
         onClick: navigateToStudent,
         label: 'View Details', // Button label
       },
-      minWidth: 150, // Adjust the width as needed
+      maxWidth: 120,
       cellClass: "grid-cell-centered",
 
     },
-           { field: "course_work_id", headerName: 'ID', filter: 'agSetColumnFilter'
-           },
-           { field: "course_work_kafedra", headerName: 'Кафедра'},
+           { field: "dep_name", headerName: 'Кафедра'},
            { field: "course_work_theme", headerName: 'Тема' },
            { field: "full_name", headerName: 'ФИО студента' },
-
+           { field: "full_name_t", headerName: 'ФИО препода' },
            
          
       ],
@@ -144,7 +158,14 @@ export default {
 
     };
   },
-  
+  data() {
+  return {
+    quickFilterValue: '',
+    filters:false,
+    pr:false,
+    pr_n:null
+  };
+},
   methods: {
 
     async loadGroupsData() {
@@ -170,18 +191,63 @@ onFirstDataRendered(params) {
       if (filterModelQuery) {
         const filterModel = JSON.parse(filterModelQuery);
         this.gridApi.setFilterModel(filterModel);
+        this.filters=true;
+        
+      }
+
+      const quickFilterQuery = this.$route.query.quickFilter;
+      if (quickFilterQuery) {
+        const quickFilter = JSON.parse(quickFilterQuery);
+        this.gridApi.setQuickFilter(quickFilter);
+        this.quickFilterValue = quickFilter;
+        this.filters=true;
       }
     },
     onFilterChanged() {
-    // This function will be called whenever filters change.
-    // You can perform your desired action here.
-    // For example, you can get the current filter model:
-    const savedFilterModel = this.gridApi.getFilterModel();
-    const query = { filterModel: JSON.stringify(savedFilterModel) };
-    this.$router.push({ query });
-    // Do something with the filterModel or trigger other actions as needed.
-  },
+  // This function will be called whenever filters change.
+  // You can perform your desired action here.
+  // For example, you can get the current filter model:
+  this.filters=false;
+  const savedQuickFilter = this.gridApi.getQuickFilter();
+  const savedFilterModel = this.gridApi.getFilterModel();
+
+  // Initialize an empty object for queryParams
+  const queryParams = {};
+
+  // Check if savedQuickFilter is not empty, then add it to queryParams
+  if (savedQuickFilter) {
+    queryParams.quickFilter = JSON.stringify(savedQuickFilter);
+    this.filters=true;
+  }
+
+  // Check if savedFilterModel is not empty, then add it to queryParams
+  if (savedFilterModel && Object.keys(savedFilterModel).length > 0) {
+    queryParams.filterModel = JSON.stringify(savedFilterModel);
+    this.filters=true;
+    if(savedFilterModel.full_name){
+      this.pr=true;
+      this.pr_n=savedFilterModel.full_name.filter;
+    }
+    else{
+      this.pr=false;
+    }
+  }
+  else{    this.pr=false;}
+
+  // Push the query parameters to the router
+  this.$router.push({ query: queryParams });
+
+  // Do something with the filterModel or trigger other actions as needed.
+},
+  clearFilters(){
+
   
+    this.gridApi.setFilterModel();
+    this.gridApi.setQuickFilter();
+    this.quickFilterValue='';
+    this.filters=false;
+  },
+
     },
 
     created() {

@@ -15,7 +15,7 @@
 
 
 
-<div style="height: 50vh">
+<div style="height: 90vh">
 <div class="h-100 pt-5">
   <ag-grid-vue
     class="ag-theme-alpine"
@@ -42,7 +42,7 @@
 
 import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
 import { reactive, onMounted, ref } from "vue";
-import ButtonCell from "@/components/PayerButtonCell.vue";
+import ButtonCell from "@/components/PaymentButtonCell.vue";
 import GroupHref from "@/components/GroupHrefCellRenderer.vue";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
@@ -94,8 +94,9 @@ export default {
            
            { field: "contr_number", headerName: 'Номер договора' },
            {
-            field: 'full_name',
-            headerName: 'ФИО слушателя'
+            field: 'expiration_date',
+            headerName: 'Дата просрочки',filter: 'agDateColumnFilter',
+            filterParams: filterParams,
            },
            {
             field: 'full_name2',
@@ -249,6 +250,28 @@ onFirstDataRendered(params) {
     },
 
     
+};
+var filterParams = {
+  comparator: (filterLocalDateAtMidnight, cellValue) => {
+    var dateAsString = cellValue;
+    if (dateAsString == null) return -1;
+    var dateParts = dateAsString.split('/');
+    var cellDate = new Date(
+      Number(dateParts[2]),
+      Number(dateParts[1]) - 1,
+      Number(dateParts[0])
+    );
+    if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
+      return 0;
+    }
+    if (cellDate < filterLocalDateAtMidnight) {
+      return -1;
+    }
+    if (cellDate > filterLocalDateAtMidnight) {
+      return 1;
+    }
+    return 0;
+  },
 };
 
 
