@@ -148,7 +148,7 @@
   
       async loadTeachersData() {
           try {
-            const response = await UserService.getAllTeachers(); // Replace with your API endpoint
+            const response = await UserService.getAllTeacherss(); // Replace with your API endpoint
             this.rowData.value = Array.isArray(response.data) ? response.data : [response.data];
             this.loading=false;
           } catch (error) {
