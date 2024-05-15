@@ -107,6 +107,12 @@
             },
           ]
         },
+          {
+          label: "Журнал",
+          link: "/teachers",
+          icon: "school",
+          
+        },
         {
           label: "Настройки",
           link: "/profile",
