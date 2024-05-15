@@ -1712,7 +1712,9 @@ addPayment(contract_id, expiration_date, date_40, all_sum, deposited_amount, lef
       return axios.post(API_URL, query, { headers: authHeader() });
     }
 
-  //Excel Запросы
+    //Excel Запросы     
+
+  //Пример
 
     //Чистка временных таблиц
   clearTempTeachGruz() {
@@ -1749,6 +1751,20 @@ addPayment(contract_id, expiration_date, date_40, all_sum, deposited_amount, lef
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
+  cleartempRaspr() {
+    const query = {
+      query: `TRUNCATE "temp_distrib_KIT" RESTART IDENTITY;`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  cleartempOfoVO() {
+    const query = {
+      query: `TRUNCATE "temp_OFO_VO" RESTART IDENTITY;`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
   clearForShedLec() {
     const query = {
       query: `TRUNCATE "for_sched_lec" RESTART IDENTITY;`,
@@ -1759,6 +1775,13 @@ addPayment(contract_id, expiration_date, date_40, all_sum, deposited_amount, lef
   clearForShedPrac() {
     const query = {
       query: `TRUNCATE "for_sched_prac" RESTART IDENTITY;`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  clearTempKurs() {
+    const query = {
+      query: `TRUNCATE "kurs_VKR" RESTART IDENTITY;`,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
@@ -1942,6 +1965,96 @@ addPayment(contract_id, expiration_date, date_40, all_sum, deposited_amount, lef
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
+  insertTempRaspr(name) {
+    const query = {
+      query: `INSERT INTO "temp_distrib_KIT" (
+        "fac",
+        "kaf",
+        "fio",
+        "sem1",
+        "sem2",
+        "lec",
+        "sem",
+        "lab",
+        "practice",
+        "VKR",
+        "GEK")
+        VALUES
+        ${name}
+      ;`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+  
+  insertTempOfoVO(name){
+    const query = {
+      query: `INSERT INTO "temp_OFO_VO" (
+        "fac",
+        "dep",
+        "dis_name",
+        "code_napr",
+        "kurs",
+        "kont_budg",
+        "kont_dog",
+        "number_of_streams",
+        "number_of_groups",
+        "number_of_subgroups",
+        "lek_budj",
+        "lek_dogovor",
+        "p_budg",
+        "p_dogovor",
+        "lab_budj",
+        "lab_dogovor",
+        "cons_ex",
+        "zachet_h",
+        "ex_speak",
+        "ex_wr",
+        "practice")
+        VALUES
+        ${name}
+      ;`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  insertTempKursVKR(name) {
+    const query = {
+      query: `INSERT INTO "kurs_VKR" (
+        "fac",
+        "dep",
+        "years",
+        "type",
+        "kurs",
+        "form",
+        "teach_fio",
+        "napr",
+        "st_fio"
+      ) VALUES ${name};`,
+    };
+  
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  insertTempProffesions(values) {
+    const query = {
+      query: `INSERT INTO "temp_proffesions" (
+        "fac",
+        "dep",
+        "napr",
+        "profile",
+        "kval",
+        "srok",
+        "proffesions"
+      ) VALUES ${values};`,
+    };
+  
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+
+  // GETы, лутаю количество для покраски кнопок
+
+  
   getTempTeachGruzCount(){
     const query = {
       query: `SELECT COUNT(*) FROM "temp_teach_gruz";`,
@@ -1979,59 +2092,75 @@ addPayment(contract_id, expiration_date, date_40, all_sum, deposited_amount, lef
 
   getTempRasprСount(){
     const query = {
-      query: `SELECT COUNT(*) FROM "temp_itogVO";`,
+      query: `SELECT COUNT(*) FROM "temp_distrib_KIT";`,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
   getTempOFOVOcount(){
     const query = {
-      query: `SELECT COUNT(*) FROM "temp_itogVO";`,
+      query: `SELECT COUNT(*) FROM "temp_OFO_VO";`,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
   getForShedLecOcount(){
     const query = {
-      query: `SELECT COUNT(*) FROM "temp_itogVO";`,
+      query: `SELECT COUNT(*) FROM "for_sched_lec";`,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
   getForShedPraccount(){
     const query = {
-      query: `SELECT COUNT(*) FROM "temp_itogVO";`,
+      query: `SELECT COUNT(*) FROM "for_sched_prac";`,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
   getTempKurscount(){
     const query = {
-      query: `SELECT COUNT(*) FROM "temp_itogVO";`,
+      query: `SELECT COUNT(*) FROM "kurs_VKR";`,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
   getTempPlanSvodcount(){
     const query = {
-      query: `SELECT COUNT(*) FROM "temp_itogVO";`,
+      query: `SELECT COUNT(*) FROM "empty_table";`,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
   getTempKompetcount(){
     const query = {
-      query: `SELECT COUNT(*) FROM "temp_itogVO";`,
+      query: `SELECT COUNT(*) FROM "empty_table";`,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
 
   getTempGruzKurscount(){
     const query = {
-      query: `SELECT COUNT(*) FROM "temp_itogVO";`,
+      query: `SELECT COUNT(*) FROM "empty_table";`,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
+
+  getTempKursDiagcount(){
+    const query = {
+      query: `SELECT COUNT(*) FROM "empty_table";`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  getPracticecount(){
+    const query = {
+      query: `SELECT COUNT(*) FROM "temp_practice";`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  // End ButtonCounters
 
   getTempSostav(){
     const query = {
@@ -2070,7 +2199,11 @@ addPayment(contract_id, expiration_date, date_40, all_sum, deposited_amount, lef
 
   getTempRaspr(){
     const query = {
-      query: `SELECT * FROM "temp_distrib_KIT";`,
+      query: `SELECT * 
+      FROM "temp_distrib_KIT"
+      INNER JOIN "temp_fac_names" 
+      ON ("temp_distrib_KIT"."fac" = "temp_fac_names"."full_name");
+      `,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
@@ -2078,6 +2211,13 @@ addPayment(contract_id, expiration_date, date_40, all_sum, deposited_amount, lef
   getTempOFO(){
     const query = {
       query: `SELECT * FROM "temp_OFO_VO";`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
+
+  getTempKurs(){
+    const query = {
+      query: `SELECT * FROM "kurs_VKR";`,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }
