@@ -245,32 +245,28 @@ class UserService {
 
 // ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ DIRECTIONS 
   getAllDirections(){
-    const query = {
-      query: `SELECT * from directions ORDER BY 
-      dir_name ASC;`,
-    };
-    return axios.post(API_URL, query, { headers: authHeader() });
+    let fr = axios.get(API+"/Direction", { headers: authHeader() })
+    // console.log(fr);
+    return fr;
   }
+
 
   getDirectionById(id){
-    const query = {
-      query: `SELECT * from directions where 
-      dir_id='${id}';`,
-    };
-    return axios.post(API_URL, query, { headers: authHeader() });
+
+    const apiUrl = `${API}/Direction/${id}`;
+
+    return axios.get(apiUrl, { headers: authHeader() });
   }
 
-  addDirection(dir_name,dir_code){
-    const query = {
-      query: `INSERT INTO "directions" (
-        "dir_name",
-        "dir_code"
-    ) VALUES (
-        '${dir_name}',
-        '${dir_code}'
-    );`,
+  addDirection(dir_name,dir_code,magister=true){
+    const apiUrl = `${API}/Direction`;
+    const data = {
+      dirName: dir_name,
+      dirCode: dir_code,
+      magister: magister
     };
-    return axios.post(API_URL, query, { headers: authHeader() });
+
+    return axios.post(apiUrl, data, { headers: authHeader() });
   }
 
   updateDirectionById(dir_id,dir_name,dir_code){
@@ -283,14 +279,17 @@ class UserService {
     return axios.put(API_URL +"directions", query, { headers: authHeader() });
   }
 
+  getAllTeachGruz(){
+    let fr = axios.get(API+"/TeachGruz", { headers: authHeader() })
+    // console.log(fr);
+    return fr;
+  }
 
   
 // ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ SUBJECTS
   getAllSubjects(){
-    const query = {
-      query: `SELECT * from subjects;`,
-    };
-    return axios.post(API_URL, query, { headers: authHeader() });
+    
+    return axios.get(API+"/Subject", { headers: authHeader() });
   }
 
   getSubjectById(id){
@@ -326,10 +325,8 @@ class UserService {
   
 // ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ TEACHERS
   getAllTeachers(){
-    const query = {
-      query: `SELECT * from teachers;`,
-    };
-    return axios.post(API_URL, query, { headers: authHeader() });
+    
+    return axios.get(API + "/Teacher" , { headers: authHeader() });
   }
 
   getTeachersForSubject(subject_id){
@@ -475,10 +472,8 @@ WHERE
 
 
 getAllWorkloads(){
-  const query = {
-    query: `SELECT * FROM workload`,
-  };
-  return axios.post(API_URL, query, { headers: authHeader() });
+  
+  return axios.get(API + "/Workload", { headers: authHeader() });
 }
 
 getWorkload(group_id){
@@ -504,6 +499,8 @@ editWorkload(wl_id, teacher_id){
   };
   return axios.post(API_URL, query, { headers: authHeader() });
 }
+
+
 
 addWorkload(group_id, subject_id, teacher_id){
   const query = {
