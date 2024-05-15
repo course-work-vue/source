@@ -340,9 +340,11 @@ deleteDirectionById(direction_id){
 
   
 // ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ TEACHERS
-  getAllTeachers(){
-    
-    return axios.get(API + "/Teacher" , { headers: authHeader() });
+ getAllTeachers(){
+    const query = {
+      query: `SELECT * from teachers;`,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
   }
 
   getTeachersForSubject(subject_id){
