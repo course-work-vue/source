@@ -99,6 +99,9 @@
               ></span>
               Обновить работу
             </button>
+            <button type="button" class="btn btn-danger mx-2 float-end" @click="deleteCW">
+              Удалить работу
+            </button>
             <router-link to="/courseworks" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
           </div>
         </div>
@@ -232,7 +235,22 @@ import { Form, Field, ErrorMessage } from "vee-validate";
     },
     methods: {
       // грузим студента из psql по id 
+      async deleteCW() {
+        try {
+          // запрос в psql
+          this.loading=true;
 
+          const response = await UserService.deleteCwById(this.Cw.course_work_id);
+          response.data;
+        
+          this.loading=false;
+          
+          this.toast.success("Успешно удалили!");
+          this.$router.push('/courseworks');
+        } catch (error) {
+          console.error('Ошибка загрузки данных', error);
+        }
+      },
       async updateCw() {
         try {
           // запрос в psql
@@ -287,12 +305,12 @@ import { Form, Field, ErrorMessage } from "vee-validate";
         }
       },
     },
-    created() {
-     
-      this.loadTeachersData();
-    this.loadStudentsData();
-    this.loadDepartamentsData();
-    this.loadCwDetail();
+    async created() {
+     await this.loadDepartamentsData();
+     await  this.loadTeachersData();
+     await this.loadStudentsData();
+
+     await this.loadCwDetail();
     },
   };
   </script>

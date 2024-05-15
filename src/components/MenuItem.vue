@@ -11,7 +11,7 @@
           
           <span v-if="showLabel" :class="{'test': !smallMenu}">{{ label }}</span>
           </router-link>
-          
+         
         </div>
         <div v-if="data" class="right">
           <i class="expand material-icons-outlined" :class="{ opened: expanded }">expand_more</i>

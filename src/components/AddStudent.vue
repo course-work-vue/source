@@ -282,17 +282,12 @@
     data() {
       const schema = yup.object().shape({
   last_name: yup.string().required('Требуется фамилия'),
-  first_name: yup.string().required('Требуется имя'),
-  patronymic: yup.string().required('Требуется отчество'),
-  gender: yup.string().required('Требуется пол'),
+ 
+
   date_of_birth: yup.string().required('Требуется дату рождения'),
-  passport_series_and_number: yup.string().required('Требуется серия и номер паспорта'),
-  place_of_birth: yup.string().required('Требуется место рождения'),
-  INN: yup.string().required('Требуется ИНН').matches(/^\d{12}$/, 'Некорректный ИНН'),
-  SNILS: yup.string().required('Требуется СНИЛС').matches(/^\d{11}$/, 'Некорректный СНИЛС'),
-  email: yup.string().required('Требуется электронная почта').email('Некорректный адрес электронной почты'),
-  student_login: yup.string().required('Требуется указать логин студента'),
-  enrollment_order: yup.string().required('Требуется приказ о зачислении'),
+ // INN: yup.string().matches(/^\d{12}$/, 'Некорректный ИНН'),
+  //SNILS: yup.string().matches(/^\d{11}$/, 'Некорректный СНИЛС'),
+  email: yup.string().email('Некорректный адрес электронной почты'),
   enrolled_date: yup.string().required('Требуется дату зачисления'),
   group_id: yup.string().required('Требуется указать группу'),
 

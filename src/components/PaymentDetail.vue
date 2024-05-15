@@ -67,6 +67,10 @@
               ></span>
               Обновить платёж
             </button>
+
+            <button type="button" class="btn btn-danger mx-2 float-end" @click="deletePayment">
+              Удалить платёж
+            </button>
             <router-link to="/payments" class="btn btn-secondary ml-2 float-end">Отмена</router-link>
           </div>
         </div>
@@ -180,6 +184,23 @@ import { Form, Field, ErrorMessage } from "vee-validate";
       };
     },
     methods: {
+
+      async deletePayment() {
+        try {
+          // запрос в psql
+          this.loading=true;
+
+          const response = await UserService.deletePaymentById(this.payment.id);
+          response.data;
+        
+          this.loading=false;
+          
+          this.toast.success("Успешно удалили!");
+          this.$router.push('/payments');
+        } catch (error) {
+          console.error('Ошибка загрузки данных', error);
+        }
+      },
       // грузим студента из psql по id 
       async loadPaymentDetail() {
         const paymentID = this.$route.params.paymentID;

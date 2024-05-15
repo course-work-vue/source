@@ -16,8 +16,8 @@
 </div>
 
 
-
-<div style="height: 50vh">
+<br>
+<div style="height: 90vh">
 <div class="h-100 pt-5">
   <ag-grid-vue
     class="ag-theme-alpine"

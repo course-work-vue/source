@@ -124,6 +124,22 @@
               <ErrorMessage name="phone_number_rod" class="error-feedback" />
               
             </div>
+            <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+
+<Field v-slot="{ field2 }" name="isBudget" type="radio" :value="true">
+  <label>
+    <input type="radio" name="isBudget" v-bind="field2" value="false" class="form-check-input mt-0 ml-5" v-model="editedStudent.isBudget" :checked="editedStudent.isBudget == false" />
+    Договор
+  </label>
+</Field>
+<ErrorMessage name="isBudget" class="error-feedback" />
+<Field v-slot="{ field }" name="editedStudent.isBudget" type="radio" :value="true">
+  <label>
+    <input type="radio" name="editedStudent.isBudget" v-bind="field" value="true" class="form-check-input mt-0 ml-5" v-model="editedStudent.isBudget" :checked="editedStudent.isBudget == true" />
+    Бюджет
+  </label>
+</Field>
+</div>
 
         </div>
           <div class="form-group  mt-3">
@@ -307,7 +323,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
 
           const response = await UserService.updateStudentById(this.student.student_id, this.editedStudent.first_name, this.editedStudent.last_name, this.editedStudent.patronymic, 
           this.editedStudent.gender, this.editedStudent.date_of_birth, this.editedStudent.passport_series_and_number, this.editedStudent.INN, this.editedStudent.SNILS, this.editedStudent.place_of_birth, this.editedStudent.email,
-          this.editedStudent.student_login, this.editedStudent.enrollment_order, this.editedStudent.enrolled_date, this.editedStudent.group_id, this.editedStudent.subgroup, this.editedStudent.zachetka_number,this.editedStudent.phone_number,this.editedStudent.phone_number_rod);
+          this.editedStudent.student_login, this.editedStudent.enrollment_order, this.editedStudent.enrolled_date, this.editedStudent.group_id, this.editedStudent.subgroup, this.editedStudent.zachetka_number,this.editedStudent.phone_number,this.editedStudent.phone_number_rod,this.editedStudent.isBudget);
           response.data;
           this.student = { ...this.editedStudent };
           this.loading=false;
@@ -326,6 +342,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
           this.student = { ...this.editedStudent };
           this.loading=false;
           this.toast.success("Успешно удалили студента!");
+          this.$router.push('/students');
         } catch (error) {
           console.error('Ошибка загрузки данных о студенте:', error);
         }

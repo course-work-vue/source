@@ -52,6 +52,10 @@
               link: "/groups",
             },
             {
+              label: "Курсы",
+              link: "/courses",
+            },
+            {
               label: "Курсовые",
               link: "/courseworks",
             }
@@ -67,12 +71,8 @@
               link: "/listeners",
             },
             {
-              label: "Плательщики",
+              label: "Список законных представителей",
               link: "/payers",
-            },
-            {
-              label: "Группы",
-              link: "/lgroups",
             },
             {
               label: "Договора",
@@ -91,25 +91,21 @@
 
           ]
         },
+          
         {
           label: "Расписание",
           link: "",
           icon: "calendar_month",
           children: [
             {
+              label: "Аудитории",
+              link: "/audits",
+            },
+            {
               label: "Нагрузка",
               link: "/ScheduleLoads",
             },
-            {
-              label: "Аудитории",
-              link: "/audits",
-            }
           ]
-        },
-          {
-          label: "Excel",
-          link: "/xlparse",
-          icon: "description"
         },
         {
           label: "Настройки",
@@ -173,3 +169,4 @@
   /* Add any other styles you want for the bottom-fixed item */
   }
   </style>
+

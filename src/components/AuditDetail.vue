@@ -170,26 +170,7 @@
         <label class="form-control skeleton-text skeleton-animate"></label>
         <input type="text" class="form-control skeleton skeleton-animate">
       </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
-      <div class="form-group">
-        <label class="form-control skeleton-text skeleton-animate"></label>
-        <input type="text" class="form-control skeleton skeleton-animate">
-      </div>
+      
     </div>
       <div
         v-if="message"
@@ -265,14 +246,25 @@ import { Form, Field, ErrorMessage } from "vee-validate";
     },
     methods: {
       // грузим студента из psql по id 
+      async loadAuditoriumData() {
+        const scheduleId = this.$route.params.scheduleId;
+        try {
+          const response = await UserService.getAuditById(scheduleId);
+          this.schedules = response.data;
+          // Клонирование объекта, для избежание редактирования данных сразу
+          this.editedSchedule = { ...response.data };
+        } catch (error) {
+          console.error('Error', error);
+        }
+      },
 
       async updateSchedule() {
         try {
           // запрос в psql
           this.loading=true;
 
-          const response = await UserService.updateScheduleById(this.schedule.schedule_id,this.editedSchedule.day_id,
-          this.editedSchedule.subject_id,this.editedSchedule.teacher_id,this.editedSchedule.aud_id);
+          const response = await UserService.updateScheduleById(this.schedules.t_id,this.editedSchedule.aud_id,this.editedSchedule.day_id,
+          this.editedSchedule.subject_id,this.editedSchedule.teacher_id,this.editedSchedule.group_id);
           response.data;
           this.schedules = { ...this.editedSchedule };
           this.loading=false;
@@ -286,7 +278,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
           // запрос в psql
           this.loading=true;
 
-          const response = await UserService.deleteScheduleById(this.schedule.schedule_id);
+          const response = await UserService.deleteScheduleById(this.schedules.schedule_id);
           response.data;
           this.schedules = { ...this.editedSchedule };
           this.loading=false;
@@ -320,17 +312,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
           console.error('Error:', error);
         }
       },
-      async loadAuditoriumData() {
-        const scheduleId = this.$route.params.scheduleId;
-        try {
-          const response = await UserService.getAuditById(scheduleId);
-          this.schedules = response.data;
-          // Клонирование объекта, для избежание редактирования данных сразу
-          this.editedSchedule = { ...response.data };
-        } catch (error) {
-          console.error('Error', error);
-        }
-      },
+      
       async loadTeachersData() {
         try {
           const response = await UserService.getTeachersAsIdText(); 
@@ -497,3 +479,4 @@ label{
     border: none;
 }
 </style>
+

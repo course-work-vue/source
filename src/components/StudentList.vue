@@ -15,6 +15,7 @@
     <div class="col col-12">
     
       <button @click="navigateToAddStudent" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить студента</button>
+      <button onclick="location.href='http://195.93.252.168:5050/api/Students/Export'" class="mx-2 btn btn-primary float-start" type="button">Отчёт о формах обучения</button>
       <div class="col col-6 float-end d-inline-flex align-items-center">
       <button @click="clearFilters" :disabled="!filters" class="btn btn-sm btn-primary text-nowrap mx-2" type="button"><i class="material-icons-outlined">close</i>Очистить фильтры</button>
       <input class="form-control" type="text" v-model="quickFilterValue" id="filter-text-box" v-on:input="onFilterTextBoxChanged()" placeholder="Поиск..."> 
