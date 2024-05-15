@@ -63,6 +63,16 @@ const addLgroup = () => import("./components/AddListenergroup.vue")
 const lGroupList = () => import("./components/ListenergroupList.vue")
 const lGroupDetail = () => import("./components/LgroupDetail.vue")
 
+const TeacherList = () => import("./components/TeacherList.vue")
+const AddTeacher = () => import("./components/AddTeacher.vue")
+const TeacherDetail = () => import("./components/TeacherDetail.vue")
+
+
+const TegrsuList = () => import("./components/TegrsuList.vue")
+const AddTegrsu = () => import("./components/AddTegrsu.vue")
+const TegrsuDetail = () => import("./components/TegrsuDetail.vue")
+
+const JournalList = () => import("./components/JournalList.vue")
 
 const xlparse = () => import("./components/xlparse.vue")
 const ManageExcel = () => import("./components/ManageExcel.vue")
