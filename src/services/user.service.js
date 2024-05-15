@@ -1553,6 +1553,14 @@ updateProgramById(id, required_amount, program_name, hours, start_date, end_date
     
     return axios.post(API_URL, query, { headers: authHeader() });
   }
+  getDaysAsIdText(){
+    const query = {
+      query: `SELECT day_id AS id, dayofweek AS text
+      FROM "days";`,
+    };
+    
+    return axios.post(API_URL, query, { headers: authHeader() });
+  }
 
   getContractsAsIdText(){
     const query = {
