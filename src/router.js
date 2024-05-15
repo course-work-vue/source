@@ -247,7 +247,15 @@ const routes = [
   { path: '/audits/:scheduleId', component: AuditDetail},
   { path: '/AddAudit', component: AddAudit },
   
+  { path: '/teachers', component: TeacherList },
+  { path: '/teachers/:teacherId', component: TeacherDetail },
+  { path: '/AddTeacher', component: AddTeacher },
 
+  { path: '/tegrsus', component: TegrsuList },
+  { path: '/tegrsus/:tegrsuId', component: TegrsuDetail },
+  { path: '/AddTegrsu', component: AddTegrsu },
+
+  { path: '/journals', component: JournalList },
 
 
   { path: '/lgroups', component: lGroupList },
