@@ -2453,14 +2453,8 @@ deleteTeacherById(teacher_id){
 
     return axios.post(API_URL, query, { headers: authHeader() });
   }
-  getTeacherById(id){
-    const query = {
-      query: `SELECT * from teachers where 
-      teacher_id='${id}';`,
-    };
-    return axios.post(API_URL, query, { headers: authHeader() });
-  }
-  getAllTeachers(){
+  
+  getAllTeacherss(){
     const query = {
       query: `SELECT
       
@@ -2475,36 +2469,8 @@ deleteTeacherById(teacher_id){
   
 
 
-  updateTeacherById(teacherId,first_name,last_name,patronymic){
-    const query = {
-      query: `"first_name" = '${first_name}',
-      "last_name" = '${last_name}',
-      "patronymic" = '${patronymic}'
-      
-  WHERE
-      "teacher_id" = '${teacherId}';`,
-    };
-    
-    return axios.put(API_URL+"teachers", query, { headers: authHeader() });
-  }
 
-  addTeacher(first_name,last_name,patronymic){
-    const query = {
-      query: `INSERT INTO "teachers" (
-        "first_name",
-        "last_name",
-        "patronymic"
-    ) VALUES (
-        '${first_name}',
-        '${last_name}',
-        '${patronymic}'
-    );`,
-    };
-
-    return axios.post(API_URL, query, { headers: authHeader() });
-
-
-  }
+  
 
 
 
@@ -2596,14 +2562,7 @@ getTegrsuById(id){
   return axios.post(API_URL, query, { headers: authHeader() });
 }
 
-getGroupsAsIdText(){
-  const query = {
-    query: `SELECT group_id AS id, group_number AS text
-    FROM "groups";`,
-  };
-  
-  return axios.post(API_URL, query, { headers: authHeader() });
-}
+
 }
 
 export default new UserService();
