@@ -1,7 +1,8 @@
-import { saveAs } from "file-saver";
-import * as XLSX from 'xlsx-js-style';
+//import { saveAs } from "file-saver";
+//import * as XLSX from 'xlsx-js-style';
 
-function generateArray(table) {
+//function generateArray(table) {
+    /*
     var out = [];
     var rows = table.querySelectorAll("tr");
     var ranges = [];
@@ -78,11 +79,11 @@ function sheet_from_array_of_arrays(data) {
             r: 0,
         },
     };
-    /*  ចំនូនលេខ សូន្យក្រោយ ចុច*/
+   
     var fmt = "0.00";
     var fontSR = "Khmer OS Siemreap";
     var fontRoboto = "Roboto";
-    /*  String  ជាលេខ*/
+    
     function isNumber(value) {
         if (typeof value === "string") {
             return !isNaN(value);
@@ -198,18 +199,17 @@ export function export_table_to_excel(id) {
     var oo = generateArray(theTable);
     var ranges = oo[1];
 
-    /* original data */
+ 
     var data = oo[0];
     var ws_name = "SheetJS";
 
     var wb = new Workbook(),
         ws = sheet_from_array_of_arrays(data);
 
-    /* add ranges to worksheet */
     // ws['!cols'] = ['apple', 'banan'];
     ws["!merges"] = ranges;
 
-    /* add worksheet to workbook */
+
     wb.SheetNames.push(ws_name);
     wb.Sheets[ws_name] = ws;
 
@@ -237,7 +237,7 @@ export function export_json_to_excel({
     autoWidth = true,
     bookType = "xlsx",
 } = {}) {
-    /* original data */
+
     filename = filename || "excel-list";
     // ឈ្មោះ របស់ Sheets
     var ws_name = sheetName || "SheetJS";
@@ -256,16 +256,16 @@ export function export_json_to_excel({
         });
     }
     if (autoWidth) {
-        /*设置worksheet每列的最大宽度*/
+       
         const colWidth = data.map((row) =>
             row.map((val) => {
-                /*先判断是否为null/undefined*/
+             
                 if (val == null) {
                     return {
                         wch: 10,
                     };
                 } else if (val.toString().charCodeAt(0) > 255) {
-                    /*再判断是否为中文*/
+                 
                     return {
                         wch: val.toString().length * 2 +2,
                     };
@@ -277,7 +277,7 @@ export function export_json_to_excel({
             })
         );
         // ការ កំណត់ទំហំ ជួរឈរ នីមួយៗ តាមរយះ ប្រវែងចំនួនតួរអក្សរ 
-        /*以第一行为初始值*/
+       
         let result = colWidth[0];
         for (let i = 1; i < colWidth.length; i++) {
             for (let j = 0; j < colWidth[i].length; j++) {
@@ -314,9 +314,9 @@ export function export_json_to_excel({
     }
     //ការកំណត់ គម្លាត Excel for Print
     ws['!margins'] = { left: 1.0, right: 1.0, top: 1.0, bottom: 1.0, header: 2, footer: 2 };
-    /* TEST: row props */
+  
     ws['!rows'] = wsrows;
-    /* add worksheet to workbook */
+   
     wb.SheetNames.push(ws_name);
     wb.Sheets[ws_name] = ws;
     console.log(ws)
@@ -331,5 +331,4 @@ export function export_json_to_excel({
             type: "application/octet-stream",
         }),
         `${filename}.${bookType}`
-    );
-}
+    );*/
