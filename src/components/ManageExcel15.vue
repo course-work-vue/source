@@ -5,8 +5,8 @@
       <div class="col col-12">
         <div class="col col-12">
       
-      <button @click="Back" class="btn btn-primary float-start" type="button" style="margin-right: 25px;"><i class="material-icons-outlined"></i>Назад</button>
-      <button @click="SaveToDB" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Сохранить</button>
+          <button @click="Back" class="btn btn-primary float-start" type="button" style="margin-right: 25px;"><i class="material-icons-outlined"></i>Назад</button>
+          <button @click="SaveToDB" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Сохранить</button>
   </div>
   </div>
   
@@ -22,7 +22,7 @@
       :defaultColDef="defaultColDef"
       rowSelection="multiple"
       animateRows="true"
-      @cell-editing-stopped="cellWasEdited"
+      @cell-clicked="cellWasClicked"
       @grid-ready="onGridReady"
       @firstDataRendered="onFirstDataRendered"
       @filter-changed="onFilterChanged"
@@ -33,8 +33,8 @@
     
   </div>
   </div>
-
-</div>
+  
+  </div>
   
   </template>
   
@@ -47,12 +47,6 @@
   import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
   import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
   import UserService from "../services/user.service";
-
-
-  let fam = []
-  let fac = []
-
-
   /* eslint-disable vue/no-unused-components */
   export default {
     name: "App",
@@ -75,7 +69,7 @@
        
       };
       const deleteRow = () => {
-
+  
     };
   
   
@@ -85,32 +79,14 @@
       // Each Column Definition results in one Column.
       const columnDefs = reactive({
         value: [
-                 { editable:true, maxWidth:200, field: "fam", headerName: 'Преподаватель' },
-                 { maxWidth:150, field: 'short_name', headerName: 'Факультет'},
-                 { minWidth:400, field: "dis_name", headerName: 'Дисциплина' },
-                 { maxWidth:200, field: "code_napr", headerName: 'Код направления'},  //hide: true
-                 { maxWidth:100, field: 'kurs', headerName: 'Курс'},
-                 { maxWidth:150, field: 'semestr',headerName: 'Семестр'},
-                 { maxWidth:200, field: 'kont_budg',headerName: 'Контингент, бюджет'},
-                 { maxWidth:200, field: 'kont_dog',headerName: 'Контингент, договор'},
-                 { maxWidth:200, field: 'number_of_streams',headerName: 'Количество потоков'},
-                 { maxWidth:200, field: 'number_of_groups',headerName: 'Количество групп'},
-                 { maxWidth:200, field: 'number_of_subgroups',headerName: 'Количество подгрупп'},
-                 { maxWidth:150, field: 'lec_h',headerName: 'Лекции, ч'},
-                 { maxWidth:150, field: 'seminar_h',headerName: 'Семинары, ч'},
-                 { maxWidth:150, field: 'lab_h',headerName: 'Лабы, ч'},
-                 { maxWidth:150, field: 'consult_h',headerName: 'Консультации, ч'},
-                 { maxWidth:150, field: 'exam_h',headerName: 'Экзамены, ч'},
-                 { maxWidth:150, field: 'zachet_h',headerName: 'Зачёты, ч'},
-                 { maxWidth:150, field: 'kursach_h',headerName: 'Курсач, ч'},
-                 { maxWidth:200, field: 'control_h',headerName: 'Контрольные, ч'},
-                 { maxWidth:150, field: 'VKR_h',headerName: 'ВКР, ч'},
-                 { maxWidth:150, field: 'magistr_h',headerName: 'Магистр, ч'},
-                 { maxWidth:150, field: 'GEK_h',headerName: 'ГЭК, ч'},
-                 { maxWidth:150, field: 'practice_h',headerName: 'Практика, ч'},
-                 { maxWidth:150, field: 'manage_h',headerName: 'Управление, ч'},
-                 { maxWidth:150, field: 'other_h',headerName: 'Прочее, ч'},
-                 { minWidth:400, field: 'dep', headerName: 'Кафедра'},
+                 { maxWidth: 300,field: "name1", headerName: 'Фамилия' },
+                 { maxWidth: 200,field: "name2", headerName: 'Имя' },
+                 { maxWidth: 230,field: "name3", headerName: 'Отчество'},  //hide: true
+                 { maxWidth: 250,field: 'short_name', headerName: 'Факультет'},
+                 { maxWidth: 250,field: 'dep', headerName: 'Кафедра'},
+                 { maxWidth: 250,field: 'dolj', headerName: 'Должность'},
+                 { field: 'deg',headerName: 'Степень, звание'},
+                 { field: 'status',headerName: 'Статус'}
         ],
       });
   
@@ -140,6 +116,9 @@
         columnDefs,
         rowData,
         defaultColDef,
+        cellWasClicked: (event) => { // Example of consuming Grid Event
+          console.log("cell was clicked", event);
+        },
         deselectRows: () =>{
           gridApi.value.deselectAll()
         },
@@ -152,60 +131,30 @@
     data() {
     return {
       quickFilterValue: '',
-      filters:false,
-      componentKey: 0,
+      filters:false
     };
   },
     methods: {
-
-      async loadGroupsData() {
-
+  
+        async loadTempKIT() {
           try {
-            const response = await UserService.getTempTeachGruz(); // Replace with your API endpoint
+            const response = await UserService.getTempSostav(); // Replace with your API endpoint
             this.rowData.value = Array.isArray(response.data) ? response.data : [response.data];
-
-            for (let i = 0;i<this.rowData.value.length;i++) {
-              //his.rowData.value[i].lec_h = typeof this.rowData.value[i].lec_h === 'object' ? 0 : this.rowData.value[i].lec_h;
-              //this.rowData.value[i].seminar_h = typeof this.rowData.value[i].seminar_h === 'object' ? 0 : this.rowData.value[i].seminar_h;
-              //this.rowData.value[i].lab_h = typeof this.rowData.value[i].lab_h === 'object' ? 0 : this.rowData.value[i].lab_h;
-              //this.rowData.value[i].consult_h = typeof this.rowData.value[i].consult_h === 'object' ? 0 : this.rowData.value[i].consult_h;
-              //this.rowData.value[i].exam_h = typeof this.rowData.value[i].exam_h === 'object' ? 0 : this.rowData.value[i].exam_h;
-              //this.rowData.value[i].zachet_h = typeof this.rowData.value[i].zachet_h === 'object' ? 0 : this.rowData.value[i].zachet_h;
-              //this.rowData.value[i].kursach_h = typeof this.rowData.value[i].kursach_h === 'object' ? 0 : this.rowData.value[i].kursach_h;
-              //this.rowData.value[i].control_h = typeof this.rowData.value[i].control_h === 'object' ? 0 : this.rowData.value[i].control_h;
-              //this.rowData.value[i].VKR_h = typeof this.rowData.value[i].VKR_h === 'object' ? 0 : this.rowData.value[i].VKR_h;
-              //this.rowData.value[i].magistr_h = typeof this.rowData.value[i].magistr_h === 'object' ? 0 : this.rowData.value[i].magistr_h;
-              //this.rowData.value[i].GEK_h = typeof this.rowData.value[i].GEK_h === 'object' ? 0 : this.rowData.value[i].GEK_h;
-              //this.rowData.value[i].practice_h = typeof this.rowData.value[i].practice_h === 'object' ? 0 : this.rowData.value[i].practice_h;
-              //this.rowData.value[i].manage_h = typeof this.rowData.value[i].manage_h === 'object' ? 0 : this.rowData.value[i].manage_h;
-              //this.rowData.value[i].other_h = typeof this.rowData.value[i].other_h === 'object' ? 0 : this.rowData.value[i].other_h;
-
-              fam.push(this.rowData.value[i].fam)
-              fac.push(this.rowData.value[i].fac)
-            }
-
+            console.log(response.data.bpi)
             this.loading=false;
           } catch (error) {
             console.error('Error loading students data:', error);
           }
         },
-
-        async SaveToDB() {
-          console.log()
-          //UserService.clearTempTeachGruz()
+  
+        SaveToDB() {
           this.Back()
   },
+  
   Back() {
             this.$router.push(`/xlparse`); // Navigate to the AddStudent route
           },
-
-  cellWasEdited(event) {
-    if (event.colDef.field == "fam")
-    {
-      UserService.updateTempNagrFam(event.data.id,event.data.fam)
-    }
-    },
-          
+  
   onFirstDataRendered(params) {
         this.gridApi = params.api;
         this.columnApi = params.columnApi;
@@ -268,9 +217,7 @@
       },
   
       created() {
-
-      this.loadGroupsData();
-
+      this.loadTempKIT()
       },
   
       
@@ -391,3 +338,4 @@
     }
   }
   </style>
+  

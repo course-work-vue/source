@@ -78,17 +78,18 @@ export default {
 
     // Each Column Definition results in one Column.
     const columnDefs = reactive({
-      value: [
-               { maxWidth: 300,field: "name1", headerName: 'Фамилия' },
-               { maxWidth: 200,field: "name2", headerName: 'Имя' },
-               { maxWidth: 230,field: "name3", headerName: 'Отчество'},  //hide: true
-               { maxWidth: 250,field: 'short_name', headerName: 'Факультет'},
-               { maxWidth: 250,field: 'dep', headerName: 'Кафедра'},
-               { maxWidth: 250,field: 'dolj', headerName: 'Должность'},
-               { field: 'deg',headerName: 'Степень, звание'},
-               { field: 'status',headerName: 'Статус'}
-      ],
-    });
+  value: [
+    { maxWidth: 150, field: "fac", headerName: 'Факультет' },
+    { minWidth: 400, field: "dep", headerName: 'Кафедра' },
+    { maxWidth: 200, field: "years", headerName: 'Год' },
+    { maxWidth: 200, field: "type", headerName: 'Тип' },
+    { maxWidth: 100, field: "kurs", headerName: 'Курс' },  //hide: true
+    { minWidth: 400, field: "form", headerName: 'Форма' },
+    { minWidth: 300, field: "teach_fio", headerName: 'ФИО преподавателя' },
+    { maxWidth: 200, field: "napr", headerName: 'Код направления' },
+    { minWidth: 300, field: "st_fio", headerName: 'ФИО студента' }
+  ],
+});
 
     // DefaultColDef sets props common to all Columns
     const defaultColDef = {
@@ -138,7 +139,7 @@ export default {
 
       async loadTempKIT() {
         try {
-          const response = await UserService.getTempSostav(); // Replace with your API endpoint
+          const response = await UserService.getTempKurs(); // Replace with your API endpoint
           this.rowData.value = Array.isArray(response.data) ? response.data : [response.data];
           console.log(response.data.bpi)
           this.loading=false;
@@ -148,6 +149,7 @@ export default {
       },
 
       SaveToDB() {
+        UserService.clearTempKurs()
         this.Back()
 },
 

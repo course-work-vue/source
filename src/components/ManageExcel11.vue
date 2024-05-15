@@ -78,17 +78,27 @@ export default {
 
     // Each Column Definition results in one Column.
     const columnDefs = reactive({
-      value: [
-               { maxWidth: 300,field: "name1", headerName: 'Фамилия' },
-               { maxWidth: 200,field: "name2", headerName: 'Имя' },
-               { maxWidth: 230,field: "name3", headerName: 'Отчество'},  //hide: true
-               { maxWidth: 250,field: 'short_name', headerName: 'Факультет'},
-               { maxWidth: 250,field: 'dep', headerName: 'Кафедра'},
-               { maxWidth: 250,field: 'dolj', headerName: 'Должность'},
-               { field: 'deg',headerName: 'Степень, звание'},
-               { field: 'status',headerName: 'Статус'}
-      ],
-    });
+  value: [
+    { maxWidth: 250, field: "Факультет", headerName: 'Факультет' },
+    { maxWidth: 250, field: "Кафедра", headerName: 'Кафедра' },
+    { maxWidth: 250, field: "Направление", headerName: 'Направление' },
+    { maxWidth: 250, field: "Профиль", headerName: 'Профиль' },
+    { maxWidth: 250, field: "Считать в плане", headerName: 'Считать в плане' },
+    { maxWidth: 250, field: "Индекс", headerName: 'Индекс' },
+    { maxWidth: 250, field: "Наименование", headerName: 'Наименование' },
+    { maxWidth: 150, field: "Экзамен", headerName: 'Экзамен' },
+    { maxWidth: 150, field: "Зачёт", headerName: 'Зачёт' },
+    { maxWidth: 150, field: "ЗачётсОц", headerName: 'Зачёт с оценкой' },
+    { maxWidth: 150, field: "КР", headerName: 'Курсовая работа' },
+    { maxWidth: 150, field: "Эксперт", headerName: 'Эксперт' },
+    { maxWidth: 150, field: "План", headerName: 'План' },
+    { maxWidth: 150, field: "КонтрРаб", headerName: 'Контрольная работа' },
+    { maxWidth: 150, field: "Аудит", headerName: 'Аудиторные часы' },
+    { maxWidth: 150, field: "СР", headerName: 'Самостоятельная работа' },
+    { maxWidth: 150, field: "Контроль", headerName: 'Контроль' },
+    { maxWidth: 200, field: "Зачётных единиц на курс", headerName: 'Зачётных единиц на курс' }
+  ],
+});
 
     // DefaultColDef sets props common to all Columns
     const defaultColDef = {

@@ -149,6 +149,7 @@ export default {
       },
 
       SaveToDB() {
+        UserService.clearForShedLec()
         this.Back()
 },
 

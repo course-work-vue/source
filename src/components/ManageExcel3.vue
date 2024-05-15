@@ -80,7 +80,7 @@ export default {
     const columnDefs = reactive({
       value: [
                { maxWidth: 600,field: "full_name", headerName: 'Полное название' },
-               { maxWidth: 150,field: 'short_name', headerName: 'Сокращение'},
+               { maxWidth: 200,field: 'short_name', headerName: 'Сокращение'},
       ],
     });
 

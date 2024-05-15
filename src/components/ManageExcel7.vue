@@ -47,6 +47,7 @@ import ProfileHref from "@/components/ProfileHrefCellRenderer.vue";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import UserService from "../services/user.service";
+import userService from "../services/user.service";
 /* eslint-disable vue/no-unused-components */
 export default {
   name: "App",
@@ -78,16 +79,29 @@ export default {
 
     // Each Column Definition results in one Column.
     const columnDefs = reactive({
-      value: [
-               { maxWidth: 300,field: "name1", headerName: 'Фамилия' },
-               { maxWidth: 200,field: "name2", headerName: 'Имя' },
-               { maxWidth: 230,field: "name3", headerName: 'Отчество'},  //hide: true
-               { maxWidth: 250,field: 'short_name', headerName: 'Факультет'},
-               { maxWidth: 250,field: 'dep', headerName: 'Кафедра'},
-               { maxWidth: 250,field: 'dolj', headerName: 'Должность'},
-               { field: 'deg',headerName: 'Степень, звание'},
-               { field: 'status',headerName: 'Статус'}
-      ],
+      value:[
+  { maxWidth: 250, field: 'fac', headerName: 'Факультет' },
+  { maxWidth: 250, field: 'dep', headerName: 'Кафедра' },
+  { maxWidth: 250, field: 'dis_name', headerName: 'Название дисциплины' },
+  { maxWidth: 100, field: 'code_napr', headerName: 'Код направления' },
+  { maxWidth: 100, field: 'kurs', headerName: 'Курс' },
+  { maxWidth: 100, field: 'kont_budg', headerName: 'Контингент (бюджет)' },
+  { maxWidth: 100, field: 'kont_dog', headerName: 'Контингент (договор)' },
+  { maxWidth: 150, field: 'number_of_streams', headerName: 'Количество потоков' },
+  { maxWidth: 150, field: 'number_of_groups', headerName: 'Количество групп' },
+  { maxWidth: 150, field: 'number_of_subgroups', headerName: 'Количество подгрупп' },
+  { maxWidth: 150, field: 'lek_budj', headerName: 'Лекции (бюджет)' },
+  { maxWidth: 150, field: 'lek_dogovor', headerName: 'Лекции (договор)' },
+  { maxWidth: 150, field: 'p_budg', headerName: 'Практические занятия (бюджет)' },
+  { maxWidth: 150, field: 'p_dogovor', headerName: 'Практические занятия (договор)' },
+  { maxWidth: 150, field: 'lab_budj', headerName: 'Лабораторные (бюджет)' },
+  { maxWidth: 150, field: 'lab_dogovor', headerName: 'Лабораторные (договор)' },
+  { maxWidth: 150, field: 'cons_ex', headerName: 'Консультации и экзамены' },
+  { maxWidth: 150, field: 'zachet_h', headerName: 'Зачет' },
+  { maxWidth: 150, field: 'ex_speak', headerName: 'Экзамен (устный)' },
+  { maxWidth: 150, field: 'ex_wr', headerName: 'Экзамен (письменный)' },
+  { maxWidth: 150, field: 'practice', headerName: 'Практика' }
+],
     });
 
     // DefaultColDef sets props common to all Columns
@@ -138,7 +152,7 @@ export default {
 
       async loadTempKIT() {
         try {
-          const response = await UserService.getTempSostav(); // Replace with your API endpoint
+          const response = await UserService.getTempOFO(); // Replace with your API endpoint
           this.rowData.value = Array.isArray(response.data) ? response.data : [response.data];
           console.log(response.data.bpi)
           this.loading=false;
@@ -148,6 +162,7 @@ export default {
       },
 
       SaveToDB() {
+        userService.cleartempOfoVO()
         this.Back()
 },
 

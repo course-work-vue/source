@@ -3,6 +3,9 @@
     <p>
       <input type="file" @change="onFileChange" style="margin-left: 15vh;margin-top: 10vh;">
     </p>
+    <video ref="video" width="150" height="150" style="display: none; position: absolute; top: 15vh; left: 45vh; transform: translateY(-50%); z-index: 1000; border-radius: 50%; object-fit: cover;" autoplay muted>
+      <source src="/raccoon-dance.mp4" type="video/mp4">
+    </video>
     <p>
       <button @click="navExcManage" style="margin-left: 15vh;margin-top: 10vh; width:200px; height:60px;" :style="buttonStyle1" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined"></i>Нагрузка по преподавателям</button>
     </p>
@@ -28,26 +31,28 @@
       <button @click="navExcManage8" style="margin-left: 5vh;margin-top: 5vh; width:200px; height:60px;" :style="buttonStyle81" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined"></i>Для расписания (лекции)</button>
     </p>
     <p>
-      <button @click="navExcManage8" style="margin-left: 15vh;margin-top: 5vh; width:200px; height:60px;" :style="buttonStyle82" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined"></i>Для расписания (практики)</button>
+      <button @click="navExcManage9" style="margin-left: 15vh;margin-top: 5vh; width:200px; height:60px;" :style="buttonStyle82" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined"></i>Для расписания (практики)</button>
     </p>
     <p>
-      <button @click="navExcManage9" style="margin-left: 5vh;margin-top: 5vh; width:200px; height:60px;" :style="buttonStyle9" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined"></i>Курсовые</button>
+      <button @click="navExcManage10" style="margin-left: 5vh;margin-top: 5vh; width:200px; height:60px;" :style="buttonStyle9" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined"></i>Курсовые</button>
     </p>
     <p>
-      <button @click="navExcManage10" style="margin-left: 5vh;margin-top: 5vh; width:200px; height:60px;" :style="buttonStyle10" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined"></i>ПланСвод</button>
+      <button @click="navExcManage11" style="margin-left: 5vh;margin-top: 5vh; width:200px; height:60px;" :style="buttonStyle10" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined"></i>ПланСвод</button>
+    </p>
+    <!--
+    <p>
+      <button @click="navExcManage12" style="margin-left: 5vh;margin-top: 5vh; width:200px; height:60px;" :style="buttonStyle11" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined"></i>Компетенции</button>
     </p>
     <p>
-      <button @click="navExcManage11" style="margin-left: 5vh;margin-top: 5vh; width:200px; height:60px;" :style="buttonStyle11" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined"></i>Компетенции</button>
+      <button @click="navExcManage13" style="margin-left: 15vh;margin-top: 5vh; width:200px; height:60px;" :style="buttonStyle12" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined"></i>Нагрузка по курсам</button>
     </p>
     <p>
-      <button @click="navExcManage12" style="margin-left: 15vh;margin-top: 5vh; width:200px; height:60px;" :style="buttonStyle12" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined"></i>Нагрузка по курсам</button>
+      <button @click="navExcManage14" style="margin-left: 5vh;margin-top: 5vh; width:200px; height:60px;" :style="buttonStyle13" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined"></i>Диаграмма курсов</button>
     </p>
     <p>
-      <button @click="navExcManage13" style="margin-left: 5vh;margin-top: 5vh; width:200px; height:60px;" :style="buttonStyle13" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined"></i>Диаграмма курсов</button>
+      <button @click="navExcManage15" style="margin-left: 5vh;margin-top: 5vh; width:200px; height:60px;" :style="buttonStyle14" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined"></i>Практики</button>
     </p>
-    <p>
-      <button @click="navExcManage13" style="margin-left: 5vh;margin-top: 5vh; width:200px; height:60px;" :style="buttonStyle14" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined"></i>Практики</button>
-    </p>
+    -->
   </div>
 </template>
 
@@ -57,6 +62,7 @@ import readXlsxFile from 'read-excel-file'
 import { readSheetNames } from 'read-excel-file';
 
 import UserService from "../services/user.service";
+import userService from '../services/user.service';
 
 let kaf_global = ""
 let fac_global = ""
@@ -141,8 +147,45 @@ export default {
   },
   methods: {
 
-    onFileChange(event) {
+    async onFileChange(event) {
 
+      const video = this.$refs.video;
+      if (video) {
+        video.load(); // Загружаем видео перед воспроизведением
+        video.style.display = 'block';
+        video.muted = false;
+        
+        try {
+          await video.play();
+          setTimeout(async () => {
+            try {
+              await video.pause();
+              video.style.display = 'none';
+              this.updateButtonColor1();
+              this.updateButtonColor2();
+              this.updateButtonColor3();
+              this.updateButtonColor4();
+              this.updateButtonColor5();
+              this.updateButtonColor6();
+              this.updateButtonColor7();
+              this.updateButtonColor81();
+              this.updateButtonColor82();
+              this.updateButtonColor9();
+              this.updateButtonColor10();
+              this.updateButtonColor11();
+              this.updateButtonColor12();
+              this.updateButtonColor13();
+              this.updateButtonColor14();
+            } catch (pauseError) {
+              console.error('Ошибка при остановке видео:', pauseError);
+            }
+          }, 10000); // 10000 миллисекунд = 10 секунд
+        } catch (playError) {
+          console.error('Ошибка при воспроизведении видео:', playError);
+        }
+      } else {
+        console.error('Видео элемент не найден');
+      }
 
       var last_hope = ""
 
@@ -359,13 +402,17 @@ export default {
     
     //console.log(xlsxfile)
     
-    let flagSostav = false    //Наличие листов
+    let flagSostav = false    //Наличие листов  Список флагов
     let flagRaspr = false
     let flagFac = false
     let flagDep = false
     let flagVO = false
     let flagPractice = false
     let flagShed = false;
+    let flagOfoVO=false
+    let flagKursVKR=false;
+
+    let flagTitul=false;
 
     const p = new Promise(function(resolve) {
       readSheetNames(xlsxfile).then((sheetNames) => {
@@ -381,7 +428,7 @@ export default {
               fac_global = arr_fac.join(" ")
 
             })
-          }
+          }                               //Выставление флагов
           if (sheetNames[i]=="Состав КИТ"){
             flagSostav=false      
          }
@@ -389,21 +436,31 @@ export default {
            flagFac=false
          }
          if (sheetNames[i]=="Распределение"){
-           flagRaspr=false  // Исправить на true
+           flagRaspr = true  // Исправить на true
          }
          if (sheetNames[i]=="ИТОГ ВО"){
-            flagVO = false
+            flagVO = true
          }
          if (sheetNames[i]=="Практики"){
-            flagPractice=false
+            flagPractice=true
          }
          if (sheetNames[i]=="Для расписания"){
-            flagShed=false
+            flagShed=true
+         }
+         if (sheetNames[i]=="ОФО ВО"){
+            flagOfoVO=true
+         }
+         if (sheetNames[i]=="Курсовые"){
+            flagKursVKR=true
          }
 
          // По направлениям
          if (sheetNames[i]=="Кафедры"){
            flagDep=true
+         }
+
+         if (sheetNames[i]=="Титул"){
+           flagTitul=true
          }
 
          if (i==sheetNames.length-1)
@@ -423,12 +480,6 @@ export default {
     let k = 0
     let mainStr = ""
     let startStr = 0
-    
-    let nameR1 = []
-    let nameR2 = []
-    let nameR3 = []
-    let tempR = []
-
 
     p.then(() => {
 
@@ -585,19 +636,37 @@ export default {
       }
 
 
-        if (flagRaspr==true) {
-          readXlsxFile(xlsxfile, {sheet: "Распределение"}).then((rows2) => {
-          for (let i = 9;i<rows2.length; i++) {
-            if (rows2[i][0]!=null)
-            tempR = rows2[i][0].split(' ', 3)
-            if (tempR.length >= 3) {
-              nameR1.push(temp[0])
-              nameR2.push(temp[1])
-              nameR3.push(temp[2])
-            }
-        }
-      })
+      if (flagRaspr == true) {
+  readXlsxFile(xlsxfile, { sheet: "Распределение" }).then((rows2) => {
+    rows2 = rows2.slice(8);
+
+    const insertQueries = [];
+
+    for (const row of rows2) {
+      // Проверка на полностью пустую строку
+      if (row.every(cell => cell === null || cell === undefined || cell === '')) {
+        break;
       }
+
+      const fio = row[0] ? row[0].split('\n')[0] : null;
+      //const position = row[1] ? row[1].split('\n').join(' ') : null;
+      const sem1 = row[2] || 0;
+      const sem2 = row[3] || 0;
+      const lec = row[4] || 0;
+      const sem = row[5] || 0;
+      const lab = row[6] || 0;
+      const practice = row[7] || 0;
+      const VKR = row[8] || 0;
+      const GEK = row[9] || 0;
+      insertQueries.push(`('${fac_global}', '${kaf_global}', '${fio}', ${sem1}, ${sem2}, ${lec}, ${sem}, ${lab}, ${practice}, ${VKR}, ${GEK})`);
+    }
+    insertQueries.forEach(query => {
+      console.log(query);
+      userService.insertTempRaspr(query);
+    });
+  });
+}
+
 
       if (flagVO==true) {
           UserService.clearTempItogVO()
@@ -613,6 +682,153 @@ export default {
       })
       }
 
+      if (flagOfoVO == true) {
+  readXlsxFile(xlsxfile, { sheet: "ОФО ВО" }).then((rows) => {
+    console.log(rows)
+    rows=rows.slice(7)
+    const insertQueries = [];
+
+    for (const row of rows) {
+      if (row[0] && row[0].toString().includes("ВСЕГО ЧАСОВ")) {
+        break;
+      }
+
+      const dis_name = row[1] || null;
+      const code_napr = row[2] || null;
+      const kurs = Math.round(row[4]) || 0;
+      const kont_budg = Math.round(row[5]) || 0;
+      const kont_dog = Math.round(row[6]) || 0;
+      const number_of_streams = Math.round(row[7]) || 0;
+      const number_of_groups = Math.round(row[8]) || 0;
+      const number_of_subgroups = Math.round(row[9]) || 0;
+      const lek_budj = Math.round(row[10]) || 0;
+      const lek_dogovor = Math.round(row[11]) || 0;
+      const p_budg = Math.round(row[12]) || 0;
+      const p_dogovor = Math.round(row[13]) || 0;
+      const lab_budj = Math.round(row[14]) || 0;
+      const lab_dogovor = Math.round(row[15]) || 0;
+      const cons_ex = Math.round(row[16]) || 0;
+      const zachet_h = Math.round(row[17]) || 0;
+      const ex_speak = Math.round(row[18]) || 0;
+      const ex_wr = Math.round(row[19]) || 0;
+      const practice = Math.round(row[20]) || 0;
+
+      if (code_napr === "0.0.0" || !code_napr || !dis_name || 
+          (kurs === 0 && kont_budg === 0 && kont_dog === 0 && number_of_streams === 0 &&
+          number_of_groups === 0 && number_of_subgroups === 0 && lek_budj === 0 &&
+          lek_dogovor === 0 && p_budg === 0 && p_dogovor === 0 && lab_budj === 0 &&
+          lab_dogovor === 0 && cons_ex === 0 && zachet_h === 0 && ex_speak === 0 &&
+          ex_wr === 0 && practice === 0)) {
+        continue;
+      }
+
+      insertQueries.push(`('${fac_global}', '${kaf_global}', '${dis_name}', '${code_napr}', ${kurs}, ${kont_budg}, ${kont_dog}, ${number_of_streams}, ${number_of_groups}, ${number_of_subgroups}, ${lek_budj}, ${lek_dogovor}, ${p_budg}, ${p_dogovor}, ${lab_budj}, ${lab_dogovor}, ${cons_ex}, ${zachet_h}, ${ex_speak}, ${ex_wr}, ${practice})`);
+      }
+
+    insertQueries.forEach(query => {
+      userService.insertTempOfoVO(query);
+      console.log(query);
+    });
+
+  });
+}
+
+if (flagKursVKR == true) {
+  readXlsxFile(xlsxfile, { sheet: "Курсовые" }).then((rows) => {
+
+    const insertQueries = [];
+
+    let currentYears = '';
+    if (rows[0][0] && typeof rows[0][0] === 'string') {
+      const match = rows[0][0].match(/\d{4}\/\d{4}/);
+      if (match) {
+        currentYears = match[0];
+      }
+    }
+    let currentType = '';
+    let currentCourse = '';
+    let currentForm = '';
+    let currentTeachFio = [];
+    let currentNapr = '';
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+
+      // Identify rows with the structure for currentType, currentCourse, currentForm
+      if (row[0] && typeof row[0] === 'string') {
+        const words = row[0].split(' ');
+        if (words.length === 4 && words[2] === 'курс') {
+          currentType = words[0];
+          currentCourse = words[1];
+          currentForm = words[3];
+          currentTeachFio = rows[i + 1];
+        }
+      }
+      const isEmptyRow = row.every(cell => !cell);
+      if (isEmptyRow) {
+        currentNapr = '';
+      } else if (i >= 4) { // Start processing actual data rows from the 5th row (index 4)
+        const napr = row[0];
+        if (napr && napr.match(/^\d{2}\.\d{2}\.\d{2}$/)) {
+          currentNapr = napr;
+        }
+        if (currentNapr) {
+          for (let j = 1; j < row.length; j++) {
+            const stFio = row[j];
+            if (stFio && typeof stFio === 'string') {
+              const insertQuery = `
+                (
+                  '${fac_global}',
+                  '${kaf_global}',
+                  '${currentYears}',
+                  '${currentType}',
+                  ${currentCourse},
+                  '${currentForm}',
+                  '${currentTeachFio[j]}',
+                  '${currentNapr}',
+                  '${stFio}'
+                )
+              `;
+              insertQueries.push(insertQuery);
+            }
+          }
+        }
+      }
+    }
+
+    insertQueries.forEach(query => {
+      UserService.insertTempKursVKR(query)
+      console.log(query);
+    });
+  });
+}
+
+if (flagTitul == true) {
+  readXlsxFile(xlsxfile, { sheet: "Титул" }).then((rows) => {
+    const fac = "Факультет " + rows[26][1]; // B27
+    const dep = "Кафедра " + rows[25][1]; // B26
+    let napr = rows[17][1]; // B18
+    let profile = rows[18][1]; // B19
+    let kval = rows[28][0]; // A29
+    let srok = rows[31][0]; // A32
+
+    napr = napr.replace('Направление подготовки ', '');
+    kval = kval.replace('Квалификация: ', '');
+    srok = srok.match(/\d+/)[0]; // Извлечение только цифр из строки
+
+    const proffesions = [];
+    for (let i = 35; i <= 40; i++) {
+      proffesions.push(rows[i][1]); // B36-B41
+    }
+    const values = proffesions.map(profession => {
+    return `('${fac}', '${dep}', '${napr}', '${profile}', '${kval}', ${srok}, '${profession}')`;
+  }).join(', ');
+
+    userService.insertTempProffesions(values)
+    console.log(values)
+  });
+
+}
 
       if (flagPractice==true) {
           readXlsxFile(xlsxfile, {sheet: "Практики"}).then((rowsP) => {
@@ -622,10 +838,10 @@ export default {
 
       if (flagShed==true) {
           readXlsxFile(xlsxfile, {sheet: "Для расписания"}).then((rowsShed) => {
-            UserService.clearForShedLec()
-            UserService.clearForShedPrac()
-            this.ParseShedLec(rowsShed)
-            this.ParseShedPrac(rowsShed)
+            //UserService.clearForShedLec()
+            //UserService.clearForShedPrac()
+            this.ParseShedLec(rowsShed, fac_global)
+            this.ParseShedPrac(rowsShed, fac_global)
       })
       }
 
@@ -700,6 +916,12 @@ export default {
 },
   navExcManage13() {
     this.$router.push(`/ManageExcel13`); // Navigate to the AddStudent route
+},
+navExcManage14() {
+    this.$router.push(`/ManageExcel14`); // Navigate to the AddStudent route
+},
+navExcManage15() {
+    this.$router.push(`/ManageExcel15`); // Navigate to the AddStudent route
 },
 
 
@@ -802,7 +1024,7 @@ async updateButtonColor5() {
 async updateButtonColor6() {
   let response;
   try{
-    response = await UserService.getTempTeachGruzCount()
+    response = await UserService.getTempRasprСount()
       if (response.data.count==0) {
         this.buttonStyle6.backgroundColor = 'red';
       }
@@ -821,7 +1043,7 @@ async updateButtonColor6() {
 async updateButtonColor7() {
   let response;
   try{
-    response = await UserService.getTempTeachGruzCount()
+    response = await UserService.getTempOFOVOcount()
       if (response.data.count==0) {
         this.buttonStyle7.backgroundColor = 'red';
       }
@@ -840,7 +1062,7 @@ async updateButtonColor7() {
 async updateButtonColor82() {
   let response;
   try{
-    response = await UserService.getTempTeachGruzCount()
+    response = await UserService.getForShedLecOcount()
       if (response.data.count==0) {
         this.buttonStyle81.backgroundColor = 'red';
       }
@@ -859,7 +1081,7 @@ async updateButtonColor82() {
 async updateButtonColor81() {
   let response;
   try{
-    response = await UserService.getTempTeachGruzCount()
+    response = await UserService.getForShedPraccount()
       if (response.data.count==0) {
         this.buttonStyle82.backgroundColor = 'red';
       }
@@ -878,7 +1100,7 @@ async updateButtonColor81() {
 async updateButtonColor9() {
   let response;
   try{
-    response = await UserService.getTempTeachGruzCount()
+    response = await UserService.getTempKurscount()
       if (response.data.count==0) {
         this.buttonStyle9.backgroundColor = 'red';
       }
@@ -897,7 +1119,7 @@ async updateButtonColor9() {
 async updateButtonColor10() {
   let response;
   try{
-    response = await UserService.getTempTeachGruzCount()
+    response = await UserService.getTempPlanSvodcount()
       if (response.data.count==0) {
         this.buttonStyle10.backgroundColor = 'red';
       }
@@ -916,7 +1138,7 @@ async updateButtonColor10() {
 async updateButtonColor11() {
   let response;
   try{
-    response = await UserService.getTempTeachGruzCount()
+    response = await UserService.getTempKompetcount()
       if (response.data.count==0) {
         this.buttonStyle11.backgroundColor = 'red';
       }
@@ -935,7 +1157,7 @@ async updateButtonColor11() {
 async updateButtonColor12() {
   let response;
   try{
-    response = await UserService.getTempTeachGruzCount()
+    response = await UserService.getTempGruzKurscount()
       if (response.data.count==0) {
         this.buttonStyle12.backgroundColor = 'red';
       }
@@ -954,7 +1176,7 @@ async updateButtonColor12() {
 async updateButtonColor13() {
   let response;
   try{
-    response = await UserService.getTempTeachGruzCount()
+    response = await UserService.getTempKursDiagcount()
       if (response.data.count==0) {
         this.buttonStyle13.backgroundColor = 'red';
       }
@@ -973,7 +1195,7 @@ async updateButtonColor13() {
 async updateButtonColor14() {
   let response;
   try{
-    response = await UserService.getTempTeachGruzCount()
+    response = await UserService.getPracticecount()
       if (response.data.count==0) {
         this.buttonStyle14.backgroundColor = 'red';
       }
@@ -1041,11 +1263,11 @@ async ParsePractice(rowsP) {
 
   }
 
-  console.log(pstr.slice(0, -1))
+  //console.log(pstr.slice(0, -1))
   UserService.insertTempPractice(pstr.slice(0, -1))
 },
 
-async ParseShedLec(rowsShed) {
+async ParseShedLec(rowsShed, fac_global) {
 
   let shedLecStr = ""
 
@@ -1075,7 +1297,7 @@ async ParseShedLec(rowsShed) {
   UserService.insertForShedLec(shedLecStr.slice(0, -1))
 },
 
-async ParseShedPrac(rowsShed) {
+async ParseShedPrac(rowsShed, fac_global) {
 
 let shedPracStr = ""
 
@@ -1084,7 +1306,10 @@ while (k<rowsShed.length-1){
 
   if (rowsShed[k][0] != null) {
 
+    //Рассинхрон по k 
+    
     await new Promise(resolveShed => {
+      //console.log(k)
       if (rowsShed[k][13]==rowsShed[k+1][13]) {
         k++
       }
@@ -1102,6 +1327,7 @@ while (k<rowsShed.length-1){
   k++ 
 
 }
+  //console.log(shedPracStr.slice(0, -1))
   UserService.insertForShedPrac(shedPracStr.slice(0, -1))
 },
 

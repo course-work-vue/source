@@ -47,6 +47,7 @@ import ProfileHref from "@/components/ProfileHrefCellRenderer.vue";
 import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
 import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import UserService from "../services/user.service";
+import userService from "../services/user.service";
 /* eslint-disable vue/no-unused-components */
 export default {
   name: "App",
@@ -78,18 +79,69 @@ export default {
 
     // Each Column Definition results in one Column.
     const columnDefs = reactive({
-      value: [
-               { maxWidth: 300,field: "name1", headerName: 'Фамилия' },
-               { maxWidth: 200,field: "name2", headerName: 'Имя' },
-               { maxWidth: 230,field: "name3", headerName: 'Отчество'},  //hide: true
-               { maxWidth: 250,field: 'short_name', headerName: 'Факультет'},
-               { maxWidth: 250,field: 'dep', headerName: 'Кафедра'},
-               { maxWidth: 250,field: 'dolj', headerName: 'Должность'},
-               { field: 'deg',headerName: 'Степень, звание'},
-               { field: 'status',headerName: 'Статус'}
-      ],
-    });
+    value: [
+    {  maxWidth:125, field: "short_name", headerName: 'Факультет' },
+    { 
+          maxWidth: 200, 
+          field: "kaf", 
+          headerName: 'Кафедра', 
+          valueFormatter: params => getInitials(params.value)
+        },
+    { maxWidth: 230, field: "fio", headerName: 'ФИО' },
+    { 
+      maxWidth: 250, 
+      field: 'sem1', 
+      headerName: 'Семестр 1', 
+      valueFormatter: params => Math.round(params.value) 
+    },
+    { 
+      maxWidth: 250, 
+      field: 'sem2', 
+      headerName: 'Семестр 2', 
+      valueFormatter: params => Math.round(params.value) 
+    },
+    { 
+      maxWidth: 250, 
+      field: 'lec', 
+      headerName: 'Лекции', 
+      valueFormatter: params => Math.round(params.value) 
+    },
+    { 
+      field: 'sem', 
+      headerName: 'Семинары', 
+      valueFormatter: params => Math.round(params.value) 
+    },
+    { 
+      field: 'lab', 
+      headerName: 'Лабораторные', 
+      valueFormatter: params => Math.round(params.value) 
+    },
+    { 
+      maxWidth: 300, 
+      field: 'practice', 
+      headerName: 'Практика', 
+      valueFormatter: params => Math.round(params.value) 
+    },
+    { 
+      maxWidth: 200, 
+      field: 'VKR', 
+      headerName: 'ВКР', 
+      valueFormatter: params => Math.round(params.value) 
+    },
+    { 
+      maxWidth: 230, 
+      field: 'GEK', 
+      headerName: 'ГЭК', 
+      valueFormatter: params => Math.round(params.value) 
+    }
+  ],
+});
 
+  // Function to extract initials
+  function getInitials(str) {
+      if (!str) return '';
+      return str.split(' ').map(word => word.charAt(0).toUpperCase()).join('');
+    }
     // DefaultColDef sets props common to all Columns
     const defaultColDef = {
       sortable: true,
@@ -139,15 +191,20 @@ export default {
       async loadTempKIT() {
         try {
           const response = await UserService.getTempRaspr(); // Replace with your API endpoint
+          response.data.kaf = "Meow!"
           this.rowData.value = Array.isArray(response.data) ? response.data : [response.data];
-          console.log(response.data.bpi)
+
+          console.log(this.rowData.value)
+
           this.loading=false;
         } catch (error) {
           console.error('Error loading students data:', error);
         }
       },
+      
 
       SaveToDB() {
+        userService.cleartempRaspr()
         this.Back()
 },
 

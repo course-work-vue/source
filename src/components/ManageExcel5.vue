@@ -1,41 +1,83 @@
 <template>
-
-
   <div class="col col-xs-9 col-lg-12 mt-4 list">
     <div class="col col-12">
       <div class="col col-12">
-    
-        <button @click="Back" class="btn btn-primary float-start" type="button" style="margin-right: 25px;"><i class="material-icons-outlined"></i>Назад</button>
-        <button @click="SaveToDB" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Сохранить</button>
-</div>
-</div>
+        <button @click="Back" class="btn btn-primary float-start" type="button" style="margin-right: 25px;">
+          <i class="material-icons-outlined"></i>Назад
+        </button>
+        <button @click="SaveToDB" class="btn btn-primary float-start" type="button">
+          <i class="material-icons-outlined">add</i>Сохранить
+        </button>
+      </div>
+    </div>
 
-
-
-<div style="height: 80vh;">
-<div class="h-100 pt-5">
-  <ag-grid-vue
-    class="ag-theme-alpine"
-    style="width: 100%; height: 100%;"
-    :columnDefs="columnDefs.value"
-    :rowData="rowData.value"
-    :defaultColDef="defaultColDef"
-    rowSelection="multiple"
-    animateRows="true"
-    @cell-clicked="cellWasClicked"
-    @grid-ready="onGridReady"
-    @firstDataRendered="onFirstDataRendered"
-    @filter-changed="onFilterChanged"
-    :pagination="true"            
-    :paginationPageSize="paginationPageSize"  
-  >
-  </ag-grid-vue>
-  
-</div>
-</div>
-
-</div>
-
+    <div style="height: 35vh;">
+      <div class="h-100 pt-5">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Факультет</th>
+              <th scope="col">Кафедра</th>
+              <th scope="col">Годы</th>
+              <th scope="col">Лекции, бюджет</th>
+              <th scope="col">Лекции, договор</th>
+              <th scope="col">Практика, бюджет</th>
+              <th scope="col">Практика, договор</th>
+              <th scope="col">Лабы, бюджет</th>
+              <th scope="col">Лабы, договор</th>
+              <th scope="col">Конс экз</th>
+            </tr>
+            <tr v-for="(item, index) in groupedData" :key="index">
+              <td>{{ item.fac }}</td>
+              <td>{{ item.dep }}</td>
+              <td>{{ item.years }}</td>
+              <td>{{ item.lek_budj }}</td>
+              <td>{{ item.lek_dogovor }}</td>
+              <td>{{ item.p_budg }}</td>
+              <td>{{ item.p_dogovor }}</td>
+              <td>{{ item.lab_budj }}</td>
+              <td>{{ item.lab_dogovor }}</td>
+              <td>{{ item.cons_ex }}</td>
+            </tr>
+            <tr>
+              <th scope="col">Конс ЗФО</th>
+              <th scope="col">Контр. раб</th>
+              <th scope="col">Зачёт</th>
+              <th scope="col">Экзамен Устный</th>
+              <th scope="col">Экзамен Письменный</th>
+              <th scope="col">Руководство ВКР</th>
+              <th scope="col">Рецензии ВКР</th>
+              <th scope="col">Нормоконтроль ВКР</th>
+              <th scope="col">Проверка Плагиата ВКР</th>
+              <th scope="col">ГОСЭкз</th>
+              <th scope="col">Защита ВКР</th>
+            </tr>
+            <tr v-for="(item, index) in groupedData" :key="'additional' + index">
+              <td>{{ item.cons_zfo }}</td>
+              <td>{{ item.control_work }}</td>
+              <td>{{ item.zachet_h }}</td>
+              <td>{{ item.ex_speak }}</td>
+              <td>{{ item.ex_wr }}</td>
+              <td>{{ item.manageVKR }}</td>
+              <td>{{ item.recVKR }}</td>
+              <td>{{ item.normContVKR }}</td>
+              <td>{{ item.checkPlagVKR }}</td>
+              <td>{{ item.GOSexam }}</td>
+              <td>{{ item.defVKR }}</td>
+            </tr>
+            <tr>
+              <th scope="col">Руководство</th>
+            </tr>
+            <tr v-for="(item, index) in groupedData" :key="'manag' + index">
+              <td>{{ item.manag }}</td>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -58,7 +100,23 @@ export default {
   setup() {
     const gridApi = ref(null); // Optional - for accessing Grid's API
     const gridColumnApi = ref();
+    const groupedData = ref([]);
+    const fac = ref("");
     // Obtain API from grid's onGridReady event
+
+    onMounted(async () => {
+      await loadTempVO();
+    });
+
+    const loadTempVO = async () => {
+      try {
+        const response = await UserService.getTempVO();
+        groupedData.value = Array.isArray(response.data) ? response.data : [response.data];
+        fac.value = response.data.fac; // Сохраняем значение fac
+      } catch (error) {
+        console.error('Error loading data:', error);
+      }
+    };
 
     const paginationPageSize = 60;
 
@@ -68,50 +126,9 @@ export default {
       gridColumnApi.value = params.columnApi;
      
     };
-    const deleteRow = () => {
-
-  };
-
-
 
     const rowData = reactive({}); // Set rowData to Array of Objects, one Object per Row
 
-    // Each Column Definition results in one Column.
-    const columnDefs = reactive({
-      value: [
-               { maxWidth: 300,field: "fac", headerName: 'Факультет' },
-               { minWidth: 250,field: "dep", headerName: 'Кафедра' },
-               { maxWidth: 230,field: "years", headerName: 'Годы'},  //hide: true
-               { maxWidth: 250,field: 'lek_budj', headerName: 'Лекции, бюджет'},
-               { maxWidth: 250,field: 'lek_dogovor', headerName: 'Лекции, договор'},
-               { maxWidth: 250,field: 'p_budg', headerName: 'Практика, бюджет'},
-               { field: 'p_dogovor',headerName: 'Практика, договор'},
-               { field: 'lab_budj',headerName: 'Лабы, бюджет'},
-               { maxWidth: 300,field: "lab_dogovor", headerName: 'Лабы, договор' },
-               { maxWidth: 200,field: "cons_ex", headerName: 'Конс экз' },
-               { maxWidth: 230,field: "cons_zfo", headerName: 'Конс ЗФО'},  //hide: true
-               { maxWidth: 250,field: 'control_work', headerName: 'Контр. раб'},
-               { maxWidth: 250,field: 'zachet_h', headerName: 'Зачёт'},
-               { maxWidth: 250,field: 'ex_speak', headerName: 'Экзамен Устный'},
-               { field: 'ex_wr',headerName: 'Экзамен Письменный'},
-               { field: 'manageVKR',headerName: 'Руководство ВКР'},
-               { field: 'recVKR',headerName: 'Рецензии ВКР'},
-               { field: 'normContVKR',headerName: 'Нормоконтроль ВКР'},
-               { field: 'checkPlagVKR',headerName: 'Проверка Плагиата ВКР'},
-               { field: 'GOSexam',headerName: 'ГОСЭкз'},
-               { field: 'defVKR',headerName: 'Защита ВКР'},
-               { field: 'manag',headerName: 'Руководство'},
-      ],
-    });
-
-    // DefaultColDef sets props common to all Columns
-    const defaultColDef = {
-      sortable: true,
-      filter: true,
-      flex: 1,
-      resizable: true,
-      minWidth: 300
-    };
 
     // Example load data from server
     onMounted(() => {
@@ -126,10 +143,10 @@ export default {
 
 
     return {
+      groupedData,
+      fac,
       onGridReady,
-      columnDefs,
       rowData,
-      defaultColDef,
       cellWasClicked: (event) => { // Example of consuming Grid Event
         console.log("cell was clicked", event);
       },
@@ -139,7 +156,6 @@ export default {
 
       onFilterTextBoxChanged,
       paginationPageSize,
-      deleteRow,
     };
   },
   data() {
@@ -150,11 +166,11 @@ export default {
 },
   methods: {
 
-      async loadTempKIT() {
+      async loadTempVO() {
         try {
           const response = await UserService.getTempVO(); // Replace with your API endpoint
           this.rowData.value = Array.isArray(response.data) ? response.data : [response.data];
-          console.log(response.data.bpi)
+          console.log(response.data)
           this.loading=false;
         } catch (error) {
           console.error('Error loading students data:', error);
@@ -231,7 +247,7 @@ onFirstDataRendered(params) {
     },
 
     created() {
-    this.loadTempKIT()
+    this.loadTempVO()
     },
 
     
