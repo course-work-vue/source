@@ -341,10 +341,8 @@ deleteDirectionById(direction_id){
   
 // ВЗАИМОДЕЙСТВИЕ С ТАБЛИЦЕЙ TEACHERS
  getAllTeachers(){
-    const query = {
-      query: `SELECT * from teachers;`,
-    };
-    return axios.post(API_URL, query, { headers: authHeader() });
+    
+    return axios.get(API + '/Teacher', { headers: authHeader() });
   }
 
   getTeachersForSubject(subject_id){
@@ -504,35 +502,42 @@ getWorkload(group_id){
   return axios.post(API_URL, query, { headers: authHeader() });
 }
 
+getWl(wl_id){
+  const apiUrl = `${API}/Workload/${wl_id}`; // Assuming the API endpoint for GET is /getStudent
+  const headers = authHeader();
 
-
-editWorkload(wl_id, teacher_id){
-  const query = {
-    query: `UPDATE "workload"
-    SET
-      "teacher_id" = '${teacher_id}'
-    WHERE
-      "wl_id" = '${wl_id}'
-    ;`,
-  };
-  return axios.post(API_URL, query, { headers: authHeader() });
+  return axios.get(apiUrl, { headers })
 }
 
 
+editWorkload(wl_id, group_id, subject_id, teacher_id, gr, sub, te){
+  const tmp = {
+    wlId: wl_id,
+    groupId: group_id,
+    subjectId: subject_id,
+    teacherId: teacher_id,
+    group:   gr,
+    subject: sub,
+    teacher: te,
+    teachschedules: []
+  }
+  return axios.put(API + '/Workload/' + wl_id, tmp, { headers: authHeader() });
+}
 
-addWorkload(group_id, subject_id, teacher_id){
-  const query = {
-    query: `INSERT INTO "workload" (
-      "group_id",
-      "subject_id",
-      "teacher_id"
-  ) VALUES (
-      '${group_id}',
-      '${subject_id}',
-      '${teacher_id}'
-  );`,
-  };
-  return axios.post(API_URL, query, { headers: authHeader() });
+addWorkload(group_id, subject_id, teacher_id, gr, sub, te){
+    const apiUrl = `${API}/Workload`;
+    const formatted = {
+      groupId: group_id,
+      subjectId: subject_id,
+      teacherId: teacher_id,
+      group:   gr,
+      subject: sub,
+      teacher: te,
+      teachschedules: []
+    }
+
+    return axios.post(apiUrl, formatted, { headers: authHeader() });
+
 }
 
 
@@ -631,29 +636,8 @@ deleteGroupById(group_id){
   return axios.delete(apiUrl, { headers: authHeader() });
 }
   getAllGroups(){
-    const query = {
-      query: `SELECT
-      g.group_id,
-      g.group_number,
-      g.course,
-      g.magister,
-      p.prof_name,
-      d.dir_name,
-      d.dir_code
-  FROM
-      "groups" AS g
-  JOIN
-      "profiles" AS p
-  ON
-      g.group_prof_id = p.prof_id
-  JOIN
-      "directions" AS d
-  ON
-      g.group_dir_id = d.dir_id  ORDER BY 
-      g.group_number ASC;
-  `,
-    };
-    return axios.post(API_URL, query, { headers: authHeader() });
+  
+    return axios.get(API+'/Group', { headers: authHeader() });
   }
 
   getGroupByDir(dir_id){

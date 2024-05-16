@@ -1,31 +1,49 @@
 <template>
     <div class="col col-xs-9 col-lg-12 mt-4 offset-md-1">
-        <div class="col col-10 align-self-end" @change="this.reloadData()">
+        <div class="col col-10 align-self-end">
             <div class="col col-10 align-self-end">
                 <div class="d-flex col-2 mb-2">
-                    <select class="form-select col-2 mr-2" v-model.number="selected_course" value=1>
-                        <option value=1 @click="this.loadDirsData()">1 курс</option>
-                        <option value=2 @click="this.loadDirsData()">2 курс</option>
-                        <option v-if="isMag=='0'" value=3 @click="this.loadDirsData()">3 курс</option>
-                        <option v-if="isMag=='0'" value=4 @click="this.loadDirsData()">4 курс</option>
+                    <select 
+                        class="form-select col-2 mr-2" 
+                        v-model.number="selected_course" 
+                        @change="
+                        this.loadSubjectsData(this.selected_dir.dirCode)
+                        this.loadGroupsData(this.selected_dir.dirId);
+                        " 
+                        value=1
+                    >
+                        <option value=1>1 курс</option>
+                        <option value=2>2 курс</option>
+                        <option v-if="isMag=='0'" value=3>3 курс</option>
+                        <option v-if="isMag=='0'" value=4>4 курс</option>
                     </select>
+                    
                     <div class="col-2"></div>
-                    <select class="form-select col-2" v-model.number="selected_sem" value=1>
-                        <option value=1 @click="this.loadDirsData()">1 семестр</option>
-                        <option value=2 @click="this.loadDirsData()">2 семестр</option>
+                    
+                    <select 
+                        class="form-select col-2" 
+                        v-model.number="selected_sem" 
+                        value=1
+                        @change="
+                            this.loadSubjectsData(this.selected_dir.dirCode);    
+                            this.loadGroupsData(this.selected_dir.dirId);
+                        "
+                    >
+                        <option value=1>1 семестр</option>
+                        <option value=2>2 семестр</option>
                     </select>
                 </div>
 
                 <div class="d-flex col-6" @click="this.loadDirsData()">
                     <div class="">
-                        <input class="form-check-input" type="radio" name="magistracy" id="magistracyYes" value='1' v-model="isMag">
+                        <input class="form-check-input m-1" type="radio" name="magistracy" id="magistracyYes" value='1' v-model="isMag">
                         <label class="form-check-label" for="magistracyYes">
                         Магистратура
                         </label>
                     </div>
                     <div class="col-1"></div>
                     <div class="">
-                        <input class="form-check-input" type="radio" name="magistracy" id="magistracyNo" value='0' v-model="isMag" checked>
+                        <input class="form-check-input m-1" type="radio" name="magistracy" id="magistracyNo" value='0' v-model="isMag" checked>
                         <label class="form-check-label" for="magistracyNo">
                         Бакалавриат
                         </label>
@@ -41,8 +59,12 @@
                     <tbody>
                         <tr v-for="dir in dirs" :key="dir.dir_id">
                             <th
-                                @click="this.selected_dir = dir.dirId; loadSubjectsData(dir.dirCode);"
-                                v-bind:class="{ 'table-active': this.selected_dir == dir.dirId }"
+                                @click="
+                                    this.selected_dir = dir; 
+                                    this.loadSubjectsData(dir.dirCode);
+                                    this.loadGroupsData(dir.dirId);
+                                "
+                                v-bind:class="{ 'table-active': this.selected_dir.dirId == dir.dirId }"
                             >
                                 {{ dir.dirCode }}
                             </th>
@@ -51,7 +73,7 @@
                 </table>
                 
                 <!-- Выбор предмета -->
-                <table class="table table-sm col-4" v-if="this.sub_loaded" id="table_subject">
+                <table class="table col-4" v-if="this.sub_loaded" id="table_subject">
                     <thead>
                         <tr><th>Предмет</th></tr>
                     </thead>
@@ -60,10 +82,10 @@
                             <th
                                 @click="
                                     this.selected_subject = subject;
-                                    findSubject(subject);
-                                    console.log(this.selected_subject_obj);
+                                    this.findSubject(subject);
+                                    this.groups_and_teachers = 0;
+                                    // console.log(this.selected_subject_obj);
                                     
-                                    loadGroupsData(this.selected_dir);
                                 "
                                 v-bind:class="{ 'table-active': this.selected_subject == subject }"
                             >
@@ -79,19 +101,27 @@
                         <tr><th>Группа</th></tr>
                     </thead>
                     <tbody>
-                        <tr v-for="group in this.groups" :key="group.group_id">
+                        <tr v-for="(group) in this.groups" :key="group.groupId">
                             <th
                                 @click="
-                                    this.selected_group = group.group_id; 
+                                    this.selected_group = group.groupId; 
                                     this.selected_group_obj = group;
                                     // console.log(selected_group_obj);
-                                    
-                                    this.loadTeachersData();
-                                    this.loadWorkloads();
+                                    this.loadTeachersData(group);
                                 "
-                                v-bind:class="{ 'table-active': this.selected_group == group.group_id, 'text-success bold': this.selected_subject_id != -1 }"
+
+
+                                v-bind:class="{ 
+                                    'table-active': this.selected_group == group.groupId, 
+                                    // 'text-success bold': this.selected_subject_id != -1 
+                                }"
                             >
-                                {{ group.group_number }}
+                            <div class="d-flex">
+                                {{ group.groupNumber }}
+                                <div class="m-1 mt-0 mb-0 text-black text-opacity-25" v-if="true">
+                                    <!-- {{ this.groups_and_teachers }} -->
+                                </div>
+                            </div>
                             </th>
                         </tr>
                     </tbody>
@@ -107,20 +137,15 @@
                             <th
                                 @click="
                                     this.selected_teacher = teacher.teacherId;
-                                    this.selected_teacher_obj = teacher;
-                                    // console.log(teacher);
-                                    
-                                    // console.log('groupId: ', this.selected_group);
-                                    // console.log('subjectId: ', this.selected_subject_id);
-                                    // console.log('teacherId: ', this.selected_teacher);
-                                    // console.log('group: ', this.selected_group_obj);
-                                    // console.log('subject: ', this.selected_subject_obj);
-                                    // console.log('teacher: ', this.selected_teacher_obj);
-                                    
-                                    
+                                    this.selected_teacher_obj = teacher;    
                                 "
-                                v-bind:class="{ 'table-active': this.selected_teacher == teacher.teacherId, 'table-success': false}"
+                                v-bind:class="{ 
+                                    'table-active': this.selected_teacher == teacher.teacherId, 
+                                    'table-success': teacher.teacherId == this.marked_teacher.teacherId
+                                }"
                             >
+                            <!-- {{ teacher.teacherId }}
+                            {{ this.marked_teacher.teacherId }} -->
                             {{ teacher.lastName }}
                             <!-- {{ this.teacher_load[index].length }}/5 час -->
                             <!-- при length жалуется на undefined -->
@@ -169,17 +194,19 @@ export default {
             groups: [], // массив всех групп
             subjects: [], // массив предметов
             teachers: [], // массив преподов
+            groups_and_teachers: 0,
             tgz: [],
             wl: [],
             teacher_load: [], // нагрузка на препода
-            selected_dir: -1,
+            selected_dir: {},
             selected_group: -1,
             selected_group_obj: null,
-            selected_subject: -1,
+            selected_subject: {},
             selected_subject_obj: null,
-            selected_subject_id : -1,
+            selected_subject_id : 0,
             selected_teacher: -1,
             selected_teacher_obj: null,
+            marked_teacher: 0,
             dir_loaded: false,
             sub_loaded: false,
             group_loaded: false,
@@ -227,27 +254,31 @@ export default {
             }
         },
         async loadSubjectsData(dirCode) {
-            try {
-                // Фильтруем массив "tgz" по полям "codeNapr", "kurs" и "semestr", чтобы получить только объекты, соответствующие переданным параметрам
-                const filteredTgz = this.tgz.filter(subject => subject.codeNapr === dirCode && subject.kurs === this.selected_course && subject.semestr === this.selected_sem);
+            if (dirCode)
+                try {
+                    this.sub_loaded = false;
+                    // console.log(1);
+                    // Фильтруем массив "tgz" по полям "codeNapr", "kurs" и "semestr", чтобы получить только объекты, соответствующие переданным параметрам
+                    const filteredTgz = this.tgz.filter(subject => subject.codeNapr === dirCode && subject.kurs === this.selected_course && subject.semestr === this.selected_sem);
 
-                // Получаем уникальные значения поля "disName" из отфильтрованного массива
-                const uniqueDisNames = [...new Set(filteredTgz.map(subject => subject.disName))];
+                    // Получаем уникальные значения поля "disName" из отфильтрованного массива
+                    const uniqueDisNames = [...new Set(filteredTgz.map(subject => subject.disName))];
 
-                // Записываем уникальные значения в массив "subjects"
-                this.subjects = uniqueDisNames;
+                    // Записываем уникальные значения в массив "subjects"
+                    this.subjects = uniqueDisNames;
 
-                
-                this.sub_loaded = true;
-                this.group_loaded = false;
-                this.teacher_loaded = false;
+                    
+                    // console.log(2);
+                    this.sub_loaded = true;
+                    this.group_loaded = false;
+                    this.teacher_loaded = false;
 
-                // console.log("curs: ", this.selected_course);
-                // console.log("sem: ", this.selected_sem);
-                // console.log(this.subjects);
-            } catch (error) {
-                console.error('Error loading subjects data:', error);
-            }
+                    // console.log("curs: ", this.selected_course);
+                    // console.log("sem: ", this.selected_sem);
+                    // console.log(this.subjects);
+                } catch (error) {
+                    console.error('Error loading subjects data:', error);
+                }
         },
         async findSubject(subName) {
             try {
@@ -257,24 +288,28 @@ export default {
                 // Находим объект, у которого поле "subjectName" равно параметру "subName"
                 const subject = subjects.find(subject => subject.subjectName === subName);
                 
-                this.selected_subject_obj = subjects.find(subject => subject.subjectName === subName);
+                this.selected_subject_obj = subject
+                this.selected_subject_id = subject ? subject.subjectId : null;
                 // console.log(subject);
                 // console.log(this.selected_subject_obj);
+                
+                this.loadTeachersData();
 
-                // Возвращаем "subjectId" найденного объекта
-                this.selected_subject_id = subject ? subject.subjectId : null;
             } catch (error) {
                 console.error('Error loading subjects data:', error);
             }
         },
 
-        async loadGroupsData() {
+        async loadGroupsData(dir_id) {
+            if (dir_id)
             try {
                 const response = await UserService.getAllGroups(); // Replace with your API endpoint
                 this.groups = Array.isArray(response.data) ? response.data : [response.data];
 
                 // Фильтруем массив "groups" по полю "course", чтобы получить только группы, соответствующие выбранному курсу
-                this.groups = this.groups.filter(group => group.course === this.selected_course);
+                this.groups = this.groups.filter(group => 
+                    (group.course === this.selected_course) && (group.groupDirId == dir_id)
+                );
 
                 this.group_loaded = true;
                 this.teacher_loaded = false;
@@ -283,72 +318,94 @@ export default {
                 console.error('Error loading groups data:', error);
             }
         },
-        async loadTeachersData() {
-            try {
-                const response = await UserService.getAllTeachers(); // Replace with your API endpoint
-                this.teachers = Array.isArray(response.data) ? response.data : [response.data];
-                // console.log(this.teachers);
+        async loadTeachersData(group) {
+            if(this.selected_subject_id && this.selected_group_obj)
+                try {
+            
+                    const response = await UserService.getAllTeachers(); // Replace with your API endpoint
+                    this.teachers = Array.isArray(response.data) ? response.data : [response.data];
+                    // console.log(this.teachers);
 
-                // Создаем список уникальных значений поля "fam" из объектов массива "tgz", которые соответствуют выбранному предмету
-                const tmp_teach = [...new Set(this.tgz.filter(subject => subject.disName === this.selected_subject).map(subject => subject.fam))];
+                    // Создаем список уникальных значений поля "fam" из объектов массива "tgz", которые соответствуют выбранному предмету
+                    const tmp_teach = [...new Set(this.tgz.filter(subject => subject.disName === this.selected_subject).map(subject => subject.fam))];
 
-                // Фильтруем массив "response" по полю "lastName", чтобы получить только преподавателей, которые преподают выбранный предмет
-                // console.log(this.teachers);
-                // console.log(tmp_teach);
-                this.teachers = this.teachers.filter(teacher => tmp_teach.includes(teacher.lastName));
+                    // Фильтруем массив "response" по полю "lastName", чтобы получить только преподавателей, которые преподают выбранный предмет
+                    // console.log(this.teachers);
+                    // console.log(tmp_teach);
+                    this.teachers = this.teachers.filter(teacher => tmp_teach.includes(teacher.lastName));
+                    // this.marked_teacher = this.findWlID(this.selected_group, this.selected_subject_id);
 
-                // console.log(this.teachers);
-                this.teacher_loaded = true
-            } catch (error) {
-                console.error('Error loading teachers data:', error);
-            }
+                    // console.log(this.teachers);
+                    if (group){
+                        
+                        this.marked_teacher = await this.loadWorkloads(group);
+                    }
+                    // console.log(this.wl);
+                } catch (error) {
+                    console.error('Error loading teachers data:', error);
+                }
         },
-        async loadWorkloads(){
+        async loadWorkloads(group){
             try {
                 const response = await UserService.getAllWorkloads(); // Replace with your API endpoint
                 // console.log(response.data);
                 this.wl = Array.isArray(response.data) ? response.data : [response.data];
-                console.log(this.wl);
+                // console.log(this.wl);
+                // console.log(this.teacher_loaded);
+
+                if (group) {
+                    this.teacher_loaded = true;
+                    return this.whosTeacher(group);
+                }
+                this.teacher_loaded = true;
+                
             } catch (error) {
-                console.error('Error loading employments data:', error);
+                console.error('Error loading workloads data:', error);
             }
         },
 
-        saveRel(){
+        async saveRel(){
             console.log('sel_gr : ' + this.selected_group);
             console.log('sel_su : ' + this.selected_subject_id);
-            let tmp = this.findWl(this.selected_group, this.selected_subject_id)
+            let tmp = await this.findWl(this.selected_group, this.selected_subject_id);
+            console.log(tmp);
             if (tmp == -1){
                 UserService.addWorkload(this.selected_group, this.selected_subject_id, this.selected_teacher, this.selected_group_obj, this.selected_subject_obj, this.selected_teacher_obj);
                 // console.log(this.findWl(this.selected_group, this.selected_subject_id));
                 // console.log(this.selected_teacher);
-                this.notify_text = 'Связь добавлена';
+                this.notify_text = 'Преподаватель добавлен';
                 this.not_suc = true;
                 this.not_upd = false;
                 this.not_ex = false;
+                
+                this.teacher_loaded = false;
+                this.loadTeachersData(this.selected_group_obj);
             }
             else if (tmp != this.selected_teacher){
                 console.log('cur_teacher = ' + tmp);
                 console.log('selected = ' + this.selected_teacher);
-                var wlid = this.findWlID(this.selected_group, this.selected_subject_id)
+                var wlid = await this.findWlID(this.selected_group, this.selected_subject_id);
                 console.log('wlid = ' + wlid);
-                UserService.editWorkload(wlid, this.selected_teacher);
+                UserService.editWorkload(wlid, this.selected_group, this.selected_subject_id, this.selected_teacher, this.selected_group_obj, this.selected_subject_obj, this.selected_teacher_obj);
                 // console.log(this.findWl(this.selected_group, this.selected_subject_id));
                 // console.log(this.selected_teacher);
-                this.notify_text = 'Связь обновлена';
+                this.notify_text = 'Преподаватель обновлен';
                 this.not_suc = false;
                 this.not_upd = true;
                 this.not_ex = false;
+                
+                this.teacher_loaded = false;
+                this.loadTeachersData(this.selected_group_obj);
             }
             else {
                 console.log("Такая запись уже есть");
-                this.notify_text = 'Такая связь уже есть';
+                this.notify_text = 'Преподаватель уже назначен';
                 this.not_suc = false;
                 this.not_upd = false;
                 this.not_ex = true;
                 this.showNotification = true; // Показать уведомление
                 setTimeout(() => {
-                this.showNotification = false; // Скрыть уведомление через 3 секунды
+                    this.showNotification = false; // Скрыть уведомление через 3 секунды
                 }, 3000
             );
                 return;
@@ -356,8 +413,7 @@ export default {
             // console.log(this.not_suc);
             // console.log(this.not_upd);
             // console.log(this.not_ex);
-            this.loadWorkloads();
-            this.loadTeachersData(this.selected_subject_id);
+            this.loadTeachersData();
             while (this.loading == true && this.wl_loading == true){
                 this.findWl(this.selected_group, this.selected_subject_id);
             }
@@ -369,7 +425,8 @@ export default {
                 }, 3000
             );
         },
-        findWl(group_id, subject_id){
+
+        async findWl(group_id, subject_id){
             var i;
             // console.log('FINDING IN:');
             // console.log(this.wl);
@@ -388,17 +445,49 @@ export default {
             return -1;
         },
 
-        findWlID(group_id, subject_id){
+        async findWlID(group_id, subject_id){
             var i;
             for (i in this.wl) {
                 if (this.wl[i].groupId == group_id) {
                     if (this.wl[i].subjectId == subject_id) 
-                        console.log(this.wl[i]);
+                        // console.log(this.wl[i]);
                         return this.wl[i].wlId;
                 }
             }
             this.s_loading = false;
-            return -1;
+            return 0;
+        },
+
+        findWlTeacher(group_id, subject_id){
+            var i;
+            for (i in this.wl) {
+                if (this.wl[i].groupId == group_id) {
+                    if (this.wl[i].subjectId == subject_id) {
+                        console.log(this.wl[i]);
+                        return this.wl[i].teacherId;
+                    }
+                }
+            }
+            // console.log(0);
+            return 0;
+        },
+
+
+        whosTeacher(group_obj){
+            var marked_id = this.findWlTeacher(group_obj.groupId, this.selected_subject_id);
+            // console.log(9999);
+            if (marked_id){
+                // console.log(marked_id);
+                // console.log(this.teachers);
+                var answ = 0;
+                this.teachers.forEach(function(teacher){
+                    if (teacher.teacherId == marked_id){
+                        answ = teacher;
+                    }
+                })
+                return answ;
+            }
+            return 0;
         },
 
 
