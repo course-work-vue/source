@@ -7,6 +7,7 @@
       <div class="d-inline-flex">
         <div v-if="!spisok">
         <h1> Список всех студентов </h1>
+        
       </div>
     <h1 v-if="spisok"> Список студентов {{ groupn }} группы </h1>
     <h1 v-if="subg">, {{ subgn }} подгруппы</h1>
@@ -15,7 +16,7 @@
     <div class="col col-12">
     
       <button @click="navigateToAddStudent" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить студента</button>
-      <button onclick="location.href='http://195.93.252.168:5050/api/Students/Export'" class="mx-2 btn btn-primary float-start" type="button">Отчёт о формах обучения</button>
+      <button @click="previewDocx" class="mx-2 btn btn-primary float-start" type="button">Отчёт о формах обучения</button>
       <div class="col col-6 float-end d-inline-flex align-items-center">
       <button @click="clearFilters" :disabled="!filters" class="btn btn-sm btn-primary text-nowrap mx-2" type="button"><i class="material-icons-outlined">close</i>Очистить фильтры</button>
       <input class="form-control" type="text" v-model="quickFilterValue" id="filter-text-box" v-on:input="onFilterTextBoxChanged()" placeholder="Поиск..."> 
@@ -73,7 +74,30 @@
   >
   </ag-grid-vue>
 </div>
-</div></div>
+</div>
+
+</div>
+<div class="container mt-3">
+    <table class="table table-striped">
+      Список отстающих студентов
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">First Name</th>
+          <th scope="col">Last Name</th>
+          <th scope="col">Sum</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(item, index) in dataFromApi" :key="index">
+          <th scope="row">{{ index }}</th>
+          <td>{{ item.first_name }}</td>
+          <td>{{ item.last_name }}</td>
+          <td>{{ item.sum }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 </template>
 
@@ -103,6 +127,9 @@ export default {
   setup() {
     const gridApi = ref(null); // Optional - for accessing Grid's API
     const gridColumnApi = ref();
+
+    const dataFromApi = ref(null); // This will store the data from the API
+    const dataLoaded = ref(false); // This flag will indicate if data is loaded
     // Obtain API from grid's onGridReady event
     const route = useRoute();
     const paginationPageSize = 60;
@@ -183,8 +210,8 @@ else{
      
     };
 
-    const handleSelectChange2 = (myValue3) => {
-      console.log(myValue3);
+    const  handleSelectChange2 = async (myValue3) => {
+
       restoreFromHardCoded2(myValue3); 
     };
 
@@ -224,7 +251,10 @@ else{
       
     };
 
-    const handleSelectChange = (myValue2) => {
+    const handleSelectChange =async (myValue2) => {
+
+      dataFromApi.value= (await UserService.getRetardsByGroupId(myValue2)).data;
+      dataLoaded.value = true; 
       restoreFromHardCoded(myValue2);
     };
  
@@ -270,7 +300,9 @@ else{
       restoreFromHardCoded,
       restoreFromHardCoded2,
       handleSelectChange,
-      handleSelectChange2
+      handleSelectChange2,
+      dataFromApi,
+      dataLoaded
      
 
       
@@ -290,12 +322,16 @@ else{
     spisok:false,
     subg:false,
     groupn:null,
-    subgn:null
+    subgn:null,
+    
   };
 },
 
   methods: {
+    previewDocx() {
     
+      window.open(`https://docs.google.com/viewerng/viewer?url=http://195.93.252.168:5050/api/Students/Export`);
+    },
     async loadGroupsData() {
         try {
           const response = await UserService.getGroupsAsKOSTIL(); 

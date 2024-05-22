@@ -67,7 +67,23 @@ class UserService {
         throw error;
       });
   }
+  getRetardsByGroupId(value){
+    
+    const query = {
+      query: `SELECT sum(j.grade), s.last_name, s.first_name from journal j 
+      JOIN groups g 
+      ON g.group_id=j.group_id
+      JOIN students s
+      ON j.student_id=s.student_id
+      group by j.student_id,s.last_name,s.first_name,g.group_number
+      having 
+      g.group_number='${value}'
+	  order by sum(j.grade) ASC;
+      `,
+    };
+    return axios.post(API_URL, query, { headers: authHeader() });
 
+  }
   getStudentById(studentId) {
     const apiUrl = `${API}/Students/${studentId}`; // Assuming the API endpoint for GET is /getStudentById/:studentId
     const headers = authHeader();
@@ -254,8 +270,20 @@ deleteDirectionById(direction_id){
 }
   getAllDirections(){
     const query = {
-      query: `SELECT * from directions ORDER BY 
-      dir_name ASC;`,
+      query: `SELECT 
+      d.dir_name,
+      d.dir_code,
+      COUNT(CASE WHEN s.is_budget = true THEN 1 END) AS total_budget_count,
+      COUNT(CASE WHEN s.is_budget = false THEN 1 END) AS total_not_budget_count
+  FROM
+      directions d
+  JOIN
+      groups g ON d.dir_id = g.group_dir_id
+  JOIN
+      students s ON g.group_id = s.group_id
+  GROUP BY
+      d.dir_name, d.dir_code;
+  `,
     };
     return axios.post(API_URL, query, { headers: authHeader() });
   }

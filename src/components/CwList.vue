@@ -14,7 +14,7 @@
       <div class="col col-12">
     
     <button @click="navigateToAddCW" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить курсовую работу</button>
-    <button onclick="location.href='http://195.93.252.168:5050/api/CourseWork/ExportCourseWorks'" class="mx-2 btn btn-primary float-start" type="button">Отчёт о научных руководителях</button>
+    <button @click="previewDocx" class="mx-2 btn btn-primary float-start" type="button">Отчёт о научных руководителях</button>
     
     <div class="col col-6 float-end d-inline-flex align-items-center">
     <button @click="clearFilters" :disabled="!filters" class="btn btn-sm btn-primary text-nowrap mx-2" type="button"><i class="material-icons-outlined">close</i>Очистить фильтры</button>
@@ -167,7 +167,10 @@ export default {
   };
 },
   methods: {
-
+    previewDocx() {
+    
+    window.open(`https://docs.google.com/viewerng/viewer?url=http://195.93.252.168:5050/api/CourseWork/ExportCourseWorks`);
+  },
     async loadGroupsData() {
         try {
           const response = await UserService.getAllCws(); // Replace with your API endpoint

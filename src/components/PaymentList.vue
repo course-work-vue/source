@@ -4,9 +4,10 @@
   <div class="col col-xs-9 col-lg-12 mt-4 list">
     <div class="col col-12">
     <div class="mb-3 col col-12">
-    
+      <button onclick="location.href='http://195.93.252.168:5050/api/PayGraph/Export'" class="mx-2 btn btn-primary float-start" type="button">Отчёт о платежах</button>
       <button @click="navigateToAddPayment" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить платёж</button>
       <div class="col col-6 float-end d-inline-flex align-items-center mb-2 ">
+
       <button @click="clearFilters" :disabled="!filters" class="btn btn-sm btn-primary text-nowrap mx-2" type="button"><i class="material-icons-outlined">close</i>Очистить фильтры</button>
       <input class="form-control" type="text" v-model="quickFilterValue" id="filter-text-box" v-on:input="onFilterTextBoxChanged()" placeholder="Поиск..."> 
     </div>

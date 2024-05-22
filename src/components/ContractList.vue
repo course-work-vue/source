@@ -4,7 +4,7 @@
   <div class="col col-xs-9 col-lg-12 mt-4 list">
     <div class="col col-12">
     <div class="mb-3 col col-12">
-    
+      <button onclick="location.href='http://195.93.252.168:5050/api/Contract/Export'" class="mx-2 btn btn-primary float-start" type="button">Отчёт о договорах</button>
       <button @click="navigateToAddContract" class="btn btn-primary float-start" type="button"><i class="material-icons-outlined">add</i>Добавить договор</button>
       <div class="col col-3 float-end">
       <input class="form-control"  id="filter-text-box" v-on:input="onFilterTextBoxChanged()" placeholder="Поиск..."> 

@@ -15,7 +15,7 @@
 
 
 
-<div style="height: 95vh">
+<div style="height: 50vh">
 <div class="h-100 pt-5">
   <ag-grid-vue
     class="ag-theme-alpine"
@@ -25,7 +25,7 @@
     :defaultColDef="defaultColDef"
     rowSelection="multiple"
     animateRows="true"
-    @cell-clicked="cellWasClicked"
+    @cell-clicked="onCellClicked"
     @grid-ready="onGridReady"
     @firstDataRendered="onFirstDataRendered"
     @filter-changed="onFilterChanged"
@@ -33,9 +33,27 @@
     :paginationPageSize="paginationPageSize"  
   >
   </ag-grid-vue>
-</div>
-</div></div>
 
+  
+</div>
+
+</div>
+
+
+
+
+</div>
+<div class="test" v-if="test">
+
+<label>Количество бюджета:</label>
+<div class="form-group d-inline-flex align-items-center mb-2 col-1 mx-1">
+<input class="form-control" v-model=event.data.total_budget_count disabled>
+</div>
+<label>Количество договоров:</label>
+<div class="form-group d-inline-flex align-items-center mb-2 col-1 mx-1">
+<input class="form-control" v-model=event.data.total_not_budget_count disabled>
+</div>
+</div>
 </template>
 
 <script>
@@ -127,9 +145,7 @@ export default {
       columnDefs,
       rowData,
       defaultColDef,
-      cellWasClicked: (event) => { // Example of consuming Grid Event
-        console.log("cell was clicked", event);
-      },
+  
       deselectRows: () =>{
         gridApi.value.deselectAll()
       },
@@ -145,12 +161,21 @@ export default {
   },
   data() {
   return {
+    test:false,
     quickFilterValue: '', // Initialize with an empty string
-    filters:false
+    filters:false,
+    event:null
   };
 },
   methods: {
-
+    onCellClicked(event) {
+      // Add HTML content based on the clicked cell
+      this.test=true;
+      console.log(this.test);
+      console.log(event);
+      this.test2=event.data.listener_snils;
+      this.event=event;
+    },
     async loadDirectionsData() {
         try {
           const response = await UserService.getAllDirections(); // Replace with your API endpoint
@@ -245,7 +270,9 @@ onFirstDataRendered(params) {
   justify-content: center; /* align horizontal */
   align-items: center;
 }
-
+.test{
+  padding-left: 100px;
+}
 .skeleton {
   width: 100%;
   height: 1.2em;

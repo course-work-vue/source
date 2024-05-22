@@ -133,7 +133,28 @@
               <ErrorMessage name="group_to_move" class="error-feedback" />
             </div>
 
-    
+            <div class="form-group d-inline-flex align-items-center col-5 mb-2">
+
+<Field v-slot="{ field2 }" name="course_work_vipysk" type="radio" :value="true">
+  <label>
+    <input type="radio" name="course_work_vipysk" v-bind="field2" value="false" class="form-check-input mt-0 ml-5"  />
+    Закончил курс
+  </label>
+</Field>
+<ErrorMessage name="course_work_vipysk" class="error-feedback" />
+<Field v-slot="{ field }" name="editedCw.course_work_vipysk" type="radio" :value="true">
+  <label>
+    <input type="radio" name="course_work_vipysk" v-bind="field" value="true" class="form-check-input mt-0 ml-5"  />
+    Закончил курс с документом
+  </label>
+</Field>
+<Field v-slot="{ field3 }" name="editedCw.course_work_vipysk" type="radio" :value="true">
+  <label>
+    <input type="radio" name="course_work_vipysk" v-bind="field3" value="true" class="form-check-input mt-0 ml-5"   />
+    Не закончил
+  </label>
+</Field>
+</div>
           </div>
           <div class="form-group mt-3">
               <button class="btn btn-primary btn-block" :disabled="loading">
